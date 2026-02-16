@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Licença LINERA-NEST</title>
+  <style>
+    body{font-family:Segoe UI,Arial,sans-serif;background:#f6f7fb;color:#0f172a;margin:0}
+    .card{max-width:720px;margin:40px auto;background:#fff;border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    .muted{color:#475569}
+    button{background:#0b1f3b;color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .msg{margin-top:12px;padding:10px 12px;border-radius:10px;background:#eef2f7}
+    code{background:#eef2f7;padding:2px 6px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Pagamento recebido ✅</h2>
+    <p class="muted">
+      Agora você só precisa baixar seu arquivo de licença e ativar no programa.
+    </p>
+
+    <div class="row">
+      <button id="btn">Baixar licença (.lic)</button>
+    </div>
+
+    <div id="out" class="msg muted">Se o pagamento ainda estiver “processando”, pode demorar alguns segundos.</div>
+
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin:18px 0" />
+
+    <h3>Como usar no programa</h3>
+    <ol class="muted">
+      <li>Abra o LINERA-NEST</li>
+      <li>Clique em <b>Ativar licença</b></li>
+      <li>Escolha o arquivo <code>.lic</code> que você baixou</li>
+      <li>Pronto</li>
+    </ol>
+  </div>
+
+<script>
+  // 1) pegamos um "codigo da compra" que vem na URL de retorno
+  const url = new URL(location.href);
+  const ref = url.searchParams.get("external_reference") || url.searchParams.get("preapproval_id") || "";
+
+  const btn = document.getElementById("btn");
+  const out = document.getElementById("out");
+
+  if (!ref) {
+    out.textContent = "Não encontrei o código da compra na URL. Me chame no suporte e envie o comprovante.";
+  }
+
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    out.textContent = "Gerando sua licença, aguarde...";
+
+    try {
+      // 2) chama seu servidor/controle para baixar o .lic
+      // TROQUE para o seu domínio do Worker:
+      const api = "https://SEU-CONTROLE.workers.dev/download-lic?ref=" + encodeURIComponent(ref);
+
+      // abre o download em uma nova aba (mais simples)
+      window.location.href = api;
+
+      out.textContent = "Se não baixar automaticamente, verifique bloqueio de pop-up/antivírus.";
+    } catch (e) {
+      out.textContent = "Erro ao tentar baixar. Tente novamente.";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
