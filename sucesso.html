@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linera-Nest | Pagamento concluído</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 760px; margin: 30px auto; padding: 0 16px; }
+    .box { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 14px 0; }
+    .ok { color: #166534; font-weight: 800; }
+    .hint { color:#555; font-size: 14px; line-height: 1.35; }
+    button { padding: 12px 14px; border: 0; border-radius: 10px; cursor: pointer; font-weight: 700; }
+    .b { background: #0B1F3B; color: #fff; }
+    .s { background: #eef2f7; color: #0f172a; }
+    code { background:#f3f4f6; padding:3px 6px; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <h1 class="ok">Pagamento concluído ✅</h1>
+
+  <div class="box">
+    <p><b>Seu e-mail:</b> <span id="email">(não encontrado)</span></p>
+    <p><b>Plano:</b> <span id="plano">(não encontrado)</span></p>
+    <p class="hint">
+      Agora o próximo passo é baixar o arquivo <code>.lic</code> e importar no programa.
+      (O botão abaixo vai funcionar quando a gente ligar o “controle de licença” no servidor.)
+    </p>
+
+    <button class="b" onclick="baixar()">Baixar licença (.lic)</button>
+    <button class="s" onclick="window.location.href='comprar.html'" style="margin-left:8px;">Voltar</button>
+
+    <p class="hint" id="msg" style="margin-top:12px;"></p>
+  </div>
+
+  <script>
+    const email = localStorage.getItem("linera_email") || "";
+    const pcs = localStorage.getItem("linera_pcs") || "";
+
+    document.getElementById("email").textContent = email || "(não encontrado)";
+    document.getElementById("plano").textContent = pcs ? (pcs + " PCs") : "(não encontrado)";
+
+    function baixar() {
+      // ainda não existe — vamos criar no próximo passo
+      // aqui a ideia é chamar: /api/licenca?email=...&pcs=...
+      if (!email || !pcs) {
+        document.getElementById("msg").textContent =
+          "Não achei seu e-mail/plano. Volte em comprar.html, digite o e-mail e escolha o plano novamente.";
+        return;
+      }
+
+      document.getElementById("msg").textContent =
+        "Ainda falta ligar o gerador do arquivo .lic no servidor. Próximo passo: criar /api/licenca.";
+    }
+  </script>
+</body>
+</html>
