@@ -1,4 +1,5 @@
 export async function onRequestGet(context) {
+  return new Response("VERSAO NOVA ASSINAR OK", { status: 200 });
   const url = new URL(context.request.url);
 
   const email = (url.searchParams.get("email") || "").trim();
