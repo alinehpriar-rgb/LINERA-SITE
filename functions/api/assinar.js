@@ -20,12 +20,12 @@ export async function onRequestGet(context) {
 
   // Cria uma assinatura ligada a um PLANO
   const body = {
-    preapproval_plan_id: PLANS[pcs],
-    payer_email: email,
-    back_url: `${origin}/sucesso.html`,
-    status: "authorized",
-    external_reference: `linera|${email}|pcs${pcs}|${Date.now()}`
-  };
+  preapproval_plan_id: PLANS[pcs],
+  payer_email: email,
+  back_url: `${origin}/sucesso.html`,
+  external_reference: `linera|${email}|pcs${pcs}|${Date.now()}`
+};
+
 
   const resp = await fetch("https://api.mercadopago.com/preapproval", {
     method: "POST",
