@@ -5,27 +5,46 @@ const PLANS = {
   "50": "eee8e3f49d6e4a59b11ee60fe5197f65"  // Plano Fábrica (50 PCs)
 };
 
+function txt(s) {
+  return new Response(String(s || ""), {
+    status: 200,
+    headers: { "content-type": "text/plain; charset=utf-8" }
+  });
+}
+
+function err(status, s) {
+  return new Response(String(s || ""), {
+    status,
+    headers: { "content-type": "text/plain; charset=utf-8" }
+  });
+}
+
 export async function onRequestGet(context) {
   const token = context.env.MP_ACCESS_TOKEN;
-  const url = new URL(context.request.url);
+  if (!token) return err(500, "ERRO: MP_ACCESS_TOKEN não existe no Cloudflare Pages.");
 
-  const email = (url.searchParams.get("email") || "").trim().toLowerCase();
-  const pcs = (url.searchParams.get("pcs") || "").trim();
+  const reqUrl = new URL(context.request.url);
+  const origin = reqUrl.origin;
 
-  if (!email) return new Response("Faltou email", { status: 400 });
-  if (!PLANS[pcs]) return new Response("pcs inválido. Use 2, 5, 10 ou 50", { status: 400 });
+  const email = (reqUrl.searchParams.get("email") || "").trim().toLowerCase();
+  const pcs = (reqUrl.searchParams.get("pcs") || "").trim();
 
-  // URL do seu próprio site (pra voltar depois do pagamento)
-  const origin = url.origin;
+  if (!email) return err(400, "Faltou o parâmetro email. Ex: ?email=voce@gmail.com&pcs=2");
+  if (!PLANS[pcs]) return err(400, "pcs inválido. Use 2, 5, 10 ou 50.");
 
-  // Cria uma assinatura ligada a um PLANO
+  // IMPORTANTE:
+  // Não colocamos status "authorized".
+  // Deixamos o Mercado Pago criar e devolver o init_point (checkout).
   const body = {
-  preapproval_plan_id: PLANS[pcs],
-  payer_email: email,
-  back_url: `${origin}/sucesso.html`,
-  external_reference: `linera|${email}|pcs${pcs}|${Date.now()}`
-};
+    preapproval_plan_id: PLANS[pcs],
+    payer_email: email,
 
+    // para onde o Mercado Pago manda o usuário depois que ele terminar no checkout
+    back_url: `${origin}/sucesso.html`,
+
+    // referência interna sua
+    external_reference: `linera|${email}|pcs${pcs}|${Date.now()}`
+  };
 
   const resp = await fetch("https://api.mercadopago.com/preapproval", {
     method: "POST",
@@ -36,21 +55,32 @@ export async function onRequestGet(context) {
     body: JSON.stringify(body)
   });
 
-  const data = await resp.json().catch(() => null);
+  const raw = await resp.text();
 
   if (!resp.ok) {
-    return new Response("ERRO criando assinatura:\n\n" + JSON.stringify(data, null, 2), {
-      status: 500,
-      headers: { "content-type": "text/plain; charset=utf-8" }
-    });
+    return err(500, "ERRO criando assinatura (resposta do Mercado Pago):\n\n" + raw);
   }
 
-  // O Mercado Pago devolve a URL do checkout em "init_point"
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    return err(500, "ERRO: não consegui ler o JSON do Mercado Pago:\n\n" + raw);
+  }
+
+  // init_point é o link do checkout
+  if (!data.init_point) {
+    return err(500, "ERRO: o Mercado Pago não devolveu init_point.\n\n" + JSON.stringify(data, null, 2));
+  }
+
+  // devolve só o que interessa
   return new Response(JSON.stringify({
     ok: true,
     init_point: data.init_point,
     id: data.id,
-    status: data.status
+    status: data.status,
+    plan_id: PLANS[pcs],
+    pcs
   }, null, 2), {
     status: 200,
     headers: { "content-type": "application/json; charset=utf-8" }
