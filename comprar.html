@@ -56,11 +56,12 @@
 
   <script>
     const LINKS = {
-      2:  "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=405cae16df8940b4b27cf57b8fc64f45",
-      5:  "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=618b087942934ef0aec938e95511296f",
-      10: "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=ee70016158bf412fadce55f3d580d5fd",
-      50: "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=eee8e3f49d6e4a59b11ee60fe5197f65"
-    };
+  2:  "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=405cae16df8940b4b27cf57b8fc64f45&back_url=https://linera-site.pages.dev/sucesso.html",
+  5:  "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=618b087942934ef0aec938e95511296f&back_url=https://linera-site.pages.dev/sucesso.html",
+  10: "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=ee70016158bf412fadce55f3d580d5fd&back_url=https://linera-site.pages.dev/sucesso.html",
+  50: "https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=eee8e3f49d6e4a59b11ee60fe5197f65&back_url=https://linera-site.pages.dev/sucesso.html"
+};
+
 
     function go(pcs) {
       const email = (document.getElementById("email").value || "").trim();
