@@ -281,13 +281,13 @@
       const msgEl = ctx.msgEl || document.getElementById("msg");
 
       if (!email || !pcs) {
-        msgEl.textContent = "Não foi possível identificar automaticamente sua compra. No próximo passo vamos ligar o botão para gerar a licença pelo e-mail.";
+        msgEl.textContent = "Não foi possível identificar automaticamente sua compra. Em breve vamos buscar a licença pelo e-mail.";
         return;
       }
 
-      // Próximo passo vamos trocar isso pelo endpoint real:
-      // window.location.href = `/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`
-      msgEl.textContent = "Próximo passo: conectar este botão ao gerador do arquivo .lic no servidor.";
+      msgEl.textContent = "Preparando sua licença...";
+      const url = `/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
+      window.location.href = url;
     }
   </script>
 </body>
