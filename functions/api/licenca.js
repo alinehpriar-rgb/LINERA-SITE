@@ -12,18 +12,70 @@ export async function onRequestGet(context) {
     return new Response("Plano inválido (pcs).", { status: 400 });
   }
 
-  // LICENÇA DE TESTE (temporária, só pra validar o fluxo do download)
-  const hoje = new Date();
-  const validade = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000); // +30 dias
+  // Busca no KV: chave = email
+  const raw = await context.env.LICENCIAS.get(email);
 
+  if (!raw) {
+    return new Response(
+      "Nenhuma assinatura encontrada para este e-mail.",
+      { status: 403, headers: { "content-type": "text/plain; charset=utf-8" } }
+    );
+  }
+
+  let lic;
+  try {
+    lic = JSON.parse(raw);
+  } catch {
+    return new Response(
+      "Cadastro de licença inválido no servidor.",
+      { status: 500, headers: { "content-type": "text/plain; charset=utf-8" } }
+    );
+  }
+
+  // Esperado no KV (exemplo):
+  // {
+  //   "email":"cliente@x.com",
+  //   "pcs":"2",
+  //   "status":"active",
+  //   "valid_until":"2026-03-27T23:59:59.000Z"
+  // }
+
+  if ((lic.status || "").toLowerCase() !== "active") {
+    return new Response(
+      "Sua assinatura está inativa no momento.",
+      { status: 403, headers: { "content-type": "text/plain; charset=utf-8" } }
+    );
+  }
+
+  if (String(lic.pcs || "") !== pcs) {
+    return new Response(
+      "O plano informado não corresponde ao plano ativo deste e-mail.",
+      { status: 403, headers: { "content-type": "text/plain; charset=utf-8" } }
+    );
+  }
+
+  if (lic.valid_until) {
+    const venc = new Date(lic.valid_until);
+    if (!isNaN(venc.getTime()) && venc.getTime() < Date.now()) {
+      return new Response(
+        "Sua assinatura está expirada.",
+        { status: 403, headers: { "content-type": "text/plain; charset=utf-8" } }
+      );
+    }
+  }
+
+  // Se passou nas validações, gera a licença
+  const hoje = new Date();
   const conteudo = [
     "LINERA-NEST LICENSE FILE",
     `email=${email}`,
     `pcs=${pcs}`,
-    "status=ATIVA_TESTE",
+    "status=ATIVA",
     `emitido_em=${hoje.toISOString()}`,
-    `validade_ate=${validade.toISOString()}`,
-    "issuer=linera-site.pages.dev"
+    `validade_ate=${lic.valid_until || ""}`,
+    `source=kv`,
+    `plano_nome=${lic.plan_name || ""}`,
+    `subscription_id=${lic.subscription_id || ""}`
   ].join("\n");
 
   return new Response(conteudo, {
