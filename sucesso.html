@@ -285,7 +285,7 @@
         return;
       }
 
-      msgEl.textContent = "Preparando sua licença...";
+      msgEl.textContent = "O download da sua licença começará em breve...";
       const url = `/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
       window.location.href = url;
     }
