@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LINERA-NEST | Assinatura de Licença</title>
+  <title>LINERA-NEST | Pagamento concluído</title>
   <style>
     :root{
       --bg:#f6f7fb;
@@ -13,447 +13,185 @@
       --primary:#0b1f3b;
       --primary-hover:#091a31;
       --line:#e2e8f0;
-      --soft:#eef2f7;
-      --green:#15803d;
-      --green-soft:#ecfdf5;
-      --yellow:#a16207;
-      --yellow-soft:#fefce8;
-      --danger:#b91c1c;
-      --danger-soft:#fef2f2;
-      --shadow: 0 12px 28px rgba(15,23,42,.07);
-      --shadow-strong: 0 18px 35px rgba(11,31,59,.18);
+      --ok:#15803d;
+      --ok-soft:#ecfdf5;
     }
 
     * { box-sizing: border-box; }
 
     body{
       margin:0;
+      font-family: "Segoe UI", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-family: "Segoe UI", Arial, sans-serif;
     }
 
     .wrap{
-      max-width: 1080px;
-      margin: 26px auto 40px;
+      max-width: 860px;
+      margin: 36px auto;
       padding: 0 16px;
     }
 
     .hero{
-      background: linear-gradient(135deg, #0b1f3b 0%, #123568 100%);
-      color:#fff;
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: var(--shadow-strong);
+      background: linear-gradient(135deg, #0b1f3b 0%, #102f59 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 22px 22px;
+      box-shadow: 0 14px 35px rgba(11,31,59,.18);
       margin-bottom: 16px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .hero::after{
-      content:"";
-      position:absolute;
-      right:-40px;
-      top:-40px;
-      width:180px;
-      height:180px;
-      border-radius:50%;
-      background: rgba(255,255,255,.07);
-      pointer-events:none;
     }
 
     .hero-top{
       display:flex;
-      gap:12px;
       align-items:center;
-      margin-bottom:8px;
-      position: relative;
-      z-index: 1;
+      gap:12px;
+      margin-bottom: 8px;
     }
 
-    .hero-icon{
-      width:44px;
-      height:44px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
+    .check{
+      width:42px;
+      height:42px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size: 22px;
-      flex: 0 0 auto;
-    }
-
-    .hero h1{
-      margin:0;
-      font-size: 20px;
-      line-height:1.2;
-      font-weight:800;
-      letter-spacing:.2px;
-    }
-
-    .hero p{
-      margin:0;
-      color: rgba(255,255,255,.92);
-      font-size:14px;
-      line-height:1.45;
-      max-width: 780px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .banner-important{
-      margin-top: 14px;
-      background: #fff;
-      color: #111827;
-      border-radius: 14px;
-      border: 2px solid #f59e0b;
-      padding: 14px;
-      box-shadow: 0 8px 18px rgba(0,0,0,.08);
-      position: relative;
-      z-index: 1;
-    }
-
-    .banner-important-top{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:8px;
-    }
-
-    .banner-important .badge{
-      background:#f59e0b;
-      color:#fff;
-      font-weight:800;
-      font-size:12px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-    }
-
-    .banner-important .title{
+      font-size: 24px;
       font-weight: 800;
-      font-size: 15px;
-      color:#92400e;
+      border: 1px solid rgba(255,255,255,.18);
     }
 
-    .banner-important p{
+    h1{
       margin:0;
-      color:#3f3f46;
-      font-size:14px;
-      line-height:1.45;
-    }
-
-    .banner-important p strong{
-      color:#7c2d12;
-      font-size:15px;
-    }
-
-    .layout{
-      display:grid;
-      grid-template-columns: 1.05fr 1.4fr;
-      gap:16px;
-      align-items:start;
-    }
-
-    .card{
-      background: var(--card);
-      border:1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px;
-    }
-
-    .card h2{
-      margin:0 0 10px 0;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 800;
       letter-spacing: .2px;
     }
 
-    .muted{
-      color: var(--muted);
+    .hero p{
+      margin: 0;
+      color: rgba(255,255,255,.9);
+      line-height: 1.4;
       font-size: 14px;
-      line-height: 1.45;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(15,23,42,.06);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-bottom: 14px;
     }
 
     .field{
-      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
     }
 
-    label{
-      display:block;
+    .label{
       font-size: 12px;
       color: var(--muted);
-      font-weight: 700;
+      margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: .4px;
-      margin-bottom: 6px;
+      font-weight: 700;
     }
 
-    input[type="email"]{
-      width:100%;
-      border:1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 12px 14px;
+    .value{
       font-size: 15px;
-      outline: none;
-      transition: .15s ease;
-    }
-
-    input[type="email"]:focus{
-      border-color:#94a3b8;
-      box-shadow: 0 0 0 4px rgba(11,31,59,.08);
-    }
-
-    .helper{
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--muted);
-      line-height:1.4;
-    }
-
-    .helper strong{
+      font-weight: 700;
       color: var(--text);
+      word-break: break-word;
     }
 
     .steps{
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 12px;
       border:1px solid var(--line);
       background:#fbfcff;
+      border-radius:12px;
+      padding:14px;
+      margin-top: 10px;
+    }
+
+    .steps h3{
+      margin:0 0 8px 0;
+      font-size:14px;
     }
 
     .steps ol{
-      margin:0;
+      margin: 0;
       padding-left: 18px;
       color: var(--muted);
-      font-size: 13px;
-      line-height:1.5;
+      line-height: 1.5;
+      font-size: 14px;
     }
 
-    .steps li + li{ margin-top: 4px; }
-
-    .security{
+    .notice{
       margin-top: 12px;
-      display:grid;
-      gap:8px;
-    }
-
-    .pill{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      border:1px solid var(--line);
+      border:1px solid #d1fae5;
+      background: var(--ok-soft);
+      color:#065f46;
       border-radius: 12px;
       padding: 10px 12px;
-      background: #fff;
       font-size: 13px;
-      color: var(--muted);
+      line-height:1.4;
     }
 
-    .pill .ico{
-      width:26px;
-      height:26px;
-      border-radius: 8px;
-      background: var(--soft);
+    .actions{
       display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 14px;
-      flex: 0 0 auto;
-    }
-
-    .plans{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-    }
-
-    .plan{
-      border:1px solid var(--line);
-      border-radius: 16px;
-      background:#fff;
-      padding: 16px;
-      display:flex;
-      flex-direction:column;
       gap:10px;
-      position: relative;
-      transition: .15s ease;
-      box-shadow: 0 8px 20px rgba(15,23,42,.04);
+      flex-wrap: wrap;
+      margin-top: 16px;
     }
 
-    .plan:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 14px 28px rgba(15,23,42,.08);
-    }
-
-    .plan.highlight{
-      border:2px solid #0b1f3b;
-      box-shadow: 0 14px 30px rgba(11,31,59,.10);
-    }
-
-    .tag{
-      position:absolute;
-      top: -10px;
-      right: 12px;
-      background:#0b1f3b;
-      color:#fff;
-      font-size:11px;
-      font-weight:800;
-      padding: 4px 8px;
-      border-radius: 999px;
-      letter-spacing:.4px;
-      text-transform: uppercase;
-    }
-
-    .plan-head{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .plan-icon{
-      width:38px;
-      height:38px;
-      border-radius: 12px;
-      background:#eef2f7;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 18px;
-      flex: 0 0 auto;
-    }
-
-    .plan-name{
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.2;
-    }
-
-    .plan-sub{
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 2px;
-    }
-
-    .price{
-      display:flex;
-      align-items:flex-end;
-      gap:4px;
-      margin-top: 2px;
-    }
-
-    .price .currency{
-      font-size: 14px;
-      color: var(--muted);
-      font-weight:700;
-    }
-
-    .price .value{
-      font-size: 28px;
-      line-height: 1;
-      font-weight: 900;
-      color: var(--text);
-      letter-spacing: -.3px;
-    }
-
-    .price .period{
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-
-    .features{
-      margin:0;
-      padding-left: 18px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-      min-height: 60px;
-    }
-
-    .features li + li{ margin-top: 4px; }
-
-    .buy-btn{
-      margin-top:auto;
+    .btn{
       border:0;
       border-radius: 12px;
-      background: var(--primary);
-      color:#fff;
-      font-weight:800;
-      font-size: 14px;
-      padding: 12px 14px;
+      padding: 12px 16px;
+      font-weight: 700;
       cursor: pointer;
       transition: .15s ease;
-      width: 100%;
-    }
-
-    .buy-btn:hover{ background: var(--primary-hover); }
-
-    .buy-btn.secondary{
-      background:#1f2937;
-    }
-
-    .buy-btn.secondary:hover{
-      background:#111827;
-    }
-
-    .faq{
-      margin-top: 16px;
-      border-top:1px solid var(--line);
-      padding-top: 14px;
-    }
-
-    .faq h3{
-      margin:0 0 8px 0;
       font-size: 14px;
     }
 
-    .faq p{
-      margin: 6px 0 0 0;
-      font-size: 13px;
+    .btn-primary{
+      background: var(--primary);
+      color:#fff;
+    }
+    .btn-primary:hover{ background: var(--primary-hover); }
+
+    .btn-soft{
+      background:#eef2f7;
+      color: var(--text);
+    }
+    .btn-soft:hover{ background:#e6ebf2; }
+
+    .msg{
+      margin-top: 12px;
       color: var(--muted);
-      line-height: 1.45;
+      font-size: 13px;
+      line-height:1.4;
+      min-height: 18px;
     }
 
     .footer{
       margin-top: 14px;
-      text-align:center;
       color: var(--muted);
       font-size: 12px;
+      text-align: center;
     }
 
-    .msg{
-      margin-top: 10px;
-      color: var(--danger);
-      font-size: 13px;
-      font-weight: 600;
-      min-height: 18px;
-    }
-
-    @media (max-width: 980px){
-      .layout{
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 720px){
-      .plans{
-        grid-template-columns: 1fr;
-      }
-      .hero h1{
-        font-size:18px;
-      }
-      .banner-important .title{
-        font-size:14px;
-      }
-      .banner-important p strong{
-        font-size:14px;
-      }
+    @media (max-width: 700px){
+      .grid{ grid-template-columns: 1fr; }
+      .hero{ padding:18px; }
     }
   </style>
 </head>
@@ -462,224 +200,94 @@
 
     <div class="hero">
       <div class="hero-top">
-        <div class="hero-icon">✂️</div>
-        <h1>Assine o LINERA-NEST e automatize seus planos de corte</h1>
+        <div class="check">✓</div>
+        <h1>Pagamento concluído com sucesso</h1>
       </div>
       <p>
-        Escolha o plano ideal para sua equipe e finalize a assinatura com segurança pelo Mercado Pago.
-        Após a confirmação, você baixa seu arquivo de licença (.lic) e ativa no programa em poucos cliques.
+        Sua assinatura foi processada. Agora falta apenas baixar o arquivo de licença
+        e ativar no LINERA-NEST.
       </p>
-
-      <!-- AVISO MUITO VISÍVEL (IMPORTANTE) -->
-      <div class="banner-important">
-        <div class="banner-important-top">
-          <span class="badge">IMPORTANTE</span>
-          <div class="title">Não feche a tela após o pagamento</div>
-        </div>
-        <p>
-          <strong>Depois de concluir o pagamento no Mercado Pago, clique em “Voltar para o site do vendedor”</strong>
-          para retornar e baixar seu arquivo de licença <b>.lic</b>.
-        </p>
-      </div>
     </div>
 
-    <div class="layout">
-      <!-- Coluna esquerda -->
-      <div class="card">
-        <h2>📩 Antes de escolher o plano</h2>
-        <p class="muted">
-          Informe abaixo o e-mail que você quer usar no processo de ativação.
-          Esse e-mail será usado para identificar sua compra e facilitar o download da licença.
-        </p>
+    <div class="card">
+      <div class="grid">
+        <div class="field">
+          <div class="label">E-mail da compra</div>
+          <div class="value" id="email">(não encontrado)</div>
+        </div>
 
         <div class="field">
-          <label for="email">E-mail do comprador</label>
-          <input id="email" type="email" placeholder="ex: voce@empresa.com.br" />
-          <div class="helper">
-            <strong>Dica:</strong> use um e-mail que você tenha acesso fácil no momento da compra.
-          </div>
-        </div>
-
-        <div class="msg" id="msg"></div>
-
-        <div class="steps">
-          <ol>
-            <li>Digite seu e-mail.</li>
-            <li>Clique no plano desejado.</li>
-            <li>Finalize a assinatura no Mercado Pago.</li>
-            <li><b>Volte para o site do vendedor</b> para baixar o arquivo <b>.lic</b>.</li>
-          </ol>
-        </div>
-
-        <div class="security">
-          <div class="pill">
-            <div class="ico">🔒</div>
-            <div>Pagamento processado pelo <b>Mercado Pago</b></div>
-          </div>
-          <div class="pill">
-            <div class="ico">🔁</div>
-            <div>Assinatura com renovação mensal automática</div>
-          </div>
-          <div class="pill">
-            <div class="ico">🧾</div>
-            <div>Após o pagamento, baixe o arquivo de licença (.lic) e ative no app</div>
-          </div>
-        </div>
-
-        <div class="faq">
-          <h3>❓ Dúvida rápida</h3>
-          <p>
-            Se você não clicar em <b>“Voltar para o site do vendedor”</b> após o pagamento,
-            pode perder a etapa de download da licença naquele momento. Se isso acontecer,
-            volte ao site e faça o processo novamente com o mesmo e-mail.
-          </p>
+          <div class="label">Plano contratado</div>
+          <div class="value" id="plano">(não encontrado)</div>
         </div>
       </div>
 
-      <!-- Coluna direita -->
-      <div>
-        <div class="plans">
-
-          <div class="plan">
-            <div class="plan-head">
-              <div class="plan-icon">🛠️</div>
-              <div>
-                <div class="plan-name">Plano Oficina</div>
-                <div class="plan-sub">2 PCs • Ideal para uso enxuto</div>
-              </div>
-            </div>
-
-            <div class="price">
-              <span class="currency">R$</span>
-              <span class="value">49,90</span>
-              <span class="period">/mês</span>
-            </div>
-
-            <ul class="features">
-              <li>Até 2 computadores</li>
-              <li>Renovação mensal automática</li>
-              <li>Ativação por arquivo de licença (.lic)</li>
-            </ul>
-
-            <button class="buy-btn" onclick="go(2)">Assinar plano Oficina</button>
-          </div>
-
-          <div class="plan highlight">
-            <div class="tag">Mais escolhido</div>
-            <div class="plan-head">
-              <div class="plan-icon">👥</div>
-              <div>
-                <div class="plan-name">Plano Equipe</div>
-                <div class="plan-sub">5 PCs • Melhor equilíbrio</div>
-              </div>
-            </div>
-
-            <div class="price">
-              <span class="currency">R$</span>
-              <span class="value">89,90</span>
-              <span class="period">/mês</span>
-            </div>
-
-            <ul class="features">
-              <li>Até 5 computadores</li>
-              <li>Ideal para equipes pequenas/médias</li>
-              <li>Excelente custo-benefício</li>
-            </ul>
-
-            <button class="buy-btn" onclick="go(5)">Assinar plano Equipe</button>
-          </div>
-
-          <div class="plan">
-            <div class="plan-head">
-              <div class="plan-icon">🏭</div>
-              <div>
-                <div class="plan-name">Plano Produção</div>
-                <div class="plan-sub">10 PCs • Operação maior</div>
-              </div>
-            </div>
-
-            <div class="price">
-              <span class="currency">R$</span>
-              <span class="value">149,90</span>
-              <span class="period">/mês</span>
-            </div>
-
-            <ul class="features">
-              <li>Até 10 computadores</li>
-              <li>Ideal para produção com múltiplos postos</li>
-              <li>Escalável para crescimento</li>
-            </ul>
-
-            <button class="buy-btn" onclick="go(10)">Assinar plano Produção</button>
-          </div>
-
-          <div class="plan">
-            <div class="plan-head">
-              <div class="plan-icon">🏢</div>
-              <div>
-                <div class="plan-name">Plano Fábrica</div>
-                <div class="plan-sub">50 PCs • Operação ampla</div>
-              </div>
-            </div>
-
-            <div class="price">
-              <span class="currency">R$</span>
-              <span class="value">499,90</span>
-              <span class="period">/mês</span>
-            </div>
-
-            <ul class="features">
-              <li>Até 50 computadores</li>
-              <li>Para empresas com múltiplas equipes/estações</li>
-              <li>Gestão centralizada de licenças</li>
-            </ul>
-
-            <button class="buy-btn secondary" onclick="go(50)">Assinar plano Fábrica</button>
-          </div>
-
-        </div>
+      <div class="steps">
+        <h3>Próximos passos</h3>
+        <ol>
+          <li>Clique em <b>Baixar licença (.lic)</b>.</li>
+          <li>Abra o programa <b>LINERA-NEST</b>.</li>
+          <li>Clique em <b>Ativar licença</b> e selecione o arquivo baixado.</li>
+          <li>Pronto: o status passará para <b>Licença ativa</b>.</li>
+        </ol>
       </div>
+
+      <div class="notice">
+        Se os dados de e-mail/plano não aparecerem acima, não se preocupe: você ainda poderá baixar
+        a licença informando seu e-mail na próxima etapa.
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="baixarLicenca()">Baixar licença (.lic)</button>
+        <button class="btn btn-soft" onclick="window.location.href='comprar.html'">Voltar para planos</button>
+      </div>
+
+      <div class="msg" id="msg"></div>
     </div>
 
     <div class="footer">
-      LINERA-NEST • Licenciamento por assinatura mensal
+      LINERA-NEST • Ativação de licença
     </div>
   </div>
 
   <script>
-    const PLAN_IDS = {
-      2:  "405cae16df8940b4b27cf57b8fc64f45",
-      5:  "618b087942934ef0aec938e95511296f",
-      10: "ee70016158bf412fadce55f3d580d5fd",
-      50: "eee8e3f49d6e4a59b11ee60fe5197f65"
-    };
+    (function () {
+      const emailEl = document.getElementById("email");
+      const planoEl = document.getElementById("plano");
+      const msgEl = document.getElementById("msg");
 
-    function go(pcs) {
-      const msg = document.getElementById("msg");
-      const email = (document.getElementById("email").value || "").trim();
+      const u = new URL(window.location.href);
 
-      if (!email || !email.includes("@")) {
-        msg.textContent = "Digite um e-mail válido antes de escolher o plano.";
-        document.getElementById("email").focus();
+      // Primeiro tenta URL
+      let email = (u.searchParams.get("email") || "").trim();
+      let pcs = (u.searchParams.get("pcs") || "").trim();
+
+      // Depois tenta localStorage (fluxo vindo da comprar.html)
+      if (!email) email = (localStorage.getItem("linera_email") || "").trim();
+      if (!pcs) pcs = (localStorage.getItem("linera_pcs") || "").trim();
+
+      // Mostra dados na tela
+      emailEl.textContent = email || "(não encontrado)";
+      planoEl.textContent = pcs ? `${pcs} PCs` : "(não encontrado)";
+
+      // expõe pro botão
+      window._lineraCompra = { email, pcs, msgEl };
+    })();
+
+    function baixarLicenca() {
+      const ctx = window._lineraCompra || {};
+      const email = (ctx.email || "").trim();
+      const pcs = (ctx.pcs || "").trim();
+      const msgEl = ctx.msgEl || document.getElementById("msg");
+
+      if (!email || !pcs) {
+        msgEl.textContent = "Não foi possível identificar automaticamente sua compra. Em breve vamos buscar a licença pelo e-mail.";
         return;
       }
 
-      msg.textContent = "";
-
-      // Guarda também no navegador (plano B para sucesso.html)
-      localStorage.setItem("linera_email", email);
-      localStorage.setItem("linera_pcs", String(pcs));
-
-      const planId = PLAN_IDS[pcs];
-
-      // URL de retorno com email/plano
-      const backUrl = `https://linera-site.pages.dev/sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
-
-      const checkoutUrl =
-        `https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=${planId}` +
-        `&back_url=${encodeURIComponent(backUrl)}`;
-
-      window.location.href = checkoutUrl;
+      msgEl.textContent = "Preparando sua licença...";
+      const url = `/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
+      window.location.href = url;
     }
   </script>
 </body>
