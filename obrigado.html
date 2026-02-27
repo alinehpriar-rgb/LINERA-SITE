@@ -2,74 +2,107 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Licença LINERA-NEST</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LINERA-NEST | Baixar Licença</title>
   <style>
-    body{font-family:Segoe UI,Arial,sans-serif;background:#f6f7fb;color:#0f172a;margin:0}
-    .card{max-width:720px;margin:40px auto;background:#fff;border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-    .muted{color:#475569}
-    button{background:#0b1f3b;color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
-    button:disabled{opacity:.55;cursor:not-allowed}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .msg{margin-top:12px;padding:10px 12px;border-radius:10px;background:#eef2f7}
-    code{background:#eef2f7;padding:2px 6px;border-radius:6px}
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#475569;
+      --primary:#0b1f3b; --primary-hover:#091a31; --line:#e2e8f0;
+      --shadow:0 12px 28px rgba(15,23,42,.07);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);font-family:"Segoe UI",Arial,sans-serif;color:var(--text)}
+    .wrap{max-width:760px;margin:36px auto;padding:0 16px}
+    .hero{
+      background:linear-gradient(135deg,#0b1f3b 0%,#123568 100%);
+      color:#fff;border-radius:18px;padding:20px;box-shadow:0 18px 35px rgba(11,31,59,.18);margin-bottom:14px
+    }
+    .hero h1{margin:0 0 8px 0;font-size:20px}
+    .hero p{margin:0;color:rgba(255,255,255,.92);font-size:14px;line-height:1.45}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+    label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+    input, select{
+      width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:15px;outline:none
+    }
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-hover)}
+    .btn-soft{background:#eef2f7;color:var(--text)}
+    .hint{margin-top:10px;color:var(--muted);font-size:13px;line-height:1.45}
+    .msg{margin-top:12px;color:#b91c1c;font-size:13px;font-weight:600;min-height:18px}
+    @media (max-width:700px){ .grid{grid-template-columns:1fr;} }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Pagamento recebido ✅</h2>
-    <p class="muted">
-      Agora você só precisa baixar seu arquivo de licença e ativar no programa.
-    </p>
-
-    <div class="row">
-      <button id="btn">Baixar licença (.lic)</button>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Baixar arquivo de licença (.lic)</h1>
+      <p>
+        Se você já concluiu a assinatura, informe o mesmo e-mail usado na compra
+        e selecione o plano para baixar sua licença.
+      </p>
     </div>
 
-    <div id="out" class="msg muted">Se o pagamento ainda estiver “processando”, pode demorar alguns segundos.</div>
+    <div class="card">
+      <div class="grid">
+        <div>
+          <label for="email">E-mail da compra</label>
+          <input id="email" type="email" placeholder="ex: voce@empresa.com.br">
+        </div>
+        <div>
+          <label for="pcs">Plano contratado</label>
+          <select id="pcs">
+            <option value="">Selecione...</option>
+            <option value="2">Plano Oficina (2 PCs)</option>
+            <option value="5">Plano Equipe (5 PCs)</option>
+            <option value="10">Plano Produção (10 PCs)</option>
+            <option value="50">Plano Fábrica (50 PCs)</option>
+          </select>
+        </div>
+      </div>
 
-    <hr style="border:none;border-top:1px solid #e2e8f0;margin:18px 0" />
+      <div class="actions">
+        <button class="btn btn-primary" onclick="baixar()">Baixar licença (.lic)</button>
+        <button class="btn btn-soft" onclick="window.location.href='comprar.html'">Ir para planos</button>
+      </div>
 
-    <h3>Como usar no programa</h3>
-    <ol class="muted">
-      <li>Abra o LINERA-NEST</li>
-      <li>Clique em <b>Ativar licença</b></li>
-      <li>Escolha o arquivo <code>.lic</code> que você baixou</li>
-      <li>Pronto</li>
-    </ol>
+      <div class="hint">
+        Use exatamente o mesmo e-mail informado antes de ir para o Mercado Pago.
+      </div>
+
+      <div class="msg" id="msg"></div>
+    </div>
   </div>
 
-<script>
-  // 1) pegamos um "codigo da compra" que vem na URL de retorno
-  const url = new URL(location.href);
-  const ref = url.searchParams.get("external_reference") || url.searchParams.get("preapproval_id") || "";
+  <script>
+    // pré-preenche se vier da URL
+    (function(){
+      const u = new URL(window.location.href);
+      const email = (u.searchParams.get("email") || "").trim();
+      const pcs = (u.searchParams.get("pcs") || "").trim();
+      if (email) document.getElementById("email").value = email;
+      if (pcs) document.getElementById("pcs").value = pcs;
+    })();
 
-  const btn = document.getElementById("btn");
-  const out = document.getElementById("out");
+    function baixar() {
+      const msg = document.getElementById("msg");
+      const email = (document.getElementById("email").value || "").trim();
+      const pcs = (document.getElementById("pcs").value || "").trim();
 
-  if (!ref) {
-    out.textContent = "Não encontrei o código da compra na URL. Me chame no suporte e envie o comprovante.";
-  }
+      if (!email || !email.includes("@")) {
+        msg.textContent = "Digite um e-mail válido.";
+        return;
+      }
+      if (!pcs) {
+        msg.textContent = "Selecione o plano contratado.";
+        return;
+      }
 
-  btn.addEventListener("click", async () => {
-    btn.disabled = true;
-    out.textContent = "Gerando sua licença, aguarde...";
-
-    try {
-      // 2) chama seu servidor/controle para baixar o .lic
-      // TROQUE para o seu domínio do Worker:
-      const api = "https://SEU-CONTROLE.workers.dev/download-lic?ref=" + encodeURIComponent(ref);
-
-      // abre o download em uma nova aba (mais simples)
-      window.location.href = api;
-
-      out.textContent = "Se não baixar automaticamente, verifique bloqueio de pop-up/antivírus.";
-    } catch (e) {
-      out.textContent = "Erro ao tentar baixar. Tente novamente.";
-    } finally {
-      btn.disabled = false;
+      msg.textContent = "Preparando sua licença...";
+      window.location.href = `/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
     }
-  });
-</script>
+  </script>
 </body>
 </html>
