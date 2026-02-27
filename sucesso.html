@@ -1,25 +1,294 @@
-<script>
-  // 1) tenta pegar da URL (ex: sucesso.html?email=...&pcs=2)
-  const u = new URL(window.location.href);
-  let email = u.searchParams.get("email") || "";
-  let pcs = u.searchParams.get("pcs") || "";
-
-  // 2) se não vier na URL, tenta pegar do localStorage
-  if (!email) email = localStorage.getItem("linera_email") || "";
-  if (!pcs) pcs = localStorage.getItem("linera_pcs") || "";
-
-  // 3) mostra na tela
-  document.getElementById("email").textContent = email || "(não encontrado)";
-  document.getElementById("plano").textContent = pcs ? (pcs + " PCs") : "(não encontrado)";
-
-  function baixar() {
-    if (!email || !pcs) {
-      document.getElementById("msg").textContent =
-        "Não achei seu e-mail/plano. Volte em comprar.html, digite o e-mail e escolha o plano novamente.";
-      return;
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LINERA-NEST | Pagamento concluído</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --primary:#0b1f3b;
+      --primary-hover:#091a31;
+      --line:#e2e8f0;
+      --ok:#15803d;
+      --ok-soft:#ecfdf5;
     }
 
-    document.getElementById("msg").textContent =
-      "Ainda falta ligar o gerador do arquivo .lic no servidor. Próximo passo: criar /api/licenca.";
-  }
-</script>
+    * { box-sizing: border-box; }
+
+    body{
+      margin:0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap{
+      max-width: 860px;
+      margin: 36px auto;
+      padding: 0 16px;
+    }
+
+    .hero{
+      background: linear-gradient(135deg, #0b1f3b 0%, #102f59 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 22px 22px;
+      box-shadow: 0 14px 35px rgba(11,31,59,.18);
+      margin-bottom: 16px;
+    }
+
+    .hero-top{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom: 8px;
+    }
+
+    .check{
+      width:42px;
+      height:42px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 24px;
+      font-weight: 800;
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    h1{
+      margin:0;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .hero p{
+      margin: 0;
+      color: rgba(255,255,255,.9);
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(15,23,42,.06);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-bottom: 14px;
+    }
+
+    .field{
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .label{
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      font-weight: 700;
+    }
+
+    .value{
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .steps{
+      border:1px solid var(--line);
+      background:#fbfcff;
+      border-radius:12px;
+      padding:14px;
+      margin-top: 10px;
+    }
+
+    .steps h3{
+      margin:0 0 8px 0;
+      font-size:14px;
+    }
+
+    .steps ol{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .notice{
+      margin-top: 12px;
+      border:1px solid #d1fae5;
+      background: var(--ok-soft);
+      color:#065f46;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height:1.4;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn{
+      border:0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .15s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary{
+      background: var(--primary);
+      color:#fff;
+    }
+    .btn-primary:hover{ background: var(--primary-hover); }
+
+    .btn-soft{
+      background:#eef2f7;
+      color: var(--text);
+    }
+    .btn-soft:hover{ background:#e6ebf2; }
+
+    .msg{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.4;
+      min-height: 18px;
+    }
+
+    .footer{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 700px){
+      .grid{ grid-template-columns: 1fr; }
+      .hero{ padding:18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-top">
+        <div class="check">✓</div>
+        <h1>Pagamento concluído com sucesso</h1>
+      </div>
+      <p>
+        Sua assinatura foi processada. Agora falta apenas baixar o arquivo de licença
+        e ativar no LINERA-NEST.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <div class="field">
+          <div class="label">E-mail da compra</div>
+          <div class="value" id="email">(não encontrado)</div>
+        </div>
+
+        <div class="field">
+          <div class="label">Plano contratado</div>
+          <div class="value" id="plano">(não encontrado)</div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <h3>Próximos passos</h3>
+        <ol>
+          <li>Clique em <b>Baixar licença (.lic)</b>.</li>
+          <li>Abra o programa <b>LINERA-NEST</b>.</li>
+          <li>Clique em <b>Ativar licença</b> e selecione o arquivo baixado.</li>
+          <li>Pronto: o status passará para <b>Licença ativa</b>.</li>
+        </ol>
+      </div>
+
+      <div class="notice">
+        Se os dados de e-mail/plano não aparecerem acima, não se preocupe: você ainda poderá baixar
+        a licença informando seu e-mail na próxima etapa.
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="baixarLicenca()">Baixar licença (.lic)</button>
+        <button class="btn btn-soft" onclick="window.location.href='comprar.html'">Voltar para planos</button>
+      </div>
+
+      <div class="msg" id="msg"></div>
+    </div>
+
+    <div class="footer">
+      LINERA-NEST • Ativação de licença
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const emailEl = document.getElementById("email");
+      const planoEl = document.getElementById("plano");
+      const msgEl = document.getElementById("msg");
+
+      const u = new URL(window.location.href);
+
+      // Primeiro tenta URL
+      let email = (u.searchParams.get("email") || "").trim();
+      let pcs = (u.searchParams.get("pcs") || "").trim();
+
+      // Depois tenta localStorage (fluxo vindo da comprar.html)
+      if (!email) email = (localStorage.getItem("linera_email") || "").trim();
+      if (!pcs) pcs = (localStorage.getItem("linera_pcs") || "").trim();
+
+      // Mostra dados na tela
+      emailEl.textContent = email || "(não encontrado)";
+      planoEl.textContent = pcs ? `${pcs} PCs` : "(não encontrado)";
+
+      // expõe pro botão
+      window._lineraCompra = { email, pcs, msgEl };
+    })();
+
+    function baixarLicenca() {
+      const ctx = window._lineraCompra || {};
+      const email = (ctx.email || "").trim();
+      const pcs = (ctx.pcs || "").trim();
+      const msgEl = ctx.msgEl || document.getElementById("msg");
+
+      if (!email || !pcs) {
+        msgEl.textContent = "Não foi possível identificar automaticamente sua compra. No próximo passo vamos ligar o botão para gerar a licença pelo e-mail.";
+        return;
+      }
+
+      // Próximo passo vamos trocar isso pelo endpoint real:
+      // window.location.href = `/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`
+      msgEl.textContent = "Próximo passo: conectar este botão ao gerador do arquivo .lic no servidor.";
+    }
+  </script>
+</body>
+</html>
