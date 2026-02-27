@@ -1,6 +1,17 @@
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
 
+  const key = (url.searchParams.get("key") || "").trim();
+  const ADMIN_KEY = context.env.ADMIN_KEY || "";
+
+  if (!ADMIN_KEY) {
+    return new Response("ADMIN_KEY não configurada no servidor.", { status: 500 });
+  }
+
+  if (key !== ADMIN_KEY) {
+    return new Response("Acesso negado.", { status: 403 });
+  }
+
   const email = (url.searchParams.get("email") || "").trim().toLowerCase();
   const pcs = (url.searchParams.get("pcs") || "").trim();
   const dias = Number(url.searchParams.get("dias") || "30");
