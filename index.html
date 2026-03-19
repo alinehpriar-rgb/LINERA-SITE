@@ -1,12 +1,1365 @@
-<!doctype html>
-<html lang="pt-br">
+export default {
+  async fetch(request, env, ctx) {
+    try {
+      return await handleRequest(request, env, ctx);
+    } catch (err) {
+      return json(
+        { ok: false, error: "internal_error", detail: String(err?.message || err) },
+        500
+      );
+    }
+  },
+};
+
+/* =========================
+   Helpers básicos
+========================= */
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data, null, 2), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+    },
+  });
+}
+
+function text(data, status = 200, extraHeaders = {}) {
+  return new Response(data, {
+    status,
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "no-store",
+      ...extraHeaders,
+    },
+  });
+}
+
+function html(data, status = 200) {
+  return new Response(data, {
+    status,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+    },
+  });
+}
+
+function normalizeEmail(email) {
+  return (email || "").trim().toLowerCase();
+}
+
+function normalizePcs(pcs) {
+  const n = parseInt(String(pcs || "").trim(), 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function addDaysIso(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + Number(days || 0));
+  return d.toISOString();
+}
+
+function randomId(size = 24) {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let out = "";
+  const bytes = crypto.getRandomValues(new Uint8Array(size));
+  for (let i = 0; i < size; i++) {
+    out += alphabet[bytes[i] % alphabet.length];
+  }
+  return out;
+}
+
+function isAdmin(request, env, url) {
+  const keyQuery = (url.searchParams.get("key") || "").trim();
+  const keyHeader = (request.headers.get("x-admin-key") || "").trim();
+  const expected = (env.ADMIN_KEY || "").trim();
+  if (!expected) return false;
+  return keyQuery === expected || keyHeader === expected;
+}
+
+function licenseKey(email, pcs) {
+  return `lic:${normalizeEmail(email)}:${normalizePcs(pcs)}`;
+}
+
+/* =========================
+   KV helper (binding LICENCIAS)
+========================= */
+
+function getKV(env) {
+  return env.LICENCIAS || null;
+}
+
+/* =========================
+   Assinatura do .lic
+========================= */
+
+async function sha256Hex(textValue) {
+  const data = new TextEncoder().encode(textValue);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(hash)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function makeLicenseSignature(env, email, pcs) {
+  const secret = (env.LICENSE_SIGN_SECRET || "").trim();
+  if (!secret) throw new Error("LICENSE_SIGN_SECRET não configurado no Worker");
+  const base = `v1|${normalizeEmail(email)}|${normalizePcs(pcs)}|${secret}`;
+  return await sha256Hex(base);
+}
+
+/* =========================
+   KV JSON helpers
+========================= */
+
+async function kvGetJson(env, key) {
+  const KV = getKV(env);
+  if (!KV) return null;
+
+  const raw = await KV.get(key);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+async function kvPutJson(env, key, obj) {
+  const KV = getKV(env);
+  if (!KV) throw new Error("KV binding 'LICENCIAS' não configurado");
+  await KV.put(key, JSON.stringify(obj));
+}
+
+async function kvDelete(env, key) {
+  const KV = getKV(env);
+  if (!KV) throw new Error("KV binding 'LICENCIAS' não configurado");
+  await KV.delete(key);
+}
+
+/* =========================
+   Regras/licença
+========================= */
+
+function buildActiveLicenseRecord({ email, pcs, planName, validUntil, subscriptionId }) {
+  return {
+    ok: true,
+    status: "active",
+    email: normalizeEmail(email),
+    pcs: normalizePcs(pcs),
+    plan_name: planName || "",
+    valid_until: validUntil || "",
+    subscription_id: subscriptionId || "",
+    devices: {},
+    updated_at: nowIso(),
+  };
+}
+
+function buildInactiveLicenseRecord({ email, pcs, reason }) {
+  return {
+    ok: false,
+    status: "inactive",
+    email: normalizeEmail(email),
+    pcs: normalizePcs(pcs),
+    reason: reason || "inactive",
+    updated_at: nowIso(),
+  };
+}
+
+function isLicenseCurrentlyActive(record) {
+  if (!record) return false;
+  if (record.status !== "active") return false;
+
+  const validUntil = record.valid_until;
+  if (!validUntil) return true;
+  const now = Date.now();
+  const exp = new Date(validUntil).getTime();
+  return Number.isFinite(exp) && exp > now;
+}
+
+function mapPcsToPlanName(pcs) {
+  const p = Number(pcs);
+  if (p === 2) return "Plano Oficina";
+  if (p === 5) return "Plano Equipe";
+  if (p === 10) return "Plano Produção";
+  if (p === 50) return "Plano Fábrica";
+  return `Plano ${pcs} PCs`;
+}
+
+/* =========================
+   Controle de PCs
+========================= */
+
+function getDeviceTtlDays(env) {
+  const n = parseInt(String(env.DEVICE_TTL_DAYS || "14"), 10);
+  return Number.isFinite(n) && n > 0 ? n : 14;
+}
+
+function isoDaysAgo(days) {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() - Number(days || 0));
+  return d.toISOString();
+}
+
+function pruneDevices(devicesObj, ttlDays) {
+  const devices =
+    devicesObj && typeof devicesObj === "object" && !Array.isArray(devicesObj)
+      ? { ...devicesObj }
+      : {};
+
+  const cutoff = new Date(isoDaysAgo(ttlDays)).getTime();
+  let changed = false;
+
+  for (const [deviceId, meta] of Object.entries(devices)) {
+    const lastSeen = meta?.last_seen ? new Date(meta.last_seen).getTime() : 0;
+    if (!lastSeen || lastSeen < cutoff) {
+      delete devices[deviceId];
+      changed = true;
+    }
+  }
+
+  return { devices, changed };
+}
+
+function applyDeviceLimitAndRegister(record, deviceId, ttlDays) {
+  const pcsLimit = normalizePcs(record?.pcs);
+  const now = nowIso();
+
+  const { devices, changed: pruned } = pruneDevices(record?.devices, ttlDays);
+
+  if (devices[deviceId]) {
+    devices[deviceId] = {
+      first_seen: devices[deviceId].first_seen || now,
+      last_seen: now,
+    };
+    return {
+      allowed: true,
+      reason: "ok",
+      devicesCount: Object.keys(devices).length,
+      devices,
+      changed: true,
+    };
+  }
+
+  const count = Object.keys(devices).length;
+  if (pcsLimit > 0 && count >= pcsLimit) {
+    return {
+      allowed: false,
+      reason: "device_limit",
+      devicesCount: count,
+      devices,
+      changed: pruned,
+    };
+  }
+
+  devices[deviceId] = { first_seen: now, last_seen: now };
+  return {
+    allowed: true,
+    reason: "ok",
+    devicesCount: Object.keys(devices).length,
+    devices,
+    changed: true,
+  };
+}
+
+/* =========================
+   Mercado Pago helpers
+========================= */
+
+function mpHasToken(env) {
+  return !!(env.MP_ACCESS_TOKEN || "").trim();
+}
+
+function mpApiBase() {
+  return "https://api.mercadopago.com";
+}
+
+function mpWebhookAuthorized(request, env) {
+  const expected = (env.MP_WEBHOOK_TOKEN || "").trim();
+  if (!expected) return true;
+
+  const hasSignature = !!request.headers.get("x-signature");
+  if (hasSignature) return true;
+
+  const got = (request.headers.get("x-mp-token") || "").trim();
+  return got === expected;
+}
+
+async function mpFetchJson(env, path) {
+  const token = (env.MP_ACCESS_TOKEN || "").trim();
+  if (!token) throw new Error("MP_ACCESS_TOKEN não configurado no Worker");
+
+  const res = await fetch(`${mpApiBase()}${path}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const txt = await res.text();
+  let data = null;
+  try {
+    data = JSON.parse(txt);
+  } catch {
+    data = { raw: txt };
+  }
+
+  if (!res.ok) {
+    throw new Error(`MercadoPago API error (${res.status}): ${JSON.stringify(data)}`);
+  }
+  return data;
+}
+
+async function mpPostJson(env, path, bodyObj) {
+  const token = (env.MP_ACCESS_TOKEN || "").trim();
+  if (!token) throw new Error("MP_ACCESS_TOKEN não configurado no Worker");
+
+  const res = await fetch(`${mpApiBase()}${path}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(bodyObj),
+  });
+
+  const txt = await res.text();
+  let data = null;
+  try {
+    data = JSON.parse(txt);
+  } catch {
+    data = { raw: txt };
+  }
+
+  if (!res.ok) {
+    throw new Error(`MercadoPago API error (${res.status}): ${JSON.stringify(data)}`);
+  }
+
+  return data;
+}
+
+async function mpGetPreapproval(env, preapprovalId) {
+  return await mpFetchJson(env, `/preapproval/${encodeURIComponent(preapprovalId)}`);
+}
+
+function mpPendingKey(preapprovalId) {
+  return `mp:pending:${String(preapprovalId || "").trim()}`;
+}
+
+function mpEventKey() {
+  const rand = Math.random().toString(16).slice(2);
+  return `mp:event:${Date.now()}:${rand}`;
+}
+
+function mpCheckoutIntentKey(ref) {
+  return `mp:checkout:${String(ref || "").trim()}`;
+}
+
+function mpPreToCheckoutKey(preapprovalId) {
+  return `mp:pre2checkout:${String(preapprovalId || "").trim()}`;
+}
+
+function mpDeriveStatusAndValidity(preapprovalJson) {
+  const status = String(preapprovalJson?.status || "").toLowerCase();
+  const isActive = status === "authorized" || status === "active";
+
+  const nextPay = preapprovalJson?.next_payment_date;
+  const dateTo = preapprovalJson?.date_to;
+
+  let validUntil = "";
+  if (nextPay) validUntil = new Date(nextPay).toISOString();
+  else if (dateTo) validUntil = new Date(dateTo).toISOString();
+
+  return { isActive, status, validUntil };
+}
+
+function parseMpPlanMap(env) {
+  const raw = (env.MP_PLAN_MAP || "").trim();
+  if (!raw) return {};
+  try {
+    const obj = JSON.parse(raw);
+    return obj && typeof obj === "object" ? obj : {};
+  } catch {
+    return {};
+  }
+}
+
+function pcsFromPlanId(env, planId) {
+  const map = parseMpPlanMap(env);
+  const pcs = map[String(planId || "").trim()];
+  const n = normalizePcs(pcs);
+  return n > 0 ? n : 0;
+}
+
+function planIdFromPcs(env, pcs) {
+  const wanted = normalizePcs(pcs);
+  const map = parseMpPlanMap(env);
+  for (const [planId, planPcs] of Object.entries(map)) {
+    if (normalizePcs(planPcs) === wanted) return planId;
+  }
+  return "";
+}
+
+function extractPayerEmailFromPreapproval(pre) {
+  return normalizeEmail(
+    pre?.payer_email ||
+      pre?.payer?.email ||
+      pre?.payer?.payer_email ||
+      pre?.card_holder_email ||
+      ""
+  );
+}
+
+function extractPlanIdFromPreapproval(pre) {
+  return String(pre?.preapproval_plan_id || pre?.plan_id || pre?.preapproval_plan?.id || "").trim();
+}
+
+function extractExternalReferenceFromPreapproval(pre) {
+  return String(pre?.external_reference || "").trim();
+}
+
+function parseCheckoutRefFromExternalReference(externalReference) {
+  const raw = String(externalReference || "").trim();
+  if (!raw) return "";
+
+  if (raw.startsWith("checkout_ref:")) {
+    return raw.slice("checkout_ref:".length).trim();
+  }
+
+  if (raw.includes("checkout_ref:")) {
+    const idx = raw.indexOf("checkout_ref:");
+    return raw.slice(idx + "checkout_ref:".length).split("|")[0].trim();
+  }
+
+  return "";
+}
+
+async function resolveEmailFromCheckoutIntent(env, externalReference) {
+  const checkoutRef = parseCheckoutRefFromExternalReference(externalReference);
+  if (!checkoutRef) return "";
+
+  const intent = await kvGetJson(env, mpCheckoutIntentKey(checkoutRef));
+  return normalizeEmail(intent?.email || "");
+}
+
+async function resolveEmailForPreapproval(env, pre) {
+  const payerEmail = extractPayerEmailFromPreapproval(pre);
+  if (payerEmail) return payerEmail;
+
+  const externalReference = extractExternalReferenceFromPreapproval(pre);
+  const intentEmail = await resolveEmailFromCheckoutIntent(env, externalReference);
+  if (intentEmail) return intentEmail;
+
+  return "";
+}
+
+async function applyLicenseFromPreapproval(env, preapprovalId, forcedEmail = "") {
+  const pre = await mpGetPreapproval(env, preapprovalId);
+
+  const planId = extractPlanIdFromPreapproval(pre);
+  const pcsAuto = pcsFromPlanId(env, planId);
+  const payerEmail = await resolveEmailForPreapproval(env, pre);
+  const finalEmail = normalizeEmail(forcedEmail || payerEmail);
+
+  const derived = mpDeriveStatusAndValidity(pre);
+
+  if (!pcsAuto) {
+    await kvPutJson(env, mpPendingKey(preapprovalId), {
+      received_at: nowIso(),
+      reason: "missing_planmap",
+      extracted: {
+        payerEmail,
+        finalEmail,
+        planId,
+        pcsAuto,
+        externalReference: extractExternalReferenceFromPreapproval(pre),
+      },
+      preapproval: pre,
+    });
+
+    return {
+      ok: false,
+      pending: true,
+      reason: "missing_planmap",
+      preapproval_id: preapprovalId,
+      planId,
+      pcsAuto,
+      payerEmail,
+      finalEmail,
+    };
+  }
+
+  if (!finalEmail) {
+    await kvPutJson(env, mpPendingKey(preapprovalId), {
+      received_at: nowIso(),
+      reason: "awaiting_email",
+      extracted: {
+        payerEmail,
+        finalEmail,
+        planId,
+        pcsAuto,
+        externalReference: extractExternalReferenceFromPreapproval(pre),
+      },
+      preapproval: pre,
+    });
+
+    return {
+      ok: false,
+      pending: true,
+      reason: "awaiting_email",
+      preapproval_id: preapprovalId,
+      planId,
+      pcsAuto,
+      payerEmail,
+      finalEmail,
+    };
+  }
+
+  const email = finalEmail;
+  const pcs = normalizePcs(pcsAuto);
+  const planName = mapPcsToPlanName(pcs);
+  const key = licenseKey(email, pcs);
+
+  const existing = await kvGetJson(env, key);
+  const existingDevices =
+    existing && existing.devices && typeof existing.devices === "object" ? existing.devices : {};
+
+  if (derived.isActive) {
+    const validUntil = derived.validUntil || addDaysIso(30);
+
+    const rec = buildActiveLicenseRecord({
+      email,
+      pcs,
+      planName,
+      validUntil,
+      subscriptionId: preapprovalId,
+    });
+
+    rec.devices = existingDevices;
+
+    await kvPutJson(env, key, rec);
+    await kvDelete(env, mpPendingKey(preapprovalId));
+
+    return {
+      ok: true,
+      action: "license_activated",
+      status: "active",
+      email,
+      pcs,
+      plan_id: planId,
+      preapproval_id: preapprovalId,
+      valid_until: rec.valid_until,
+    };
+  }
+
+  const rec = buildInactiveLicenseRecord({
+    email,
+    pcs,
+    reason: `mp_status_${derived.status || "inactive"}`,
+  });
+  rec.plan_name = planName;
+  rec.subscription_id = preapprovalId;
+  rec.valid_until = derived.validUntil || "";
+  rec.devices = existingDevices;
+
+  await kvPutJson(env, key, rec);
+  await kvDelete(env, mpPendingKey(preapprovalId));
+
+  return {
+    ok: true,
+    action: "license_inactivated",
+    status: "inactive",
+    email,
+    pcs,
+    plan_id: planId,
+    preapproval_id: preapprovalId,
+    reason: rec.reason,
+  };
+}
+
+/* =========================
+   Rotas
+========================= */
+
+async function handleRequest(request, env, ctx) {
+  const url = new URL(request.url);
+
+  if (!getKV(env)) {
+    return json({ ok: false, error: "KV binding 'LICENCIAS' não configurado" }, 500);
+  }
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders(),
+    });
+  }
+
+  if (url.pathname === "/") {
+    return html(`<!doctype html>
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <title>LINERA-NEST</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LINERA License Server</title>
+  <style>
+    body{font-family:Segoe UI,Arial,sans-serif;background:#f6f7fb;color:#0f172a;margin:0;padding:24px}
+    .card{max-width:980px;margin:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px}
+    code{background:#f1f5f9;padding:2px 6px;border-radius:6px}
+    li{margin:8px 0}
+  </style>
 </head>
 <body>
-  <h2>LINERA-NEST</h2>
-  <p>Se você acabou de pagar, clique abaixo:</p>
-  <p><a href="/obrigado.html">Abrir página de download da licença</a></p>
+  <div class="card">
+    <h2>🔐 LINERA License Server</h2>
+    <ul>
+      <li><code>/api/ping</code> → teste rápido</li>
+      <li><code>/api/licenca?email=...&pcs=5</code> → baixa arquivo .lic assinado</li>
+      <li><code>/api/check?email=...&pcs=5&device_id=...</code> → valida + limita PCs</li>
+      <li><code>/api/mp/registrar_checkout?email=...&pcs=...</code> → salva email do comprador antes do MP</li>
+      <li><code>/api/mp/criar_assinatura</code> (POST) → cria assinatura no Mercado Pago</li>
+      <li><code>/api/mp/checkout_status?checkout_ref=...</code> → consulta andamento do checkout</li>
+      <li><code>/api/mp/confirmar?preapproval_id=...&email=...</code> → ativa licença pela página de sucesso</li>
+      <li><code>/api/mp/webhook</code> (POST) → webhook Mercado Pago</li>
+      <li><code>/api/admin/mp_events?key=...</code> → últimos eventos MP</li>
+      <li><code>/api/admin/reset_devices?key=...&email=...&pcs=...</code> → limpa PCs</li>
+      <li><code>/api/mp/simular?key=...&email=...&pcs=...&status=authorized</code> → simula MP</li>
+    </ul>
+  </div>
 </body>
-</html>
+</html>`);
+  }
+
+  if (url.pathname === "/api/ping") {
+    const planMap = parseMpPlanMap(env);
+    return withCors(
+      json({
+        ok: true,
+        service: "linera-license-server",
+        domain_hint: "https://linera-site.pages.dev",
+        time: nowIso(),
+        kv_binding: !!getKV(env),
+        has_admin_key: !!env.ADMIN_KEY,
+        has_sign_secret: !!env.LICENSE_SIGN_SECRET,
+        has_mp_token: mpHasToken(env),
+        webhook_token_enabled: !!(env.MP_WEBHOOK_TOKEN || "").trim(),
+        has_mp_plan_map: Object.keys(planMap).length > 0,
+        mp_plan_map_keys: Object.keys(planMap).length,
+        device_ttl_days: getDeviceTtlDays(env),
+      })
+    );
+  }
+
+  if (url.pathname === "/api/licenca") {
+    const email = normalizeEmail(url.searchParams.get("email"));
+    const pcs = normalizePcs(url.searchParams.get("pcs"));
+
+    if (!email || !pcs) {
+      return withCors(json({ ok: false, error: "email e pcs são obrigatórios" }, 400));
+    }
+
+    const sig = await makeLicenseSignature(env, email, pcs);
+    const licText = [`email=${email}`, `pcs=${pcs}`, `sig=${sig}`, `ver=1`, ""].join("\n");
+
+    return withCors(
+      text(licText, 200, {
+        "content-disposition": `attachment; filename="linera_license_${pcs}pcs.lic"`,
+      })
+    );
+  }
+
+  if (url.pathname === "/api/check") {
+    const email = normalizeEmail(url.searchParams.get("email"));
+    const pcs = normalizePcs(url.searchParams.get("pcs"));
+    const deviceId = String(url.searchParams.get("device_id") || "").trim();
+
+    if (!email || !pcs) {
+      return withCors(
+        json(
+          { ok: false, status: "invalid_request", error: "email e pcs são obrigatórios" },
+          400
+        )
+      );
+    }
+
+    if (!deviceId) {
+      return withCors(
+        json(
+          {
+            ok: false,
+            status: "denied",
+            reason: "missing_device_id",
+            message: "Atualize o programa para esta versão (controle de PCs).",
+          },
+          400
+        )
+      );
+    }
+
+    const key = licenseKey(email, pcs);
+    const rec = await kvGetJson(env, key);
+
+    if (!rec) {
+      return withCors(json({ ok: false, status: "not_found" }, 404));
+    }
+
+    if (rec.status !== "active") {
+      return withCors(json({ ok: false, status: "inactive" }, 403));
+    }
+
+    if (!isLicenseCurrentlyActive(rec)) {
+      const expiredPayload = { ...rec, ok: false, status: "expired", updated_at: nowIso() };
+      await kvPutJson(env, key, expiredPayload);
+      return withCors(json({ ok: false, status: "expired" }, 403));
+    }
+
+    const ttlDays = getDeviceTtlDays(env);
+
+    if (!rec.devices || typeof rec.devices !== "object") rec.devices = {};
+
+    const r = applyDeviceLimitAndRegister(rec, deviceId, ttlDays);
+
+    if (!r.allowed) {
+      if (r.changed) {
+        rec.devices = r.devices;
+        rec.updated_at = nowIso();
+        await kvPutJson(env, key, rec);
+      }
+
+      return withCors(
+        json({
+          ok: false,
+          status: "denied",
+          reason: "device_limit",
+          email: rec.email,
+          pcs: rec.pcs,
+          plan_name: rec.plan_name || mapPcsToPlanName(rec.pcs),
+          pcs_limit: rec.pcs,
+          devices_active: r.devicesCount,
+          valid_until: rec.valid_until || "",
+          subscription_id: rec.subscription_id || "",
+        }, 403)
+      );
+    }
+
+    rec.devices = r.devices;
+    rec.updated_at = nowIso();
+    await kvPutJson(env, key, rec);
+
+    return withCors(
+      json({
+        ok: true,
+        status: "active",
+        email: rec.email,
+        pcs: rec.pcs,
+        plan_name: rec.plan_name || mapPcsToPlanName(rec.pcs),
+        valid_until: rec.valid_until || "",
+        subscription_id: rec.subscription_id || "",
+        pcs_limit: rec.pcs,
+        devices_active: r.devicesCount,
+      })
+    );
+  }
+
+  if (url.pathname === "/api/mp/registrar_checkout") {
+    const email = normalizeEmail(url.searchParams.get("email"));
+    const pcs = normalizePcs(url.searchParams.get("pcs"));
+
+    if (!email || !pcs) {
+      return withCors(json({ ok: false, error: "email e pcs são obrigatórios" }, 400));
+    }
+
+    const checkoutRef = randomId(28);
+    const planId = planIdFromPcs(env, pcs);
+
+    await kvPutJson(env, mpCheckoutIntentKey(checkoutRef), {
+      created_at: nowIso(),
+      email,
+      pcs,
+      plan_id: planId || "",
+      external_reference: `checkout_ref:${checkoutRef}`,
+    });
+
+    return withCors(
+      json({
+        ok: true,
+        action: "checkout_registered",
+        email,
+        pcs,
+        plan_id: planId || "",
+        checkout_ref: checkoutRef,
+        external_reference: `checkout_ref:${checkoutRef}`,
+      })
+    );
+  }
+
+  if (url.pathname === "/api/mp/criar_assinatura") {
+    if (request.method !== "POST") {
+      return withCors(json({ ok: false, error: "method_not_allowed" }, 405));
+    }
+
+    let body = {};
+    try {
+      body = await request.json();
+    } catch {
+      body = {};
+    }
+
+    const email = normalizeEmail(body?.email);
+    const pcs = normalizePcs(body?.pcs);
+
+    if (!email || !pcs) {
+      return withCors(json({ ok: false, error: "email e pcs são obrigatórios" }, 400));
+    }
+
+    if (!mpHasToken(env)) {
+      return withCors(json({ ok: false, error: "MP_ACCESS_TOKEN não configurado" }, 500));
+    }
+
+    const planId = planIdFromPcs(env, pcs);
+    if (!planId) {
+      return withCors(json({ ok: false, error: "Plano não encontrado no MP_PLAN_MAP" }, 400));
+    }
+
+    const checkoutRef = randomId(28);
+    const externalReference = `checkout_ref:${checkoutRef}`;
+    const backUrl =
+      `https://linera-site.pages.dev/obrigado?checkout_ref=${encodeURIComponent(checkoutRef)}&email=${encodeURIComponent(email)}`;
+
+    await kvPutJson(env, mpCheckoutIntentKey(checkoutRef), {
+      created_at: nowIso(),
+      status: "creating",
+      email,
+      pcs,
+      plan_id: planId,
+      external_reference: externalReference,
+      back_url: backUrl,
+    });
+
+    let created = null;
+    try {
+      created = await mpPostJson(env, "/preapproval", {
+        preapproval_plan_id: planId,
+        payer_email: email,
+        reason: mapPcsToPlanName(pcs),
+        external_reference: externalReference,
+        back_url: backUrl,
+      });
+    } catch (e) {
+      await kvPutJson(env, mpCheckoutIntentKey(checkoutRef), {
+        created_at: nowIso(),
+        status: "error",
+        email,
+        pcs,
+        plan_id: planId,
+        external_reference: externalReference,
+        back_url: backUrl,
+        error: String(e?.message || e),
+      });
+
+      return withCors(
+        json({
+          ok: false,
+          error: "mp_create_subscription_failed",
+          detail: String(e?.message || e),
+        }, 500)
+      );
+    }
+
+    const preapprovalId = String(created?.id || created?.subscription_id || "").trim();
+    const initPoint = String(created?.init_point || "").trim();
+
+    await kvPutJson(env, mpCheckoutIntentKey(checkoutRef), {
+      created_at: nowIso(),
+      status: "created",
+      email,
+      pcs,
+      plan_id: planId,
+      external_reference: externalReference,
+      back_url: backUrl,
+      preapproval_id: preapprovalId,
+      init_point: initPoint,
+      raw_create_response: created,
+    });
+
+    if (preapprovalId) {
+      await kvPutJson(env, mpPreToCheckoutKey(preapprovalId), {
+        checkout_ref: checkoutRef,
+        email,
+        pcs,
+        created_at: nowIso(),
+      });
+    }
+
+    return withCors(
+      json({
+        ok: true,
+        action: "subscription_created",
+        email,
+        pcs,
+        plan_id: planId,
+        checkout_ref: checkoutRef,
+        preapproval_id: preapprovalId,
+        init_point: initPoint,
+        back_url: backUrl,
+      })
+    );
+  }
+
+  if (url.pathname === "/api/mp/checkout_status") {
+    const checkoutRef = String(url.searchParams.get("checkout_ref") || "").trim();
+    if (!checkoutRef) {
+      return withCors(json({ ok: false, error: "checkout_ref é obrigatório" }, 400));
+    }
+
+    const checkout = await kvGetJson(env, mpCheckoutIntentKey(checkoutRef));
+    if (!checkout) {
+      return withCors(json({ ok: false, error: "checkout_not_found" }, 404));
+    }
+
+    let preapproval = null;
+    let fetched = false;
+
+    const preapprovalId = String(checkout?.preapproval_id || "").trim();
+    if (preapprovalId && mpHasToken(env)) {
+      try {
+        preapproval = await mpGetPreapproval(env, preapprovalId);
+        fetched = true;
+
+        checkout.last_status_check_at = nowIso();
+        checkout.preapproval_status = String(preapproval?.status || "").trim();
+        checkout.next_payment_date = preapproval?.next_payment_date || "";
+        checkout.last_modified = preapproval?.last_modified || "";
+        await kvPutJson(env, mpCheckoutIntentKey(checkoutRef), checkout);
+      } catch (e) {
+        checkout.last_status_check_at = nowIso();
+        checkout.last_status_error = String(e?.message || e);
+        await kvPutJson(env, mpCheckoutIntentKey(checkoutRef), checkout);
+      }
+    }
+
+    return withCors(
+      json({
+        ok: true,
+        checkout_ref: checkoutRef,
+        checkout,
+        fetched_from_mp: fetched,
+        preapproval,
+      })
+    );
+  }
+
+  if (url.pathname === "/api/mp/confirmar") {
+    const preapprovalId = String(url.searchParams.get("preapproval_id") || "").trim();
+    const email = normalizeEmail(url.searchParams.get("email"));
+
+    if (!preapprovalId || !email) {
+      return withCors(
+        json({ ok: false, error: "preapproval_id e email são obrigatórios" }, 400)
+      );
+    }
+
+    if (!mpHasToken(env)) {
+      return withCors(json({ ok: false, error: "MP_ACCESS_TOKEN não configurado" }, 500));
+    }
+
+    const result = await applyLicenseFromPreapproval(env, preapprovalId, email);
+    return withCors(json(result, result.ok ? 200 : 200));
+  }
+
+  if (url.pathname === "/api/admin/reset_devices") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+
+    const email = normalizeEmail(url.searchParams.get("email"));
+    const pcs = normalizePcs(url.searchParams.get("pcs"));
+
+    if (!email || !pcs) {
+      return withCors(json({ ok: false, error: "email e pcs são obrigatórios" }, 400));
+    }
+
+    const key = licenseKey(email, pcs);
+    const rec = await kvGetJson(env, key);
+    if (!rec) {
+      return withCors(json({ ok: false, error: "not_found" }, 404));
+    }
+
+    rec.devices = {};
+    rec.updated_at = nowIso();
+    await kvPutJson(env, key, rec);
+
+    return withCors(json({ ok: true, action: "devices_reset", email, pcs }));
+  }
+
+  if (url.pathname === "/api/ativar_manual") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+
+    const email = normalizeEmail(url.searchParams.get("email"));
+    const pcs = normalizePcs(url.searchParams.get("pcs"));
+    const dias = Number(url.searchParams.get("dias") || "30");
+
+    if (!email || !pcs) {
+      return withCors(json({ ok: false, error: "email e pcs são obrigatórios" }, 400));
+    }
+
+    const planName = mapPcsToPlanName(pcs);
+    const validUntil = addDaysIso(dias > 0 ? dias : 30);
+
+    const existing = await kvGetJson(env, licenseKey(email, pcs));
+    const existingDevices =
+      existing && existing.devices && typeof existing.devices === "object" ? existing.devices : {};
+
+    const rec = buildActiveLicenseRecord({
+      email,
+      pcs,
+      planName,
+      validUntil,
+      subscriptionId: `MANUAL-${Date.now()}`,
+    });
+
+    rec.devices = existingDevices;
+    await kvPutJson(env, licenseKey(email, pcs), rec);
+
+    return withCors(
+      json({
+        ok: true,
+        action: "activated_manual",
+        email,
+        pcs,
+        plan_name: rec.plan_name,
+        valid_until: rec.valid_until,
+        subscription_id: rec.subscription_id,
+      })
+    );
+  }
+
+  if (url.pathname === "/api/desativar_manual") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+
+    const email = normalizeEmail(url.searchParams.get("email"));
+    if (!email) {
+      return withCors(json({ ok: false, error: "email é obrigatório" }, 400));
+    }
+
+    const planos = [2, 5, 10, 50];
+    let count = 0;
+
+    for (const pcs of planos) {
+      const key = licenseKey(email, pcs);
+      const rec = await kvGetJson(env, key);
+      if (rec) {
+        const inactive = buildInactiveLicenseRecord({ email, pcs, reason: "manual_deactivation" });
+        inactive.plan_name = rec.plan_name || mapPcsToPlanName(pcs);
+        inactive.subscription_id = rec.subscription_id || "";
+        inactive.valid_until = rec.valid_until || "";
+        inactive.devices =
+          rec.devices && typeof rec.devices === "object" ? rec.devices : {};
+        await kvPutJson(env, key, inactive);
+        count++;
+      }
+    }
+
+    return withCors(json({ ok: true, action: "deactivated_manual", email, updated_records: count }));
+  }
+
+  if (url.pathname === "/api/status_raw") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+
+    const email = normalizeEmail(url.searchParams.get("email"));
+    const pcs = normalizePcs(url.searchParams.get("pcs"));
+    if (!email || !pcs) {
+      return withCors(json({ ok: false, error: "email e pcs são obrigatórios" }, 400));
+    }
+
+    const rec = await kvGetJson(env, licenseKey(email, pcs));
+    return withCors(json({ ok: true, record: rec || null }));
+  }
+
+  if (url.pathname === "/api/admin/mp_events") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+
+    const KV = getKV(env);
+    const listed = await KV.list({ prefix: "mp:event:", limit: 20 });
+
+    const items = [];
+    for (const k of listed.keys) {
+      const value = await kvGetJson(env, k.name);
+      items.push({ key: k.name, value });
+    }
+
+    items.sort((a, b) => String(b.key).localeCompare(String(a.key)));
+
+    return withCors(json({ ok: true, count: items.length, items }));
+  }
+
+  if (url.pathname === "/api/admin/mp_pending") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+
+    const KV = getKV(env);
+    const listed = await KV.list({ prefix: "mp:pending:", limit: 50 });
+
+    const items = [];
+    for (const k of listed.keys) {
+      const value = await kvGetJson(env, k.name);
+      items.push({ key: k.name, value });
+    }
+
+    items.sort((a, b) => String(b.key).localeCompare(String(a.key)));
+
+    return withCors(json({ ok: true, count: items.length, items }));
+  }
+
+  if (url.pathname === "/api/mp/webhook") {
+    if (request.method !== "POST") {
+      return withCors(json({ ok: false, error: "method_not_allowed" }, 405));
+    }
+
+    let rawBody = "";
+    try {
+      rawBody = await request.text();
+    } catch {
+      rawBody = "";
+    }
+
+    let payload = null;
+    try {
+      payload = rawBody ? JSON.parse(rawBody) : {};
+    } catch {
+      payload = { raw: rawBody };
+    }
+
+    const eventKey = mpEventKey();
+    const type = String(payload?.type || "").trim();
+    const entity = String(payload?.entity || "").trim();
+    const eventId = String(payload?.data?.id || payload?.id || "").trim();
+
+    await kvPutJson(env, eventKey, {
+      received_at: nowIso(),
+      method: request.method,
+      url: request.url,
+      authorized: mpWebhookAuthorized(request, env),
+      type,
+      entity,
+      extracted_id: eventId,
+      headers: {
+        x_signature: request.headers.get("x-signature") || "",
+        x_mp_token: request.headers.get("x-mp-token") || "",
+        content_type: request.headers.get("content-type") || "",
+        user_agent: request.headers.get("user-agent") || "",
+      },
+      raw_body: rawBody,
+      payload,
+    });
+
+    if (!mpWebhookAuthorized(request, env)) {
+      return withCors(
+        json({ ok: true, ignored: true, reason: "unauthorized_webhook", event_key: eventKey }, 200)
+      );
+    }
+
+    if (type !== "subscription_preapproval" || entity !== "preapproval") {
+      return withCors(
+        json({
+          ok: true,
+          ignored: true,
+          reason: "event_type_not_processed",
+          type,
+          entity,
+          event_key: eventKey,
+        }, 200)
+      );
+    }
+
+    if (!eventId) {
+      return withCors(
+        json({ ok: true, received: true, note: "no_id_in_payload", event_key: eventKey }, 200)
+      );
+    }
+
+    if (!mpHasToken(env)) {
+      await kvPutJson(env, mpPendingKey(eventId), {
+        received_at: nowIso(),
+        reason: "no_MP_ACCESS_TOKEN_configured",
+        payload,
+        event_key: eventKey,
+      });
+      return withCors(
+        json({ ok: true, received: true, stored: "pending_no_token", id: eventId, event_key: eventKey }, 200)
+      );
+    }
+
+    const preToCheckout = await kvGetJson(env, mpPreToCheckoutKey(eventId));
+    if (preToCheckout?.checkout_ref) {
+      const existingCheckout = await kvGetJson(env, mpCheckoutIntentKey(preToCheckout.checkout_ref));
+      if (existingCheckout) {
+        existingCheckout.webhook_last_event_at = nowIso();
+        existingCheckout.webhook_last_event_key = eventKey;
+        existingCheckout.webhook_last_type = type;
+        existingCheckout.webhook_last_entity = entity;
+        existingCheckout.status = "webhook_received";
+        await kvPutJson(env, mpCheckoutIntentKey(preToCheckout.checkout_ref), existingCheckout);
+      }
+    }
+
+    try {
+      const result = await applyLicenseFromPreapproval(env, eventId, "");
+
+      if (preToCheckout?.checkout_ref) {
+        const existingCheckout = await kvGetJson(env, mpCheckoutIntentKey(preToCheckout.checkout_ref));
+        if (existingCheckout) {
+          existingCheckout.status = result.ok ? "processed" : (result.reason || "pending");
+          existingCheckout.processed_at = nowIso();
+          existingCheckout.process_result = result;
+          await kvPutJson(env, mpCheckoutIntentKey(preToCheckout.checkout_ref), existingCheckout);
+        }
+      }
+
+      if (!result.ok && result.pending) {
+        const existing = await kvGetJson(env, mpPendingKey(eventId));
+        await kvPutJson(env, mpPendingKey(eventId), {
+          ...(existing || {}),
+          payload,
+          event_key: eventKey,
+          updated_at: nowIso(),
+        });
+      }
+      return withCors(json({ ...result, event_key: eventKey }, 200));
+    } catch (e) {
+      await kvPutJson(env, mpPendingKey(eventId), {
+        received_at: nowIso(),
+        reason: "mp_fetch_failed",
+        error: String(e?.message || e),
+        payload,
+        event_key: eventKey,
+      });
+      return withCors(
+        json({ ok: true, received: true, stored: "pending_fetch_failed", id: eventId, event_key: eventKey }, 200)
+      );
+    }
+  }
+
+  if (url.pathname === "/api/mp/pending") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+    const preapprovalId = (url.searchParams.get("preapproval_id") || "").trim();
+    if (!preapprovalId) {
+      return withCors(json({ ok: false, error: "preapproval_id é obrigatório" }, 400));
+    }
+    const pending = await kvGetJson(env, mpPendingKey(preapprovalId));
+    return withCors(json({ ok: true, pending: pending || null }));
+  }
+
+  if (url.pathname === "/api/mp/simular") {
+    if (!isAdmin(request, env, url)) {
+      return withCors(json({ ok: false, error: "unauthorized" }, 401));
+    }
+
+    const email = normalizeEmail(url.searchParams.get("email"));
+    const pcs = normalizePcs(url.searchParams.get("pcs"));
+    const status = (url.searchParams.get("status") || "authorized").trim().toLowerCase();
+    const dias = Number(url.searchParams.get("dias") || "30");
+    const preapprovalId = (url.searchParams.get("preapproval_id") || `SIM-${Date.now()}`).trim();
+
+    if (!email || !pcs) {
+      return withCors(json({ ok: false, error: "email e pcs são obrigatórios" }, 400));
+    }
+
+    const planName = mapPcsToPlanName(pcs);
+
+    const key = licenseKey(email, pcs);
+    const existing = await kvGetJson(env, key);
+    const existingDevices =
+      existing && existing.devices && typeof existing.devices === "object" ? existing.devices : {};
+
+    if (status === "authorized" || status === "active") {
+      const validUntil = addDaysIso(dias > 0 ? dias : 30);
+
+      const rec = buildActiveLicenseRecord({
+        email,
+        pcs,
+        planName,
+        validUntil,
+        subscriptionId: preapprovalId,
+      });
+      rec.devices = existingDevices;
+
+      await kvPutJson(env, key, rec);
+
+      return withCors(
+        json({
+          ok: true,
+          action: "mp_simulated",
+          status: "active",
+          preapproval_id: preapprovalId,
+          email,
+          pcs,
+          valid_until: rec.valid_until,
+        })
+      );
+    }
+
+    const rec = buildInactiveLicenseRecord({ email, pcs, reason: `mp_status_${status}` });
+    rec.plan_name = planName;
+    rec.subscription_id = preapprovalId;
+    rec.valid_until = "";
+    rec.devices = existingDevices;
+
+    await kvPutJson(env, key, rec);
+
+    return withCors(
+      json({
+        ok: true,
+        action: "mp_simulated",
+        status: "inactive",
+        preapproval_id: preapprovalId,
+        email,
+        pcs,
+        reason: rec.reason,
+      })
+    );
+  }
+
+  return withCors(json({ ok: false, error: "not_found" }, 404));
+}
+
+/* =========================
+   CORS
+========================= */
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, x-admin-key, x-mp-token, x-signature",
+  };
+}
+
+function withCors(response) {
+  const headers = new Headers(response.headers);
+  const cors = corsHeaders();
+  Object.entries(cors).forEach(([k, v]) => headers.set(k, v));
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
