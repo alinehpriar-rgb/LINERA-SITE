@@ -41,7 +41,7 @@
     <div class="grid">
       <div class="card">
         <h1>Pagamento da assinatura</h1>
-        <p>Preencha os dados do cartão para criar sua assinatura recorrente mensal do LINERA-NEST.</p>
+        <p>Preencha os dados do cartão para ativar sua assinatura mensal do LINERA-NEST.</p>
 
         <div class="summary">
           <div class="badge">Assinatura mensal</div>
@@ -52,7 +52,7 @@
         </div>
 
         <div class="note">
-          Este checkout transparente usa o Mercado Pago no seu próprio site. Para esse fluxo de assinatura mensal, a integração é com cartão.
+          
         </div>
 
         <div class="actions">
@@ -143,7 +143,7 @@
       statusEl.textContent = 'Dados de email/plano não encontrados. Volte para a página anterior.';
       payBtn.disabled = true;
     } else if (!MP_PUBLIC_KEY || MP_PUBLIC_KEY.includes('COLE_AQUI')) {
-      statusEl.innerHTML = 'Falta configurar sua <strong>PUBLIC KEY</strong> do Mercado Pago nesta página.';
+      statusEl.innerHTML = '';
       payBtn.disabled = true;
     } else {
       const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
@@ -170,7 +170,7 @@
               statusEl.textContent = 'Erro ao montar o formulário: ' + error.message;
               return;
             }
-            statusEl.textContent = 'Checkout carregado. Preencha os dados do cartão para criar sua assinatura.';
+            statusEl.textContent = 'Checkout carregado. Preencha os dados do cartão para comprar sua assinatura.';
           },
 
           onSubmit: async function (event) {
@@ -198,7 +198,7 @@
               const json = await res.json();
 
               if (!res.ok || !json.ok) {
-                throw new Error(json.detail || json.error || 'Falha ao criar assinatura.');
+                throw new Error(json.detail || json.error || 'Falha ao ativar assinatura.');
               }
 
               if (json.checkout_ref) localStorage.setItem('linera_checkout_ref', json.checkout_ref);
@@ -206,14 +206,14 @@
               localStorage.setItem('linera_email', email);
               localStorage.setItem('linera_pcs', String(pcs));
 
-              statusEl.innerHTML = '<span class="ok">Assinatura criada com sucesso. Redirecionando...</span>';
+              statusEl.innerHTML = '<span class="ok">Assinatura ativada com sucesso. Redirecionando...</span>';
 
               location.href =
                 `https://linera-site.pages.dev/sucesso.html?checkout_ref=${encodeURIComponent(json.checkout_ref || '')}` +
                 `&preapproval_id=${encodeURIComponent(json.preapproval_id || '')}` +
                 `&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
             } catch (err) {
-              statusEl.innerHTML = '<span class="err">Erro ao criar assinatura:</span>\n' + (err.message || String(err));
+              statusEl.innerHTML = '<span class="err">Erro ao ativar assinatura:</span>\n' + (err.message || String(err));
               payBtn.disabled = false;
             }
           },
