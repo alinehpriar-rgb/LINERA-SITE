@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LINERA-NEST | Pagamento</title>
+  <style>
+    :root{--bg:#f6f7fb;--card:#fff;--text:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#0b1f3b;--primary-hover:#091a31;--soft:#f8fafc}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:760px;margin:0 auto;padding:24px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+    h1{margin:0 0 10px}
+    p{color:var(--muted);line-height:1.45}
+    .info{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+    .line{margin:8px 0;color:#334155}
+    .big{font-size:20px;font-weight:700}
+    button{width:100%;padding:14px;border:0;border-radius:12px;background:var(--primary);color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+    button:hover{background:var(--primary-hover)}
+    button:disabled{opacity:.7;cursor:not-allowed}
+    .status{margin-top:14px;color:var(--muted);white-space:pre-line}
+    .back{display:inline-block;margin-top:16px;color:#334155;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Pagamento seguro</h1>
+      <p>Confira os dados abaixo. Ao clicar no botão, sua assinatura será criada e você será enviado ao ambiente seguro do Mercado Pago.</p>
+
+      <div class="info">
+        <div class="line"><strong>Email:</strong> <span id="emailOut"></span></div>
+        <div class="line"><strong>Plano:</strong> <span id="planOut"></span></div>
+        <div class="line"><strong>Quantidade de PCs:</strong> <span id="pcsOut"></span></div>
+        <div class="line big"><strong>Valor:</strong> <span id="priceOut"></span></div>
+      </div>
+
+      <button id="payBtn">Ir para pagamento no Mercado Pago</button>
+      <div class="status" id="status"></div>
+      <a class="back" href="https://linera-site.pages.dev/comprar.html">← Voltar para planos</a>
+    </div>
+  </div>
+
+  <script>
+    const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+    const qp = new URLSearchParams(location.search);
+    const email = (qp.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
+    const pcs = (qp.get('pcs') || localStorage.getItem('linera_pcs') || '').trim();
+    const planName = localStorage.getItem('linera_plan_name') || `Plano ${pcs} PCs`;
+    const price = localStorage.getItem('linera_price') || '-';
+
+    document.getElementById('emailOut').textContent = email || '(não informado)';
+    document.getElementById('planOut').textContent = planName;
+    document.getElementById('pcsOut').textContent = pcs || '-';
+    document.getElementById('priceOut').textContent = price;
+
+    const statusEl = document.getElementById('status');
+    const payBtn = document.getElementById('payBtn');
+
+    payBtn.addEventListener('click', async () => {
+      if (!email || !pcs) {
+        alert('Dados do plano não encontrados. Volte e preencha novamente.');
+        location.href = 'https://linera-site.pages.dev/comprar.html';
+        return;
+      }
+
+      payBtn.disabled = true;
+      statusEl.textContent = 'Criando sua assinatura...';
+
+      try {
+        const res = await fetch(`${WORKER}/api/mp/criar_assinatura`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, pcs: Number(pcs) })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok || !data.init_point) {
+          throw new Error(data.detail || data.error || 'Não foi possível iniciar o pagamento.');
+        }
+
+        localStorage.setItem('linera_checkout_ref', data.checkout_ref || '');
+        localStorage.setItem('linera_preapproval_id', data.preapproval_id || '');
+        localStorage.setItem('linera_email', email);
+        localStorage.setItem('linera_pcs', String(pcs));
+
+        statusEl.textContent = 'Redirecionando para o Mercado Pago...';
+        window.location.href = data.init_point;
+      } catch (err) {
+        statusEl.textContent = 'Erro ao iniciar o pagamento:\n' + (err.message || String(err));
+        payBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
