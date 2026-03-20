@@ -3,86 +3,79 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LINERA-NEST | Pagamento</title>
+  <title>LINERA-NEST | Pagamentos</title>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
   <style>
-    :root{
-      --bg:#f5f7fb;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#475569;
-      --primary:#0b1f3b;
-      --primary-hover:#091a31;
-      --line:#e2e8f0;
-      --soft:#f8fafc;
-      --ok:#15803d;
-      --danger:#b91c1c;
-      --shadow:0 14px 36px rgba(15,23,42,.08);
-      --radius:22px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:var(--text);background:var(--bg)}
-    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 42px}
-    .grid{display:grid;grid-template-columns:380px 1fr;gap:22px;align-items:start}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}
-    .badge{display:inline-flex;padding:8px 14px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:13px;font-weight:800;margin-bottom:12px}
-    h1{font-size:34px;line-height:1.1;margin:0 0 10px}
-    h2{font-size:24px;margin:0 0 10px}
-    p{color:var(--muted);line-height:1.6;margin:0 0 16px}
-    .summary{display:grid;gap:12px;margin-top:18px}
-    .row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px dashed var(--line)}
-    .row:last-child{border-bottom:0}
-    .k{color:var(--muted)}
-    .price{font-size:28px;font-weight:800;color:#166534}
-    .brick-shell{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;min-height:520px}
-    .brick-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}
-    .hint{font-size:14px;color:var(--muted)}
-    .status{margin-top:16px;padding:14px 16px;border-radius:16px;background:var(--soft);border:1px solid var(--line);white-space:pre-line;font-size:14px;color:#334155}
-    .status.ok{background:#ecfdf5;border-color:#bbf7d0;color:#166534}
-    .status.err{background:#fef2f2;border-color:#fecaca;color:#991b1b}
-    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
-    .btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:16px;padding:14px 18px;font-weight:800}
-    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    :root{--bg:#f5f7fb;--card:#fff;--text:#0f172a;--muted:#475569;--primary:#0b1f3b;--primary-hover:#091a31;--line:#e2e8f0;--soft:#f8fafc;--ok:#15803d;--danger:#b91c1c;--shadow:0 14px 36px rgba(15,23,42,.08);--radius:22px;}
+    *{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:var(--text);background:var(--bg)}
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 42px}.grid{display:grid;grid-template-columns:370px 1fr;gap:22px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}.badge{display:inline-flex;padding:8px 14px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:13px;font-weight:800;margin-bottom:12px}
+    h1{font-size:34px;line-height:1.1;margin:0 0 10px}h2{font-size:22px;margin:0 0 6px}p{color:var(--muted);line-height:1.6;margin:0 0 16px}
+    .summary{display:grid;gap:12px;margin-top:18px}.row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px dashed var(--line)}.row:last-child{border-bottom:0}.k{color:var(--muted)}.price{font-size:28px;font-weight:800;color:#166534}
+    .method-switch{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.tab{padding:12px 16px;border-radius:14px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:800;color:#334155}.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .panel{display:none}.panel.active{display:block}.brick-shell,.pix-shell{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;min-height:520px}.hint{font-size:14px;color:var(--muted);margin-bottom:14px}
+    .status{margin-top:16px;padding:14px 16px;border-radius:16px;background:var(--soft);border:1px solid var(--line);white-space:pre-line;font-size:14px;color:#334155}.status.ok{background:#ecfdf5;border-color:#bbf7d0;color:#166534}.status.err{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:16px;padding:14px 18px;font-weight:800;border:0;cursor:pointer}.btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}.btn.primary{background:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-hover)}
     .note{margin-top:16px;padding:14px 16px;border-radius:16px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:14px;line-height:1.55}
-    @media (max-width:960px){.grid{grid-template-columns:1fr}}
+    .qr-wrap{display:grid;grid-template-columns:240px 1fr;gap:18px;align-items:start;margin-top:10px}.qr-box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;text-align:center}.qr-box img{width:100%;max-width:200px;height:auto}.pix-code{width:100%;min-height:128px;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:13px;line-height:1.45;resize:vertical}.small{font-size:13px;color:var(--muted)}
+    @media (max-width:960px){.grid{grid-template-columns:1fr}.qr-wrap{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="grid">
       <aside class="card">
-        <div class="badge">Checkout Brick oficial</div>
-        <h1>Finalize sua assinatura</h1>
-        <p>O formulário abaixo é renderizado pelo SDK do Mercado Pago. Você não vai mais usar aquele formulário manual feio.</p>
-
+        <div class="badge">Pagamento do LINERA-NEST</div>
+        <h1>Finalize sua compra</h1>
+        <p>Escolha abaixo a forma de pagamento que faz mais sentido para sua operação.</p>
         <div class="summary">
           <div class="row"><span class="k">Email</span><strong id="outEmail"></strong></div>
           <div class="row"><span class="k">Plano</span><strong id="outPlan"></strong></div>
           <div class="row"><span class="k">Computadores</span><strong id="outPcs"></strong></div>
-          <div class="row"><span class="k">Cobrança</span><strong>Mensal</strong></div>
           <div class="row"><span class="k">Valor</span><strong class="price">R$ <span id="outPrice"></span></strong></div>
         </div>
-
-        <div class="actions">
-          <a class="btn secondary" href="https://linera-site.pages.dev/comprar_brick.html">Voltar e alterar plano</a>
+        <div class="note">
+          <strong>Cartão:</strong> assinatura mensal com renovação automática.<br>
+          <strong>PIX:</strong> pagamento do mês atual, sem renovação automática.
         </div>
-
-        <div class="note">Se a assinatura for autorizada, você será levado para a página de sucesso e poderá baixar sua licença.</div>
+        <div class="actions"><a class="btn secondary" href="https://linera-site.pages.dev/comprar.html">Voltar e alterar plano</a></div>
       </aside>
 
       <main class="card">
-        <div class="brick-head">
-          <div>
-            <h2>Pague com cartão</h2>
-            <div class="hint">Este é o <strong>Card Payment Brick</strong> do Mercado Pago, renderizado dentro da sua página.</div>
+        <div class="method-switch">
+          <button class="tab active" data-tab="card">Cartão de crédito</button>
+          <button class="tab" data-tab="pix">PIX</button>
+        </div>
+
+        <section class="panel active" id="panel-card">
+          <h2>Assinatura mensal no cartão</h2>
+          <div class="hint">Preencha o Brick oficial do Mercado Pago abaixo. Essa opção cria sua assinatura mensal com renovação automática.</div>
+          <div class="brick-shell"><div id="cardPaymentBrick_container"></div></div>
+          <div id="statusCard" class="status">Preparando pagamento com cartão...</div>
+        </section>
+
+        <section class="panel" id="panel-pix">
+          <h2>PIX do mês</h2>
+          <div class="hint">Essa opção gera um QR Code para liberar 30 dias do seu plano. No fim do período, o próximo mês deve ser pago novamente.</div>
+          <div class="pix-shell">
+            <div class="actions"><button id="btnGerarPix" class="btn primary">Gerar PIX agora</button></div>
+            <div id="pixArea" style="display:none">
+              <div class="qr-wrap">
+                <div class="qr-box"><img id="qrImg" alt="QR Code PIX"></div>
+                <div>
+                  <label for="pixCode">Código PIX copia e cola</label>
+                  <textarea id="pixCode" class="pix-code" readonly></textarea>
+                  <div class="actions">
+                    <button id="btnCopiarPix" class="btn secondary">Copiar código PIX</button>
+                    <button id="btnVerificarPix" class="btn primary">Já paguei, verificar</button>
+                  </div>
+                  <div class="small">Depois de pagar, clique em <strong>Já paguei, verificar</strong>. Você também pode aguardar e a confirmação será consultada automaticamente.</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div class="brick-shell">
-          <div id="cardPaymentBrick_container"></div>
-        </div>
-
-        <div id="status" class="status">Preparando checkout...</div>
+          <div id="statusPix" class="status">Gerando PIX somente quando você clicar no botão.</div>
+        </section>
       </main>
     </div>
   </div>
@@ -90,7 +83,6 @@
   <script>
     const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
     const MP_PUBLIC_KEY = 'APP_USR-3bdc8221-3105-4b85-bea0-216201a15648';
-
     const qp = new URLSearchParams(location.search);
     const email = (qp.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
     const pcs = (qp.get('pcs') || localStorage.getItem('linera_pcs') || '').trim();
@@ -102,60 +94,40 @@
     document.getElementById('outPcs').textContent = `${pcs} PCs`;
     document.getElementById('outPrice').textContent = String(planPrice).replace('.', ',');
 
-    const statusEl = document.getElementById('status');
+    const statusCard = document.getElementById('statusCard');
+    const statusPix = document.getElementById('statusPix');
+    function setStatus(el, message, type=''){ el.className = 'status' + (type ? ' ' + type : ''); el.textContent = message; }
 
-    function setStatus(message, type = '') {
-      statusEl.className = 'status' + (type ? ' ' + type : '');
-      statusEl.textContent = message;
-    }
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
 
-    async function buildBrick() {
+    async function buildCardBrick() {
       if (!email || !pcs) {
-        setStatus('Não encontrei email ou plano. Volte para a página anterior.', 'err');
+        setStatus(statusCard, 'Não encontrei email ou plano. Volte para a página anterior.', 'err');
         return;
       }
-
-      if (!MP_PUBLIC_KEY) {
-        setStatus('A Public Key do Mercado Pago não foi configurada.', 'err');
-        return;
-      }
-
-      setStatus('Carregando o Checkout Brick do Mercado Pago...');
-
       try {
         const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
         const bricksBuilder = mp.bricks();
-
-        const settings = {
-          initialization: {
-            amount: Number(planPrice) || 1,
-            payer: { email }
-          },
+        await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', {
+          initialization: { amount: Number(planPrice) || 1, payer: { email } },
           customization: {
             visual: {
-              style: {
-                theme: 'bootstrap',
-                customVariables: {
-                  formBackgroundColor: '#ffffff',
-                  baseColor: '#0b1f3b',
-                  textPrimaryColor: '#0f172a'
-                }
-              },
               hideFormTitle: true,
-              hidePaymentButton: false
+              style: { theme: 'bootstrap', customVariables: { baseColor: '#0b1f3b', textPrimaryColor: '#0f172a' } }
             },
-            paymentMethods: {
-              maxInstallments: 1,
-              minInstallments: 1
-            }
+            paymentMethods: { maxInstallments: 1, minInstallments: 1 }
           },
           callbacks: {
-            onReady: () => {
-              setStatus('Checkout carregado. Preencha os dados do cartão para criar sua assinatura.');
-            },
+            onReady: () => setStatus(statusCard, 'Brick carregado. Preencha os dados do cartão para ativar a assinatura.'),
             onSubmit: async (formData) => {
-              setStatus('Criando assinatura... Aguarde alguns segundos.');
-
+              setStatus(statusCard, 'Criando assinatura mensal no cartão...');
               try {
                 const res = await fetch(`${WORKER}/api/mp/criar_assinatura_cartao`, {
                   method: 'POST',
@@ -170,42 +142,106 @@
                     identificationNumber: formData.payer?.identification?.number || formData.identificationNumber || ''
                   })
                 });
-
                 const json = await res.json();
-
-                if (!res.ok || !json.ok) {
-                  throw new Error(json.detail || json.error || 'Falha ao criar assinatura.');
-                }
-
+                if (!res.ok || !json.ok) throw new Error(json.detail || json.error || 'Falha ao criar assinatura.');
                 if (json.checkout_ref) localStorage.setItem('linera_checkout_ref', json.checkout_ref);
                 if (json.preapproval_id) localStorage.setItem('linera_preapproval_id', json.preapproval_id);
                 localStorage.setItem('linera_email', email);
                 localStorage.setItem('linera_pcs', String(pcs));
-
-                setStatus('Assinatura criada com sucesso. Redirecionando...', 'ok');
-
-                location.href =
-                  `https://linera-site.pages.dev/sucesso_brick.html?checkout_ref=${encodeURIComponent(json.checkout_ref || '')}` +
-                  `&preapproval_id=${encodeURIComponent(json.preapproval_id || '')}` +
-                  `&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
+                localStorage.setItem('linera_payment_method', 'card');
+                setStatus(statusCard, 'Assinatura criada com sucesso. Redirecionando...', 'ok');
+                location.href = `https://linera-site.pages.dev/sucesso.html?checkout_ref=${encodeURIComponent(json.checkout_ref || '')}&preapproval_id=${encodeURIComponent(json.preapproval_id || '')}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&method=card`;
               } catch (err) {
-                setStatus('Erro ao criar a assinatura: ' + (err.message || String(err)), 'err');
+                setStatus(statusCard, 'Erro ao criar a assinatura: ' + (err.message || String(err)), 'err');
                 throw err;
               }
             },
-            onError: (error) => {
-              setStatus('Erro no Checkout Brick: ' + (error?.message || String(error)), 'err');
-            }
+            onError: (error) => setStatus(statusCard, 'Erro no formulário do cartão: ' + (error?.message || String(error)), 'err')
           }
-        };
-
-        await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', settings);
+        });
       } catch (err) {
-        setStatus('Não foi possível renderizar o Checkout Brick: ' + (err.message || String(err)), 'err');
+        setStatus(statusCard, 'Não foi possível renderizar o Brick: ' + (err.message || String(err)), 'err');
       }
     }
 
-    buildBrick();
+    let currentPixPaymentId = '';
+    let pixPolling = null;
+
+    async function gerarPix() {
+      if (!email || !pcs) {
+        setStatus(statusPix, 'Não encontrei email ou plano. Volte para a página anterior.', 'err');
+        return;
+      }
+      setStatus(statusPix, 'Gerando QR Code PIX...');
+      try {
+        const res = await fetch(`${WORKER}/api/mp/criar_pix_mensal`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, pcs: Number(pcs) })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.detail || json.error || 'Falha ao gerar PIX.');
+        currentPixPaymentId = json.payment_id || '';
+        localStorage.setItem('linera_payment_method', 'pix');
+        localStorage.setItem('linera_pix_payment_id', currentPixPaymentId);
+        localStorage.setItem('linera_checkout_ref', json.checkout_ref || '');
+        document.getElementById('pixArea').style.display = 'block';
+        document.getElementById('pixCode').value = json.qr_code || '';
+        if (json.qr_code_base64) {
+          document.getElementById('qrImg').src = `data:image/png;base64,${json.qr_code_base64}`;
+        }
+        setStatus(statusPix, 'PIX gerado. Faça o pagamento e depois clique em “Já paguei, verificar”.', 'ok');
+        startPixPolling();
+      } catch (err) {
+        setStatus(statusPix, 'Erro ao gerar PIX: ' + (err.message || String(err)), 'err');
+      }
+    }
+
+    async function verificarPix() {
+      const paymentId = currentPixPaymentId || localStorage.getItem('linera_pix_payment_id') || '';
+      if (!paymentId) {
+        setStatus(statusPix, 'Gere o PIX primeiro.', 'err');
+        return;
+      }
+      setStatus(statusPix, 'Verificando pagamento PIX...');
+      try {
+        const res = await fetch(`${WORKER}/api/mp/confirmar_pix?payment_id=${encodeURIComponent(paymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
+        const json = await res.json();
+        if (json.ok && json.status === 'active') {
+          location.href = `https://linera-site.pages.dev/sucesso.html?payment_id=${encodeURIComponent(paymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&method=pix`;
+          return;
+        }
+        setStatus(statusPix, 'Pagamento ainda não aprovado. Assim que for confirmado, sua licença será liberada.', '');
+      } catch (err) {
+        setStatus(statusPix, 'Erro ao verificar PIX: ' + (err.message || String(err)), 'err');
+      }
+    }
+
+    function startPixPolling() {
+      if (pixPolling) clearInterval(pixPolling);
+      pixPolling = setInterval(async () => {
+        const paymentId = currentPixPaymentId || localStorage.getItem('linera_pix_payment_id') || '';
+        if (!paymentId) return;
+        try {
+          const res = await fetch(`${WORKER}/api/mp/confirmar_pix?payment_id=${encodeURIComponent(paymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
+          const json = await res.json();
+          if (json.ok && json.status === 'active') {
+            clearInterval(pixPolling);
+            location.href = `https://linera-site.pages.dev/sucesso.html?payment_id=${encodeURIComponent(paymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&method=pix`;
+          }
+        } catch (_) {}
+      }, 5000);
+    }
+
+    document.getElementById('btnGerarPix').addEventListener('click', gerarPix);
+    document.getElementById('btnVerificarPix').addEventListener('click', verificarPix);
+    document.getElementById('btnCopiarPix').addEventListener('click', async () => {
+      const txt = document.getElementById('pixCode').value || '';
+      if (!txt) return;
+      try { await navigator.clipboard.writeText(txt); setStatus(statusPix, 'Código PIX copiado para a área de transferência.', 'ok'); } catch (_) {}
+    });
+
+    buildCardBrick();
   </script>
 </body>
 </html>
