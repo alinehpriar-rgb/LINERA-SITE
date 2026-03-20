@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pagamento do LINERA-NEST</title>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script src="https://www.mercadopago.com/v2/security.js" view="checkout"></script>
   <style>
     :root{
       --bg:#eef2f7; --card:#ffffff; --text:#0b2347; --muted:#42526b;
@@ -92,12 +93,12 @@
 
         <div class="pix-actions">
           <button id="btnPix" class="copy-btn" type="button">Gerar PIX agora</button>
-          <button id="btnCheckPix" class="check-btn secondary hidden" type="button">Já paguei, verificar</button>
         </div>
 
         <div id="pixArea"></div>
         <div id="pixStatus" class="status info hidden"></div>
       </section>
+          <input type="hidden" id="deviceId" value="" />
     </main>
   </div>
 
@@ -124,12 +125,14 @@
     const cardStatus = el('cardStatus');
     const pixStatus = el('pixStatus');
     const btnPix = el('btnPix');
-    const btnCheckPix = el('btnCheckPix');
     const pixArea = el('pixArea');
 
     let currentPlanInfo = null;
     let cardBrickController = null;
     let pixPaymentId = '';
+    let pixPollTimer = null;
+    let cardSubmitRunning = false;
+    let pixSubmitRunning = false;
 
     function showStatus(target, kind, msg) {
       target.className = `status ${kind}`;
@@ -140,6 +143,35 @@
     function hideStatus(target) {
       target.classList.add('hidden');
       target.textContent = '';
+    }
+
+    function getDeviceId() {
+      const hidden = el('deviceId');
+      const current = (hidden?.value || window.MP_DEVICE_SESSION_ID || '').trim();
+      if (hidden && current) hidden.value = current;
+      return current;
+    }
+
+    function syncDeviceId(retry = 0) {
+      const current = getDeviceId();
+      if (current || retry > 20) return current;
+      setTimeout(() => syncDeviceId(retry + 1), 300);
+      return '';
+    }
+
+    function startPixAutoCheck() {
+      stopPixAutoCheck();
+      if (!pixPaymentId) return;
+      pixPollTimer = setInterval(() => {
+        verificarPix(true).catch(console.error);
+      }, 5000);
+    }
+
+    function stopPixAutoCheck() {
+      if (pixPollTimer) {
+        clearInterval(pixPollTimer);
+        pixPollTimer = null;
+      }
     }
 
     function moneyBRL(value) {
@@ -259,6 +291,8 @@
             showStatus(cardStatus, 'error', `Erro ao montar checkout do cartão:\n${error?.message || JSON.stringify(error)}`);
           },
           onSubmit: async (cardFormData) => {
+            if (cardSubmitRunning) return;
+            cardSubmitRunning = true;
             hideStatus(cardStatus);
             showStatus(cardStatus, 'info', 'Processando assinatura no cartão...');
 
@@ -269,6 +303,7 @@
               const installments = Number(cardFormData?.installments || 1);
               const identificationType = cardFormData?.payer?.identification?.type || '';
               const identificationNumber = cardFormData?.payer?.identification?.number || '';
+              const deviceId = getDeviceId();
 
               if (!token) throw new Error('O checkout do cartão não retornou o token do cartão.');
 
@@ -286,6 +321,7 @@
                     type: identificationType,
                     number: identificationNumber,
                   },
+                  device_id: deviceId,
                 }),
               });
 
@@ -310,16 +346,18 @@
     }
 
     async function gerarPix() {
+      if (pixSubmitRunning) return;
+      pixSubmitRunning = true;
+      stopPixAutoCheck();
       hideStatus(pixStatus);
       pixArea.innerHTML = '';
-      btnCheckPix.classList.add('hidden');
       showStatus(pixStatus, 'info', 'Gerando PIX...');
 
       try {
         const res = await fetch(`${WORKER}/api/mp/criar_pix`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, pcs }),
+          body: JSON.stringify({ email, pcs, device_id: getDeviceId() }),
         });
         const data = await res.json().catch(() => ({}));
 
@@ -334,7 +372,7 @@
         pixArea.innerHTML = `
           ${qrBase64 ? `<img class="qr-img" alt="QR Code PIX" src="data:image/png;base64,${qrBase64}">` : ''}
           ${qrText ? `<div class="muted-mini">Código PIX copia e cola</div><textarea class="pix-code" readonly>${qrText}</textarea>` : ''}
-          <div class="muted-mini">Após efetuar o pagamento, clique em “Já paguei, verificar”.</div>
+          <div class="muted-mini">Após efetuar o pagamento, a confirmação será feita automaticamente.</div>
         `;
 
         const textarea = pixArea.querySelector('textarea');
@@ -359,8 +397,8 @@
           pixArea.appendChild(actions);
         }
 
-        btnCheckPix.classList.remove('hidden');
-        showStatus(pixStatus, 'info', 'PIX gerado com sucesso.');
+        showStatus(pixStatus, 'info', 'PIX gerado com sucesso. Aguardando confirmação automática...');
+        startPixAutoCheck();
       } catch (err) {
         console.error(err);
         showStatus(pixStatus, 'error', `Erro ao gerar PIX:\n${err.message || String(err)}`);
@@ -372,7 +410,7 @@
         showStatus(pixStatus, 'error', 'Gere um PIX antes de verificar o pagamento.');
         return;
       }
-      showStatus(pixStatus, 'info', 'Verificando pagamento PIX...');
+      if (!isAutomatic) showStatus(pixStatus, 'info', 'Verificando pagamento PIX...');
       try {
         const res = await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
         const data = await res.json().catch(() => ({}));
@@ -382,11 +420,12 @@
         }
 
         if (data.status === 'approved' || data.license_status === 'active') {
+          stopPixAutoCheck();
           location.href = `/sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&payment_id=${encodeURIComponent(pixPaymentId)}&origem=pix`;
           return;
         }
 
-        showStatus(pixStatus, 'info', `Pagamento ainda não aprovado. Status atual: ${data.status || 'pendente'}`);
+        if (!isAutomatic) showStatus(pixStatus, 'info', `Pagamento ainda não aprovado. Status atual: ${data.status || 'pendente'}`);
       } catch (err) {
         console.error(err);
         showStatus(pixStatus, 'error', `Erro ao verificar PIX:\n${err.message || String(err)}`);
@@ -394,10 +433,10 @@
     }
 
     btnPix.addEventListener('click', gerarPix);
-    btnCheckPix.addEventListener('click', verificarPix);
 
     (async () => {
       try {
+        syncDeviceId();
         await loadPlanInfo();
         await mountCardBrick();
       } catch (err) {
