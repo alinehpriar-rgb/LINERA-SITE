@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pagamento do LINERA-NEST</title>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
-  <script src="https://www.mercadopago.com/v2/security.js" view="checkout"></script>
   <style>
     :root{
       --bg:#eef2f7; --card:#ffffff; --text:#0b2347; --muted:#42526b;
@@ -39,13 +38,8 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     #wallet_container,#pixArea,#cardBrick_container{margin-top:18px}
     .pix-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-    .copy-btn{appearance:none;border:0;background:var(--primary);color:#fff;padding:14px 18px;border-radius:16px;font-weight:800;cursor:pointer}
-    .copy-btn.secondary{background:#eef4ff;color:var(--primary);border:1px solid #c7d8fb}
-    .buyer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 8px}
-    .field{display:flex;flex-direction:column;gap:6px}
-    .field label{font-size:13px;font-weight:700;color:var(--text)}
-    .field input{width:100%;padding:14px;border:1px solid var(--line);border-radius:16px;font-size:14px;background:#fbfdff;color:var(--text)}
-    .field.full{grid-column:1 / -1}
+    .copy-btn,.check-btn{appearance:none;border:0;background:var(--primary);color:#fff;padding:14px 18px;border-radius:16px;font-weight:800;cursor:pointer}
+    .copy-btn.secondary,.check-btn.secondary{background:#eef4ff;color:var(--primary);border:1px solid #c7d8fb}
     .pix-code{width:100%;min-height:120px;padding:14px;border:1px solid var(--line);border-radius:16px;font-size:14px;line-height:1.45;resize:vertical;background:#fbfdff}
     .muted-mini{margin-top:12px;font-size:14px;color:var(--muted)}
     .qr-img{max-width:280px;width:100%;height:auto;border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px}
@@ -87,18 +81,6 @@
         <h2>Cartão e assinatura automática</h2>
         <p>Preencha os dados abaixo para iniciar sua assinatura mensal do LINERA-NEST sem sair do seu site.</p>
 
-        <div class="buyer-grid">
-          <div class="field full"><label for="buyerFullName">Nome completo do titular</label><input id="buyerFullName" autocomplete="name" placeholder="Nome e sobrenome" /></div>
-          <div class="field"><label for="buyerCpf">CPF</label><input id="buyerCpf" inputmode="numeric" autocomplete="off" placeholder="Somente números" maxlength="14" /></div>
-          <div class="field"><label for="buyerPhone">Telefone</label><input id="buyerPhone" inputmode="tel" autocomplete="tel" placeholder="DDD + número" maxlength="15" /></div>
-          <div class="field"><label for="buyerCep">CEP</label><input id="buyerCep" inputmode="numeric" autocomplete="postal-code" placeholder="Somente números" maxlength="9" /></div>
-          <div class="field"><label for="buyerUf">UF</label><input id="buyerUf" maxlength="2" placeholder="SP" /></div>
-          <div class="field full"><label for="buyerStreet">Rua</label><input id="buyerStreet" autocomplete="address-line1" placeholder="Rua / Avenida" /></div>
-          <div class="field"><label for="buyerNumber">Número</label><input id="buyerNumber" autocomplete="address-line2" placeholder="123" /></div>
-          <div class="field"><label for="buyerDistrict">Bairro</label><input id="buyerDistrict" placeholder="Bairro" /></div>
-          <div class="field full"><label for="buyerCity">Cidade</label><input id="buyerCity" autocomplete="address-level2" placeholder="Cidade" /></div>
-        </div>
-
         <div id="cardLoader" class="loader"><div class="spinner"></div><span>Carregando checkout do cartão...</span></div>
         <div id="cardBrick_container"></div>
         <div id="cardStatus" class="status info hidden"></div>
@@ -110,6 +92,7 @@
 
         <div class="pix-actions">
           <button id="btnPix" class="copy-btn" type="button">Gerar PIX agora</button>
+          <button id="btnCheckPix" class="check-btn secondary hidden" type="button">Já paguei, verificar</button>
         </div>
 
         <div id="pixArea"></div>
@@ -125,6 +108,7 @@
     const params = new URLSearchParams(location.search);
     const email = (params.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
     const pcs = Number(params.get('pcs') || localStorage.getItem('linera_pcs') || 0);
+
     const PLAN_NAMES = {2:'Plano Oficina',5:'Plano Equipe',10:'Plano Produção',50:'Plano Fábrica'};
 
     const el = (id) => document.getElementById(id);
@@ -140,23 +124,12 @@
     const cardStatus = el('cardStatus');
     const pixStatus = el('pixStatus');
     const btnPix = el('btnPix');
+    const btnCheckPix = el('btnCheckPix');
     const pixArea = el('pixArea');
-    const buyerFullName = el('buyerFullName');
-    const buyerCpf = el('buyerCpf');
-    const buyerPhone = el('buyerPhone');
-    const buyerCep = el('buyerCep');
-    const buyerUf = el('buyerUf');
-    const buyerStreet = el('buyerStreet');
-    const buyerNumber = el('buyerNumber');
-    const buyerDistrict = el('buyerDistrict');
-    const buyerCity = el('buyerCity');
 
     let currentPlanInfo = null;
     let cardBrickController = null;
     let pixPaymentId = '';
-    let pixPollTimer = null;
-    let cardSubmitting = false;
-    let pixGenerating = false;
 
     function showStatus(target, kind, msg) {
       target.className = `status ${kind}`;
@@ -169,104 +142,28 @@
       target.textContent = '';
     }
 
-    function onlyDigits(v) { return String(v || '').replace(/\D+/g, ''); }
-    function maskCpf(v) {
-      const d = onlyDigits(v).slice(0, 11);
-      return d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-    }
-    function maskPhone(v) {
-      const d = onlyDigits(v).slice(0, 11);
-      if (d.length <= 10) return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
-      return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
-    }
-    function maskCep(v) {
-      const d = onlyDigits(v).slice(0, 8);
-      return d.replace(/(\d{5})(\d)/, '$1-$2');
-    }
-    buyerCpf.addEventListener('input', () => buyerCpf.value = maskCpf(buyerCpf.value));
-    buyerPhone.addEventListener('input', () => buyerPhone.value = maskPhone(buyerPhone.value));
-    buyerCep.addEventListener('input', () => buyerCep.value = maskCep(buyerCep.value));
-    buyerUf.addEventListener('input', () => buyerUf.value = String(buyerUf.value || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0,2));
-
-    function loadBuyerCache() {
-      buyerFullName.value = localStorage.getItem('linera_buyer_full_name') || '';
-      buyerCpf.value = localStorage.getItem('linera_buyer_cpf') || '';
-      buyerPhone.value = localStorage.getItem('linera_buyer_phone') || '';
-      buyerCep.value = localStorage.getItem('linera_buyer_cep') || '';
-      buyerUf.value = localStorage.getItem('linera_buyer_uf') || '';
-      buyerStreet.value = localStorage.getItem('linera_buyer_street') || '';
-      buyerNumber.value = localStorage.getItem('linera_buyer_number') || '';
-      buyerDistrict.value = localStorage.getItem('linera_buyer_district') || '';
-      buyerCity.value = localStorage.getItem('linera_buyer_city') || '';
-    }
-
-    function saveBuyerCache() {
-      localStorage.setItem('linera_buyer_full_name', buyerFullName.value.trim());
-      localStorage.setItem('linera_buyer_cpf', buyerCpf.value.trim());
-      localStorage.setItem('linera_buyer_phone', buyerPhone.value.trim());
-      localStorage.setItem('linera_buyer_cep', buyerCep.value.trim());
-      localStorage.setItem('linera_buyer_uf', buyerUf.value.trim());
-      localStorage.setItem('linera_buyer_street', buyerStreet.value.trim());
-      localStorage.setItem('linera_buyer_number', buyerNumber.value.trim());
-      localStorage.setItem('linera_buyer_district', buyerDistrict.value.trim());
-      localStorage.setItem('linera_buyer_city', buyerCity.value.trim());
-    }
-
-    function getDeviceId() {
-      return window.MP_DEVICE_SESSION_ID || window.MeliSessionId || '';
-    }
-
-    function getBuyerData() {
-      saveBuyerCache();
-      return {
-        payer_full_name: buyerFullName.value.trim(),
-        phone: buyerPhone.value.trim(),
-        identification: {
-          type: 'CPF',
-          number: onlyDigits(buyerCpf.value),
-        },
-        address: {
-          zip_code: onlyDigits(buyerCep.value),
-          street_name: buyerStreet.value.trim(),
-          street_number: buyerNumber.value.trim(),
-          neighborhood: buyerDistrict.value.trim(),
-          city: buyerCity.value.trim(),
-          federal_unit: buyerUf.value.trim().toUpperCase(),
-        },
-        device_id: getDeviceId(),
-      };
-    }
-
-    function validateBuyerData() {
-      const data = getBuyerData();
-      if (!data.payer_full_name || data.payer_full_name.split(/\s+/).length < 2) {
-        throw new Error('Informe o nome completo do titular.');
-      }
-      if (data.identification.number.length !== 11) {
-        throw new Error('Informe um CPF válido com 11 números.');
-      }
-      if (onlyDigits(data.phone).length < 10) {
-        throw new Error('Informe o telefone com DDD.');
-      }
-      if (data.address.zip_code.length !== 8) {
-        throw new Error('Informe o CEP com 8 números.');
-      }
-      if (!data.address.street_name || !data.address.street_number || !data.address.neighborhood || !data.address.city || data.address.federal_unit.length !== 2) {
-        throw new Error('Preencha endereço completo: rua, número, bairro, cidade e UF.');
-      }
-      if (!data.device_id) {
-        throw new Error('O Device ID do Mercado Pago não foi carregado ainda. Aguarde alguns segundos e tente novamente.');
-      }
-      return data;
-    }
-
     function moneyBRL(value) {
       const n = Number(value || 0);
       return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
     function resolveAmount(data) {
-      const candidates = [data?.amount, data?.price, data?.transaction_amount, data?.plan_amount, data?.value, data?.plan?.amount, data?.plan?.price, data?.plan?.transaction_amount, data?.plan?.auto_recurring?.transaction_amount, data?.auto_recurring?.transaction_amount, data?.raw?.auto_recurring?.transaction_amount, data?.raw?.transaction_amount, data?.raw?.amount];
+      const candidates = [
+        data?.amount,
+        data?.price,
+        data?.transaction_amount,
+        data?.plan_amount,
+        data?.value,
+        data?.plan?.amount,
+        data?.plan?.price,
+        data?.plan?.transaction_amount,
+        data?.plan?.auto_recurring?.transaction_amount,
+        data?.auto_recurring?.transaction_amount,
+        data?.raw?.auto_recurring?.transaction_amount,
+        data?.raw?.transaction_amount,
+        data?.raw?.amount
+      ];
+
       for (const item of candidates) {
         const n = Number(item);
         if (Number.isFinite(n) && n > 0) return n;
@@ -279,15 +176,25 @@
         sumPrice.textContent = 'Dados inválidos';
         throw new Error('Email ou plano não encontrado. Volte para a página de compra.');
       }
+
       sumEmail.textContent = email;
       sumPlan.textContent = PLAN_NAMES[pcs] || `Plano ${pcs} PCs`;
       sumPcs.textContent = `${pcs} PCs`;
       sumPrice.textContent = 'Carregando...';
+
       const res = await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(pcs)}`);
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data.detail || data.error || 'Falha ao consultar o plano no Worker.');
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.detail || data.error || 'Falha ao consultar o plano no Worker.');
+      }
+
       const amount = resolveAmount(data);
-      if (!(amount > 0)) throw new Error('Valor do plano não encontrado.');
+      if (!(amount > 0)) {
+        console.error('plan_info sem valor utilizável:', data);
+        throw new Error('Valor do plano não encontrado.');
+      }
+
       currentPlanInfo = { ...data, amount };
       sumPrice.textContent = moneyBRL(amount);
       return currentPlanInfo;
@@ -300,139 +207,136 @@
       tabCard.classList.toggle('active', isCard);
       tabPix.classList.toggle('active', !isCard);
     }
+
     tabCard.addEventListener('click', () => showTab('card'));
     tabPix.addEventListener('click', () => showTab('pix'));
 
     async function mountCardBrick() {
       cardLoader.style.display = 'flex';
       hideStatus(cardStatus);
+
       const plan = currentPlanInfo || await loadPlanInfo();
       const amount = Number(plan.amount);
       const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
       const bricksBuilder = mp.bricks();
+
       if (cardBrickController && typeof cardBrickController.unmount === 'function') {
         try { cardBrickController.unmount(); } catch {}
       }
       el('cardBrick_container').innerHTML = '';
+
       cardBrickController = await bricksBuilder.create('cardPayment', 'cardBrick_container', {
-        initialization: { amount, payer: { email } },
+        initialization: {
+          amount,
+          payer: {
+            email,
+          },
+        },
         customization: {
-          visual: { style: { theme: 'default', customVariables: { formBackgroundColor: '#ffffff', baseColor: '#082554', textPrimaryColor: '#0b2347', textSecondaryColor: '#42526b', inputBackgroundColor: '#ffffff' } } },
-          paymentMethods: { maxInstallments: 1 }
+          visual: {
+            style: {
+              theme: 'default',
+              customVariables: {
+                formBackgroundColor: '#ffffff',
+                baseColor: '#082554',
+                textPrimaryColor: '#0b2347',
+                textSecondaryColor: '#42526b',
+                inputBackgroundColor: '#ffffff',
+              },
+            },
+          },
+          paymentMethods: {
+            maxInstallments: 1,
+          },
         },
         callbacks: {
-          onReady: () => { cardLoader.style.display = 'none'; },
+          onReady: () => {
+            cardLoader.style.display = 'none';
+          },
           onError: (error) => {
             cardLoader.style.display = 'none';
             console.error('Erro no Brick:', error);
-            showStatus(cardStatus, 'error', `Erro ao montar checkout do cartão:
-${error?.message || JSON.stringify(error)}`);
+            showStatus(cardStatus, 'error', `Erro ao montar checkout do cartão:\n${error?.message || JSON.stringify(error)}`);
           },
           onSubmit: async (cardFormData) => {
-            if (cardSubmitting) {
-              showStatus(cardStatus, 'info', 'Já existe uma tentativa em andamento. Aguarde alguns instantes.');
-              return;
-            }
+            hideStatus(cardStatus);
+            showStatus(cardStatus, 'info', 'Processando assinatura no cartão...');
+
             try {
-              const buyer = validateBuyerData();
               const token = cardFormData?.token;
               const paymentMethodId = cardFormData?.payment_method_id || '';
               const issuerId = cardFormData?.issuer_id || '';
               const installments = Number(cardFormData?.installments || 1);
+              const identificationType = cardFormData?.payer?.identification?.type || '';
+              const identificationNumber = cardFormData?.payer?.identification?.number || '';
+
               if (!token) throw new Error('O checkout do cartão não retornou o token do cartão.');
-              cardSubmitting = true;
-              showStatus(cardStatus, 'info', 'Processando assinatura no cartão...');
+
               const res = await fetch(`${WORKER}/api/mp/criar_assinatura_cartao`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  email, pcs,
+                  email,
+                  pcs,
                   card_token_id: token,
                   payment_method_id: paymentMethodId,
                   issuer_id: issuerId,
                   installments,
-                  ...buyer,
+                  identification: {
+                    type: identificationType,
+                    number: identificationNumber,
+                  },
                 }),
               });
+
               const data = await res.json().catch(() => ({}));
-              if (!res.ok || !data.ok) throw new Error(data.detail || data.error || 'Falha ao criar assinatura no cartão.');
+              if (!res.ok || !data.ok) {
+                throw new Error(data.detail || data.error || 'Falha ao criar assinatura no cartão.');
+              }
+
               localStorage.setItem('linera_email', email);
               localStorage.setItem('linera_pcs', String(pcs));
               if (data.preapproval_id) localStorage.setItem('linera_preapproval_id', data.preapproval_id);
+
               showStatus(cardStatus, 'info', 'Assinatura criada com sucesso. Redirecionando...');
               location.href = `/sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&preapproval_id=${encodeURIComponent(data.preapproval_id || '')}&origem=cartao`;
             } catch (err) {
               console.error(err);
-              showStatus(cardStatus, 'error', `Erro ao iniciar assinatura:
-${err.message || String(err)}`);
-            } finally {
-              setTimeout(() => { cardSubmitting = false; }, 3000);
+              showStatus(cardStatus, 'error', `Erro ao iniciar assinatura:\n${err.message || String(err)}`);
             }
           },
         },
       });
     }
 
-    function stopPixPolling() {
-      if (pixPollTimer) {
-        clearInterval(pixPollTimer);
-        pixPollTimer = null;
-      }
-    }
-
-    async function verificarPixAutomatico() {
-      if (!pixPaymentId) return;
-      try {
-        const res = await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) throw new Error(data.detail || data.error || 'Falha ao verificar o PIX.');
-        if (data.status === 'approved' || data.license_status === 'active') {
-          stopPixPolling();
-          showStatus(pixStatus, 'info', 'Pagamento PIX aprovado. Redirecionando...');
-          location.href = `/sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&payment_id=${encodeURIComponent(pixPaymentId)}&origem=pix`;
-          return;
-        }
-        showStatus(pixStatus, 'info', `PIX gerado. Aguardando aprovação automática...
-Status atual: ${data.status || 'pendente'}`);
-      } catch (err) {
-        console.error(err);
-        showStatus(pixStatus, 'error', `Erro ao verificar PIX automaticamente:
-${err.message || String(err)}`);
-      }
-    }
-
-    function startPixPolling() {
-      stopPixPolling();
-      verificarPixAutomatico();
-      pixPollTimer = setInterval(verificarPixAutomatico, 5000);
-    }
-
     async function gerarPix() {
-      if (pixGenerating) {
-        showStatus(pixStatus, 'info', 'Já existe uma geração de PIX em andamento.');
-        return;
-      }
       hideStatus(pixStatus);
       pixArea.innerHTML = '';
+      btnCheckPix.classList.add('hidden');
+      showStatus(pixStatus, 'info', 'Gerando PIX...');
+
       try {
-        const buyer = validateBuyerData();
-        pixGenerating = true;
-        showStatus(pixStatus, 'info', 'Gerando PIX...');
         const res = await fetch(`${WORKER}/api/mp/criar_pix`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, pcs, ...buyer }),
+          body: JSON.stringify({ email, pcs }),
         });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) throw new Error(data.detail || data.error || 'Falha ao gerar PIX.');
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.detail || data.error || 'Falha ao gerar PIX.');
+        }
+
         pixPaymentId = String(data.payment_id || '');
         const qrText = data.qr_code || data.pix_code || '';
         const qrBase64 = data.qr_code_base64 || '';
+
         pixArea.innerHTML = `
           ${qrBase64 ? `<img class="qr-img" alt="QR Code PIX" src="data:image/png;base64,${qrBase64}">` : ''}
           ${qrText ? `<div class="muted-mini">Código PIX copia e cola</div><textarea class="pix-code" readonly>${qrText}</textarea>` : ''}
-          <div class="muted-mini">A página vai verificar automaticamente o pagamento a cada poucos segundos.</div>
+          <div class="muted-mini">Após efetuar o pagamento, clique em “Já paguei, verificar”.</div>
         `;
+
         const textarea = pixArea.querySelector('textarea');
         if (textarea) {
           const copyBtn = document.createElement('button');
@@ -440,31 +344,59 @@ ${err.message || String(err)}`);
           copyBtn.type = 'button';
           copyBtn.textContent = 'Copiar código PIX';
           copyBtn.onclick = async () => {
-            try { await navigator.clipboard.writeText(textarea.value); }
-            catch { textarea.select(); document.execCommand('copy'); }
-            showStatus(pixStatus, 'info', 'Código PIX copiado. Aguardando aprovação automática...');
+            try {
+              await navigator.clipboard.writeText(textarea.value);
+              showStatus(pixStatus, 'info', 'Código PIX copiado.');
+            } catch {
+              textarea.select();
+              document.execCommand('copy');
+              showStatus(pixStatus, 'info', 'Código PIX copiado.');
+            }
           };
           const actions = document.createElement('div');
           actions.className = 'pix-actions';
           actions.appendChild(copyBtn);
           pixArea.appendChild(actions);
         }
-        showStatus(pixStatus, 'info', 'PIX gerado com sucesso. Aguardando aprovação automática...');
-        startPixPolling();
+
+        btnCheckPix.classList.remove('hidden');
+        showStatus(pixStatus, 'info', 'PIX gerado com sucesso.');
       } catch (err) {
         console.error(err);
-        showStatus(pixStatus, 'error', `Erro ao gerar PIX:
-${err.message || String(err)}`);
-      } finally {
-        setTimeout(() => { pixGenerating = false; }, 2000);
+        showStatus(pixStatus, 'error', `Erro ao gerar PIX:\n${err.message || String(err)}`);
+      }
+    }
+
+    async function verificarPix() {
+      if (!pixPaymentId) {
+        showStatus(pixStatus, 'error', 'Gere um PIX antes de verificar o pagamento.');
+        return;
+      }
+      showStatus(pixStatus, 'info', 'Verificando pagamento PIX...');
+      try {
+        const res = await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.detail || data.error || 'Falha ao verificar o PIX.');
+        }
+
+        if (data.status === 'approved' || data.license_status === 'active') {
+          location.href = `/sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&payment_id=${encodeURIComponent(pixPaymentId)}&origem=pix`;
+          return;
+        }
+
+        showStatus(pixStatus, 'info', `Pagamento ainda não aprovado. Status atual: ${data.status || 'pendente'}`);
+      } catch (err) {
+        console.error(err);
+        showStatus(pixStatus, 'error', `Erro ao verificar PIX:\n${err.message || String(err)}`);
       }
     }
 
     btnPix.addEventListener('click', gerarPix);
-    window.addEventListener('beforeunload', stopPixPolling);
+    btnCheckPix.addEventListener('click', verificarPix);
 
     (async () => {
-      loadBuyerCache();
       try {
         await loadPlanInfo();
         await mountCardBrick();
@@ -472,8 +404,7 @@ ${err.message || String(err)}`);
         console.error(err);
         sumPrice.textContent = 'R$ --';
         cardLoader.style.display = 'none';
-        showStatus(cardStatus, 'error', `Erro ao montar checkout do cartão:
-${err.message || String(err)}`);
+        showStatus(cardStatus, 'error', `Erro ao montar checkout do cartão:\n${err.message || String(err)}`);
       }
     })();
   </script>
