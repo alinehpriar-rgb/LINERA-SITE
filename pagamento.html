@@ -7,116 +7,83 @@
   <script src="https://sdk.mercadopago.com/js/v2"></script>
   <style>
     :root{
-      --bg:#f6f7fb;--card:#ffffff;--text:#0f172a;--muted:#475569;--primary:#0b1f3b;--primary-hover:#091a31;
-      --line:#e2e8f0;--soft:#f8fafc;--ok:#15803d;--danger:#b91c1c;--shadow:0 12px 28px rgba(15,23,42,.07);
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --primary:#0b1f3b;
+      --primary-hover:#091a31;
+      --line:#e2e8f0;
+      --soft:#f8fafc;
+      --ok:#15803d;
+      --danger:#b91c1c;
+      --shadow:0 14px 36px rgba(15,23,42,.08);
+      --radius:22px;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
-    .wrap{max-width:980px;margin:24px auto;padding:0 16px}
-    .grid{display:grid;grid-template-columns:1fr 1.2fr;gap:16px}
-    .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px}
-    h1,h2{margin:0 0 10px}
-    p{color:var(--muted);line-height:1.45}
-    .summary{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px}
-    .sum-line{margin:8px 0}
-    .badge{display:inline-block;background:#ecfdf5;color:#166534;border:1px solid #bbf7d0;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
-    .field{margin-top:14px}
-    label{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
-    input, select{width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px;font-size:15px}
-    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .brick-area{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}
-    .actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
-    button,.btn{display:inline-block;border:0;border-radius:12px;background:var(--primary);color:#fff;font-weight:800;font-size:15px;padding:14px 18px;cursor:pointer;text-decoration:none}
-    button:hover,.btn:hover{background:var(--primary-hover)}
+    body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:var(--text);background:var(--bg)}
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 42px}
+    .grid{display:grid;grid-template-columns:380px 1fr;gap:22px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}
+    .badge{display:inline-flex;padding:8px 14px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:13px;font-weight:800;margin-bottom:12px}
+    h1{font-size:34px;line-height:1.1;margin:0 0 10px}
+    h2{font-size:24px;margin:0 0 10px}
+    p{color:var(--muted);line-height:1.6;margin:0 0 16px}
+    .summary{display:grid;gap:12px;margin-top:18px}
+    .row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px dashed var(--line)}
+    .row:last-child{border-bottom:0}
+    .k{color:var(--muted)}
+    .price{font-size:28px;font-weight:800;color:#166534}
+    .brick-shell{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;min-height:520px}
+    .brick-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}
+    .hint{font-size:14px;color:var(--muted)}
+    .status{margin-top:16px;padding:14px 16px;border-radius:16px;background:var(--soft);border:1px solid var(--line);white-space:pre-line;font-size:14px;color:#334155}
+    .status.ok{background:#ecfdf5;border-color:#bbf7d0;color:#166534}
+    .status.err{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:16px;padding:14px 18px;font-weight:800}
     .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
-    .status{margin-top:14px;white-space:pre-line;color:var(--muted);font-size:14px}
-    .ok{color:var(--ok)}
-    .err{color:var(--danger)}
-    .note{margin-top:12px;font-size:13px;color:var(--muted)}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .note{margin-top:16px;padding:14px 16px;border-radius:16px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:14px;line-height:1.55}
+    @media (max-width:960px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="grid">
-      <div class="card">
-        <h1>Pagamento da assinatura</h1>
-        <p>Preencha os dados do cartão para ativar sua assinatura mensal do LINERA-NEST.</p>
+      <aside class="card">
+        <div class="badge">Checkout Brick oficial</div>
+        <h1>Finalize sua assinatura</h1>
+        <p>O formulário abaixo é renderizado pelo SDK do Mercado Pago. Você não vai mais usar aquele formulário manual feio.</p>
 
         <div class="summary">
-          <div class="badge">Assinatura mensal</div>
-          <div class="sum-line"><strong>Email:</strong> <span id="outEmail"></span></div>
-          <div class="sum-line"><strong>Plano:</strong> <span id="outPlan"></span></div>
-          <div class="sum-line"><strong>Valor:</strong> R$ <span id="outPrice"></span> / mês</div>
-          <div class="sum-line"><strong>Computadores:</strong> <span id="outPcs"></span></div>
-        </div>
-
-        <div class="note">
-          
+          <div class="row"><span class="k">Email</span><strong id="outEmail"></strong></div>
+          <div class="row"><span class="k">Plano</span><strong id="outPlan"></strong></div>
+          <div class="row"><span class="k">Computadores</span><strong id="outPcs"></strong></div>
+          <div class="row"><span class="k">Cobrança</span><strong>Mensal</strong></div>
+          <div class="row"><span class="k">Valor</span><strong class="price">R$ <span id="outPrice"></span></strong></div>
         </div>
 
         <div class="actions">
-          <a class="btn secondary" href="https://linera-site.pages.dev/comprar.html">Voltar</a>
+          <a class="btn secondary" href="https://linera-site.pages.dev/comprar_brick.html">Voltar e alterar plano</a>
         </div>
-      </div>
 
-      <div class="card">
-        <h2>Dados do cartão</h2>
+        <div class="note">Se a assinatura for autorizada, você será levado para a página de sucesso e poderá baixar sua licença.</div>
+      </aside>
 
-        <form id="cardForm">
-          <div class="field">
-            <label>Número do cartão</label>
-            <div id="form-cardNumber" class="brick-area"></div>
+      <main class="card">
+        <div class="brick-head">
+          <div>
+            <h2>Pague com cartão</h2>
+            <div class="hint">Este é o <strong>Card Payment Brick</strong> do Mercado Pago, renderizado dentro da sua página.</div>
           </div>
+        </div>
 
-          <div class="field">
-            <label>Nome impresso no cartão</label>
-            <input id="form-cardholderName" type="text" placeholder="Nome como está no cartão" />
-          </div>
+        <div class="brick-shell">
+          <div id="cardPaymentBrick_container"></div>
+        </div>
 
-          <div class="row2">
-            <div class="field">
-              <label>Validade</label>
-              <div id="form-expirationDate" class="brick-area"></div>
-            </div>
-            <div class="field">
-              <label>Código de segurança</label>
-              <div id="form-securityCode" class="brick-area"></div>
-            </div>
-          </div>
-
-          <div class="row2">
-            <div class="field">
-              <label>Bandeira</label>
-              <select id="form-paymentMethod"></select>
-            </div>
-            <div class="field">
-              <label>Banco emissor</label>
-              <select id="form-issuer"></select>
-            </div>
-          </div>
-
-          <div class="row2">
-            <div class="field">
-              <label>Tipo de documento</label>
-              <select id="form-identificationType"></select>
-            </div>
-            <div class="field">
-              <label>Número do documento</label>
-              <input id="form-identificationNumber" type="text" placeholder="CPF/CNPJ" />
-            </div>
-          </div>
-
-          <input type="hidden" id="form-email" />
-          <input type="hidden" id="form-installments" value="1" />
-
-          <div class="actions">
-            <button type="submit" id="payBtn">Criar assinatura agora</button>
-          </div>
-        </form>
-
-        <div class="status" id="status">Carregando checkout...</div>
-      </div>
+        <div id="status" class="status">Preparando checkout...</div>
+      </main>
     </div>
   </div>
 
@@ -128,103 +95,117 @@
     const email = (qp.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
     const pcs = (qp.get('pcs') || localStorage.getItem('linera_pcs') || '').trim();
     const planName = localStorage.getItem('linera_plan_name') || `Plano ${pcs} PCs`;
-    const planPrice = localStorage.getItem('linera_plan_price') || '-';
+    const planPrice = localStorage.getItem('linera_plan_price') || '0.00';
 
-    document.getElementById('outEmail').textContent = email;
+    document.getElementById('outEmail').textContent = email || '-';
     document.getElementById('outPlan').textContent = planName;
-    document.getElementById('outPrice').textContent = planPrice;
     document.getElementById('outPcs').textContent = `${pcs} PCs`;
-    document.getElementById('form-email').value = email;
+    document.getElementById('outPrice').textContent = String(planPrice).replace('.', ',');
 
     const statusEl = document.getElementById('status');
-    const payBtn = document.getElementById('payBtn');
 
-    if (!email || !pcs) {
-      statusEl.textContent = 'Dados de email/plano não encontrados. Volte para a página anterior.';
-      payBtn.disabled = true;
-    } else if (!MP_PUBLIC_KEY || MP_PUBLIC_KEY.includes('COLE_AQUI')) {
-      statusEl.innerHTML = '';
-      payBtn.disabled = true;
-    } else {
-      const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
-
-      const cardForm = mp.cardForm({
-        amount: '1',
-        iframe: true,
-        form: {
-          id: 'cardForm',
-          cardholderName: { id: 'form-cardholderName', placeholder: 'Titular do cartão' },
-          cardNumber: { id: 'form-cardNumber', placeholder: 'Número do cartão' },
-          expirationDate: { id: 'form-expirationDate', placeholder: 'MM/YY' },
-          securityCode: { id: 'form-securityCode', placeholder: 'CVV' },
-          installments: { id: 'form-installments' },
-          identificationType: { id: 'form-identificationType' },
-          identificationNumber: { id: 'form-identificationNumber', placeholder: 'Documento' },
-          issuer: { id: 'form-issuer' },
-          paymentMethod: { id: 'form-paymentMethod' },
-          cardholderEmail: { id: 'form-email', placeholder: 'E-mail' },
-        },
-        callbacks: {
-          onFormMounted: function (error) {
-            if (error) {
-              statusEl.textContent = 'Erro ao montar o formulário: ' + error.message;
-              return;
-            }
-            statusEl.textContent = 'Checkout carregado. Preencha os dados do cartão para comprar sua assinatura.';
-          },
-
-          onSubmit: async function (event) {
-            event.preventDefault();
-            statusEl.textContent = 'Gerando token do cartão e criando assinatura...';
-            payBtn.disabled = true;
-
-            const data = cardForm.getCardFormData();
-
-            try {
-              const res = await fetch(`${WORKER}/api/mp/criar_assinatura_cartao`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  email,
-                  pcs: Number(pcs),
-                  card_token_id: data.token,
-                  payment_method_id: data.paymentMethodId,
-                  issuer_id: data.issuerId || '',
-                  identification_type: data.identificationType || '',
-                  identification_number: data.identificationNumber || '',
-                }),
-              });
-
-              const json = await res.json();
-
-              if (!res.ok || !json.ok) {
-                throw new Error(json.detail || json.error || 'Falha ao ativar assinatura.');
-              }
-
-              if (json.checkout_ref) localStorage.setItem('linera_checkout_ref', json.checkout_ref);
-              if (json.preapproval_id) localStorage.setItem('linera_preapproval_id', json.preapproval_id);
-              localStorage.setItem('linera_email', email);
-              localStorage.setItem('linera_pcs', String(pcs));
-
-              statusEl.innerHTML = '<span class="ok">Assinatura ativada com sucesso. Redirecionando...</span>';
-
-              location.href =
-                `https://linera-site.pages.dev/sucesso.html?checkout_ref=${encodeURIComponent(json.checkout_ref || '')}` +
-                `&preapproval_id=${encodeURIComponent(json.preapproval_id || '')}` +
-                `&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
-            } catch (err) {
-              statusEl.innerHTML = '<span class="err">Erro ao ativar assinatura:</span>\n' + (err.message || String(err));
-              payBtn.disabled = false;
-            }
-          },
-
-          onFetching: function (resource) {
-            statusEl.textContent = 'Consultando informações do cartão...';
-            return function () {};
-          }
-        }
-      });
+    function setStatus(message, type = '') {
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+      statusEl.textContent = message;
     }
+
+    async function buildBrick() {
+      if (!email || !pcs) {
+        setStatus('Não encontrei email ou plano. Volte para a página anterior.', 'err');
+        return;
+      }
+
+      if (!MP_PUBLIC_KEY) {
+        setStatus('A Public Key do Mercado Pago não foi configurada.', 'err');
+        return;
+      }
+
+      setStatus('Carregando o Checkout Brick do Mercado Pago...');
+
+      try {
+        const mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'pt-BR' });
+        const bricksBuilder = mp.bricks();
+
+        const settings = {
+          initialization: {
+            amount: Number(planPrice) || 1,
+            payer: { email }
+          },
+          customization: {
+            visual: {
+              style: {
+                theme: 'bootstrap',
+                customVariables: {
+                  formBackgroundColor: '#ffffff',
+                  baseColor: '#0b1f3b',
+                  textPrimaryColor: '#0f172a'
+                }
+              },
+              hideFormTitle: true,
+              hidePaymentButton: false
+            },
+            paymentMethods: {
+              maxInstallments: 1,
+              minInstallments: 1
+            }
+          },
+          callbacks: {
+            onReady: () => {
+              setStatus('Checkout carregado. Preencha os dados do cartão para criar sua assinatura.');
+            },
+            onSubmit: async (formData) => {
+              setStatus('Criando assinatura... Aguarde alguns segundos.');
+
+              try {
+                const res = await fetch(`${WORKER}/api/mp/criar_assinatura_cartao`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email,
+                    pcs: Number(pcs),
+                    token: formData.token,
+                    paymentMethodId: formData.payment_method_id || formData.paymentMethodId || '',
+                    issuerId: formData.issuer_id || formData.issuerId || '',
+                    identificationType: formData.payer?.identification?.type || formData.identificationType || '',
+                    identificationNumber: formData.payer?.identification?.number || formData.identificationNumber || ''
+                  })
+                });
+
+                const json = await res.json();
+
+                if (!res.ok || !json.ok) {
+                  throw new Error(json.detail || json.error || 'Falha ao criar assinatura.');
+                }
+
+                if (json.checkout_ref) localStorage.setItem('linera_checkout_ref', json.checkout_ref);
+                if (json.preapproval_id) localStorage.setItem('linera_preapproval_id', json.preapproval_id);
+                localStorage.setItem('linera_email', email);
+                localStorage.setItem('linera_pcs', String(pcs));
+
+                setStatus('Assinatura criada com sucesso. Redirecionando...', 'ok');
+
+                location.href =
+                  `https://linera-site.pages.dev/sucesso_brick.html?checkout_ref=${encodeURIComponent(json.checkout_ref || '')}` +
+                  `&preapproval_id=${encodeURIComponent(json.preapproval_id || '')}` +
+                  `&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
+              } catch (err) {
+                setStatus('Erro ao criar a assinatura: ' + (err.message || String(err)), 'err');
+                throw err;
+              }
+            },
+            onError: (error) => {
+              setStatus('Erro no Checkout Brick: ' + (error?.message || String(error)), 'err');
+            }
+          }
+        };
+
+        await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', settings);
+      } catch (err) {
+        setStatus('Não foi possível renderizar o Checkout Brick: ' + (err.message || String(err)), 'err');
+      }
+    }
+
+    buildBrick();
   </script>
 </body>
 </html>
