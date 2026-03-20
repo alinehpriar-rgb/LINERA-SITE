@@ -5,133 +5,143 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LINERA-NEST | Sucesso</title>
   <style>
-    :root{--bg:#f6f7fb;--card:#fff;--text:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#0b1f3b;--ok:#15803d;--ok-soft:#ecfdf5;--warn:#92400e;--warn-soft:#fffbeb}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:"Segoe UI",Arial,sans-serif;color:var(--text)} .wrap{max-width:820px;margin:0 auto;padding:28px 18px 42px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 12px 30px rgba(15,23,42,.07)}
-    h1{margin:0 0 8px;font-size:34px}.lead{color:var(--muted);line-height:1.6}.ok{background:var(--ok-soft);border:1px solid #bbf7d0;color:#166534;border-radius:14px;padding:14px;margin:18px 0}.warn{background:var(--warn-soft);border:1px solid #fde68a;color:var(--warn);border-radius:14px;padding:14px;margin:18px 0}
-    .status{margin-top:16px;white-space:pre-line;padding:14px 16px;border-radius:16px;background:#f8fafc;border:1px solid var(--line);font-size:14px;color:#334155}
-    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.btn{display:inline-flex;padding:14px 18px;border-radius:12px;text-decoration:none;font-weight:800}.primary{background:var(--primary);color:#fff}.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}.hidden{display:none} ol{padding-left:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.kv{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}.kv .k{font-size:12px;text-transform:uppercase;color:var(--muted);font-weight:700}.kv .v{font-size:16px;font-weight:800;margin-top:4px}
-    @media (max-width:720px){.grid{grid-template-columns:1fr}h1{font-size:28px}}
+    :root{
+      --bg:#f6f7fb;--card:#ffffff;--text:#0f172a;--muted:#475569;--primary:#0b1f3b;--line:#e2e8f0;
+      --ok:#15803d;--ok-soft:#ecfdf5;--warn:#92400e;--warn-soft:#fffbeb;--shadow:0 12px 28px rgba(15,23,42,.07);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
+    .wrap{max-width:820px;margin:28px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px}
+    h1{margin:0 0 10px}
+    p{color:var(--muted);line-height:1.5}
+    .ok{background:var(--ok-soft);border:1px solid #bbf7d0;color:#166534;border-radius:14px;padding:14px;margin:16px 0}
+    .warn{background:var(--warn-soft);border:1px solid #fde68a;color:var(--warn);border-radius:14px;padding:14px;margin:16px 0}
+    .status{margin-top:14px;white-space:pre-line;color:var(--muted)}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .btn{display:inline-block;padding:14px 18px;border-radius:12px;text-decoration:none;font-weight:700}
+    .primary{background:var(--primary);color:#fff}
+    .secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .hidden{display:none}
+    ol{padding-left:18px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>Obrigado pela compra</h1>
-      <p class="lead">Estamos conferindo seu pagamento e preparando a liberação da licença do LINERA-NEST.</p>
-
-      <div class="grid">
-        <div class="kv"><div class="k">Email</div><div class="v" id="emailOut"></div></div>
-        <div class="kv"><div class="k">Plano</div><div class="v" id="pcsOut"></div></div>
-        <div class="kv"><div class="k">Forma de pagamento</div><div class="v" id="methodOut"></div></div>
-        <div class="kv"><div class="k">Identificador</div><div class="v" id="idOut"></div></div>
-      </div>
-
-      <div class="ok">Assim que a confirmação estiver pronta, o botão para baixar sua licença será liberado automaticamente.</div>
-      <div class="warn" id="warnBox">No PIX, a confirmação pode levar alguns instantes. Mantenha esta página aberta até liberar o download.</div>
-      <div class="status" id="status">Consultando pagamento...</div>
+      <h1>Obrigado pela compra 🎉</h1>
+      <div class="ok">Sua assinatura foi enviada para confirmação. Assim que estiver ativa, o botão para baixar a licença ficará liberado.</div>
+      <p><strong>Email:</strong> <span id="emailOut"></span></p>
+      <p><strong>Plano:</strong> <span id="pcsOut"></span> PCs</p>
+      <div class="status" id="status">Consultando sua assinatura...</div>
 
       <div class="actions">
         <a id="downloadBtn" class="btn primary hidden" href="#" download>Baixar licença</a>
-        <a class="btn secondary" href="https://linera-site.pages.dev/comprar.html">Voltar ao site</a>
+        <a class="btn secondary" href="https://linera-site.pages.dev/comprar.html">Nova assinatura</a>
+      </div>
+
+      <div class="warn">
+        Se o botão ainda não aparecer, aguarde alguns segundos. A página tenta confirmar sua assinatura automaticamente.
       </div>
 
       <h3>Como usar o arquivo .lic</h3>
       <ol>
-        <li>Baixe o arquivo de licença.</li>
+        <li>Clique em <strong>Baixar licença</strong>.</li>
+        <li>Salve o arquivo em um local fácil de encontrar.</li>
         <li>Abra o LINERA-NEST no computador.</li>
-        <li>Importe ou selecione o arquivo <strong>.lic</strong>.</li>
-        <li>Reabra o programa, se necessário, para concluir a ativação.</li>
+        <li>Importe ou selecione o arquivo de licença quando o programa solicitar.</li>
+        <li>Se necessário, feche e abra o programa novamente.</li>
       </ol>
     </div>
   </div>
 
   <script>
     const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+
     const qp = new URLSearchParams(location.search);
-    const method = (qp.get('method') || localStorage.getItem('linera_payment_method') || 'card').trim().toLowerCase();
+    const checkoutRef = qp.get('checkout_ref') || localStorage.getItem('linera_checkout_ref') || '';
+    const preapprovalIdFromUrl = qp.get('preapproval_id') || localStorage.getItem('linera_preapproval_id') || '';
     const email = (qp.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
     const pcs = (qp.get('pcs') || localStorage.getItem('linera_pcs') || '').trim();
-    const checkoutRef = qp.get('checkout_ref') || localStorage.getItem('linera_checkout_ref') || '';
-    const preapprovalId = qp.get('preapproval_id') || localStorage.getItem('linera_preapproval_id') || '';
-    const paymentId = qp.get('payment_id') || localStorage.getItem('linera_pix_payment_id') || '';
 
-    document.getElementById('emailOut').textContent = email || '-';
-    document.getElementById('pcsOut').textContent = pcs ? `${pcs} PCs` : '-';
-    document.getElementById('methodOut').textContent = method === 'pix' ? 'PIX' : 'Cartão de crédito';
-    document.getElementById('idOut').textContent = method === 'pix' ? (paymentId || '-') : (preapprovalId || checkoutRef || '-');
-    if (method !== 'pix') document.getElementById('warnBox').style.display = 'none';
+    document.getElementById('emailOut').textContent = email || '(não informado)';
+    document.getElementById('pcsOut').textContent = pcs || '-';
 
     const statusEl = document.getElementById('status');
     const downloadBtn = document.getElementById('downloadBtn');
-    function liberarDownload(conf) {
-      downloadBtn.href = `${WORKER}/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(conf.pcs || pcs)}`;
-      downloadBtn.classList.remove('hidden');
+
+    async function confirmar(preapprovalId, email) {
+      const res = await fetch(
+        `${WORKER}/api/mp/confirmar?preapproval_id=${encodeURIComponent(preapprovalId)}&email=${encodeURIComponent(email)}`
+      );
+      return await res.json();
     }
 
-    async function loopCartao() {
+    async function consultarStatus() {
+      if (!email) {
+        statusEl.textContent = 'Email não encontrado. Volte para comprar.html e faça novamente.';
+        return;
+      }
+
       let tentativas = 0;
-      async function tick() {
+
+      const loop = async () => {
         tentativas++;
+
         try {
-          const res = await fetch(`${WORKER}/api/mp/checkout_status?checkout_ref=${encodeURIComponent(checkoutRef)}`);
-          const data = await res.json();
-          const preId = data?.checkout?.preapproval_id || preapprovalId;
-          const mpStatus = data?.preapproval?.status || data?.checkout?.preapproval_status || data?.checkout?.status || '(aguardando)';
-          statusEl.textContent = `Tentativa ${tentativas}
-Assinatura: ${preId || '-'}
-Status: ${mpStatus}`;
-          if (preId && email) {
-            const confRes = await fetch(`${WORKER}/api/mp/confirmar?preapproval_id=${encodeURIComponent(preId)}&email=${encodeURIComponent(email)}`);
-            const conf = await confRes.json();
+          let preapprovalId = preapprovalIdFromUrl;
+          let conf = null;
+
+          if (checkoutRef) {
+            const statusRes = await fetch(`${WORKER}/api/mp/checkout_status?checkout_ref=${encodeURIComponent(checkoutRef)}`);
+            const statusData = await statusRes.json();
+
+            if (statusRes.ok && statusData.ok) {
+              preapprovalId =
+                statusData?.checkout?.preapproval_id ||
+                statusData?.preapproval?.id ||
+                preapprovalId;
+
+              statusEl.textContent =
+                `Tentativa ${tentativas}\n` +
+                `Checkout: ${checkoutRef}\n` +
+                `Assinatura: ${preapprovalId || '(aguardando)'}\n` +
+                `Status MP: ${statusData?.preapproval?.status || statusData?.checkout?.preapproval_status || statusData?.checkout?.status || '(aguardando)'}`;
+            }
+          }
+
+          if (preapprovalId) {
+            conf = await confirmar(preapprovalId, email);
+
             if (conf.ok && conf.status === 'active') {
-              statusEl.textContent = `Pagamento confirmado com sucesso.
-Plano liberado: ${conf.pcs} PCs
-Validade: ${conf.valid_until || '-'}`;
-              liberarDownload(conf);
+              const finalPcs = conf.pcs || pcs;
+              downloadBtn.href =
+                `${WORKER}/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(finalPcs)}`;
+              downloadBtn.classList.remove('hidden');
+
+              statusEl.textContent =
+                `Pagamento confirmado com sucesso.\n` +
+                `Assinatura: ${preapprovalId}\n` +
+                `Plano liberado: ${finalPcs} PCs\n` +
+                `Validade: ${conf.valid_until || '-'}`;
               return;
             }
           }
-          if (tentativas < 20) setTimeout(tick, 4000);
-          else statusEl.textContent += '
 
-Ainda não consegui confirmar automaticamente. Aguarde um pouco e recarregue a página.';
-        } catch (err) {
-          statusEl.textContent = 'Erro ao confirmar assinatura: ' + (err.message || String(err));
-        }
-      }
-      tick();
-    }
-
-    async function loopPix() {
-      let tentativas = 0;
-      async function tick() {
-        tentativas++;
-        try {
-          const res = await fetch(`${WORKER}/api/mp/confirmar_pix?payment_id=${encodeURIComponent(paymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
-          const conf = await res.json();
-          statusEl.textContent = `Tentativa ${tentativas}
-Pagamento PIX: ${paymentId || '-'}
-Status: ${conf.payment_status || conf.status || 'aguardando'}`;
-          if (conf.ok && conf.status === 'active') {
-            statusEl.textContent = `PIX confirmado com sucesso.
-Plano liberado: ${conf.pcs} PCs
-Validade: ${conf.valid_until || '-'}`;
-            liberarDownload(conf);
-            return;
+          if (tentativas < 15) {
+            setTimeout(loop, 3000);
+          } else {
+            statusEl.textContent += '\n\nA confirmação automática demorou mais que o esperado. Recarregue esta página em alguns instantes.';
           }
-          if (tentativas < 24) setTimeout(tick, 5000);
-          else statusEl.textContent += '
-
-O PIX ainda não foi confirmado. Aguarde mais um pouco e recarregue a página.';
         } catch (err) {
-          statusEl.textContent = 'Erro ao confirmar PIX: ' + (err.message || String(err));
+          statusEl.textContent = 'Erro ao consultar sua assinatura:\n' + (err.message || String(err));
         }
-      }
-      tick();
+      };
+
+      loop();
     }
 
-    if (method === 'pix') loopPix(); else loopCartao();
+    consultarStatus();
   </script>
 </body>
 </html>
