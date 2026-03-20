@@ -1,326 +1,272 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LINERA-NEST | Pagamento</title>
+  <title>LINERA-NEST | Pagamentos</title>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
   <script src="https://www.mercadopago.com/v2/security.js" view="checkout"></script>
   <style>
-    :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --line: #e2e8f0;
-      --primary: #0b1f3b;
-      --primary-hover: #08182e;
-      --danger: #b91c1c;
-      --warning: #a16207;
-      --success: #15803d;
-      --soft: #f8fafc;
-      --soft-danger: #fef2f2;
-      --soft-warning: #fffbeb;
-      --soft-success: #f0fdf4;
-      --radius: 18px;
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#475569;
+      --primary:#0b1f3b; --primary-hover:#091a31; --line:#e2e8f0;
+      --soft:#f8fafc; --green:#15803d; --green-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2;
+      --warning:#a16207; --warning-soft:#fffbeb; --shadow:0 12px 28px rgba(15,23,42,.07);
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-
-    .wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 28px 16px 48px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 20px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
-      padding: 22px;
-    }
-
-    h1, h2, h3 {
-      margin: 0 0 12px;
-    }
-
-    h1 { font-size: 28px; }
-    h2 { font-size: 18px; }
-
-    p {
-      margin: 0 0 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    input, select {
-      height: 44px;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 0 12px;
-      font-size: 15px;
-      outline: none;
-      background: #fff;
-      width: 100%;
-    }
-
-    input:focus, select:focus {
-      border-color: #94a3b8;
-      box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      background: var(--soft);
-      color: var(--muted);
-      border: 1px solid var(--line);
-      margin-bottom: 14px;
-    }
-
-    .status {
-      display: none;
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      font-size: 14px;
-      line-height: 1.5;
-      white-space: pre-line;
-    }
-
-    .status.show { display: block; }
-    .status.info { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-    .status.error { background: var(--soft-danger); color: var(--danger); border-color: #fecaca; }
-    .status.warn { background: var(--soft-warning); color: var(--warning); border-color: #fde68a; }
-    .status.success { background: var(--soft-success); color: var(--success); border-color: #bbf7d0; }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--line);
-      font-size: 15px;
-    }
-
-    .summary-row:last-child { border-bottom: 0; }
-
-    .small {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .loader {
-      display: none;
-      margin-top: 14px;
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    .loader.show { display: block; }
-
-    .tips {
-      margin-top: 16px;
-      padding-left: 18px;
-      color: var(--muted);
-    }
-
-    .tips li { margin-bottom: 8px; }
-
-    #paymentBrick_container {
-      margin-top: 18px;
-      min-height: 220px;
-    }
-
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; }
-      .form-grid { grid-template-columns: 1fr; }
-    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
+    .wrap{max-width:1180px;margin:20px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:380px 1fr;gap:18px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+    .summary{padding:22px}
+    .pill{display:inline-block;padding:7px 14px;border:1px solid #bcd0f7;border-radius:999px;background:#f4f8ff;color:#1d4ed8;font-weight:800;margin-bottom:14px}
+    h1{margin:0 0 10px;font-size:30px;line-height:1.1}
+    h2{margin:0 0 10px;font-size:24px}
+    h3{margin:0 0 10px;font-size:17px}
+    .muted{color:var(--muted);font-size:15px;line-height:1.55}
+    .rows{margin-top:18px;border-top:1px solid var(--line)}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px dashed var(--line);font-size:15px}
+    .row .label{color:var(--muted)}
+    .row .value{font-weight:800;text-align:right}
+    .value.price{font-size:28px;color:#166534}
+    .info{margin-top:18px;padding:14px 16px;border-radius:18px;background:#fff8e6;border:1px solid #f3d36a;color:#9a5800;line-height:1.45}
+    .back{display:inline-flex;align-items:center;justify-content:center;margin-top:18px;padding:14px 18px;border-radius:16px;background:#fff;border:1px solid #d7deea;color:var(--text);text-decoration:none;font-weight:800}
+    .panel{padding:22px}
+    .tabs{display:flex;gap:10px;margin-bottom:18px}
+    .tab{border:1px solid #c8d3e2;background:#fff;color:var(--primary);padding:14px 22px;border-radius:16px;font-weight:800;cursor:pointer;font-size:16px}
+    .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .tabpane{display:none}
+    .tabpane.active{display:block}
+    .paybox{border:1px solid var(--line);border-radius:22px;background:#fff;padding:22px;min-height:540px}
+    .lead{margin:0 0 16px;color:var(--muted);font-size:15px;line-height:1.5}
+    .status{margin-top:14px;padding:14px 16px;border-radius:16px;line-height:1.5;font-size:15px;white-space:pre-line}
+    .status.info{background:#f8fafc;border:1px solid #dbe3ef;color:#334155}
+    .status.ok{background:var(--green-soft);border:1px solid #bbf7d0;color:var(--green)}
+    .status.error{background:var(--danger-soft);border:1px solid #fecaca;color:var(--danger)}
+    .status.warn{background:var(--warning-soft);border:1px solid #fde68a;color:var(--warning)}
+    .loader{display:flex;align-items:center;gap:12px;margin-top:12px;color:#334155;font-weight:700}
+    .spinner{width:20px;height:20px;border-radius:50%;border:3px solid #dbe3ef;border-top-color:var(--primary);animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .retry{margin-top:16px;padding:13px 18px;border:0;border-radius:14px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer}
+    .pix-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+    .pix-card{border:1px dashed #c9d5e6;border-radius:20px;padding:18px;background:#fafcff}
+    .pix-btn{padding:16px 22px;border:0;border-radius:16px;background:var(--primary);color:#fff;font-size:17px;font-weight:800;cursor:pointer}
+    .pix-btn:disabled{opacity:.6;cursor:not-allowed}
+    .qr{width:100%;max-width:280px;border-radius:18px;border:1px solid var(--line);background:#fff;padding:10px}
+    .code-box{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px}
+    textarea{width:100%;min-height:120px;border:0;resize:vertical;outline:none;font-family:inherit;font-size:14px;color:#0f172a}
+    .copy{margin-top:10px;padding:12px 16px;border:0;border-radius:14px;background:#0f172a;color:#fff;font-weight:800;cursor:pointer}
+    .hidden{display:none}
+    .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field.full{grid-column:1 / -1}
+    label{font-size:14px;font-weight:700}
+    input, select{height:46px;border:1px solid #cbd5e1;border-radius:14px;padding:0 12px;font-size:15px;outline:none;background:#fff;width:100%}
+    input:focus, select:focus{border-color:#94a3b8;box-shadow:0 0 0 3px rgba(148,163,184,.15)}
+    .help-list{margin:14px 0 0;padding-left:18px;color:var(--muted)}
+    .help-list li{margin-bottom:7px}
+    #paymentBrick_container{margin-top:10px;min-height:260px}
+    .section-soft{padding:16px;border-radius:18px;background:var(--soft);border:1px solid var(--line);margin-bottom:16px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .pix-wrap{grid-template-columns:1fr} .fields{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="pill">Pagamento com proteção extra contra tentativa duplicada e com envio do Device ID</div>
     <div class="grid">
-      <section class="card">
-        <h1>Finalizar assinatura</h1>
-        <p>Preencha exatamente os dados do titular do cartão. Nome completo, CPF e e-mail consistentes ajudam na análise de segurança.</p>
+      <div class="card summary">
+        <span class="pill">Pagamento do LINERA-NEST</span>
+        <h1>Finalize sua compra</h1>
+        <p class="muted">O cartão usa envio de Device ID, bloqueio contra repetição imediata e dados completos do titular para melhorar a análise do Mercado Pago.</p>
 
-        <div class="form-grid">
-          <div class="field full">
-            <label for="full_name">Nome completo do titular</label>
-            <input id="full_name" type="text" autocomplete="cc-name" placeholder="Nome igual ao do cartão" />
-          </div>
+        <div class="rows">
+          <div class="row"><div class="label">Email</div><div class="value" id="emailOut">-</div></div>
+          <div class="row"><div class="label">Plano</div><div class="value" id="planOut">-</div></div>
+          <div class="row"><div class="label">Computadores</div><div class="value" id="pcsOut">-</div></div>
+          <div class="row"><div class="label">Valor</div><div class="value price" id="priceOut">R$ --</div></div>
+          <div class="row"><div class="label">Device ID</div><div class="value" id="deviceOut">carregando...</div></div>
+        </div>
 
-          <div class="field">
-            <label for="email">E-mail</label>
-            <input id="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" />
-          </div>
+        <div class="info">
+          <strong>Cartão:</strong> assinatura mensal com renovação automática.<br>
+          <strong>PIX:</strong> pagamento do mês atual, sem renovação automática.
+        </div>
 
-          <div class="field">
-            <label for="cpf">CPF</label>
-            <input id="cpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" />
-          </div>
+        <a class="back" href="comprar.html">Voltar e alterar plano</a>
+      </div>
 
-          <div class="field">
-            <label for="phone">Telefone</label>
-            <input id="phone" type="text" inputmode="numeric" maxlength="15" placeholder="(00) 00000-0000" />
-          </div>
+      <div class="card panel">
+        <div class="tabs">
+          <button class="tab active" data-tab="card">Cartão de crédito</button>
+          <button class="tab" data-tab="pix">PIX</button>
+        </div>
 
-          <div class="field">
-            <label for="plan">Plano</label>
-            <select id="plan"></select>
+        <div id="tab-card" class="tabpane active">
+          <div class="paybox">
+            <h2>Cartão e assinatura automática</h2>
+            <p class="lead">Preencha os dados reais do titular. Nome completo, CPF, telefone e endereço ajudam a reduzir recusas por risco.</p>
+
+            <div class="section-soft">
+              <h3>Dados do titular</h3>
+              <div class="fields">
+                <div class="field full">
+                  <label for="full_name">Nome completo</label>
+                  <input id="full_name" type="text" autocomplete="cc-name" placeholder="Nome igual ao do cartão" />
+                </div>
+                <div class="field">
+                  <label for="email">E-mail</label>
+                  <input id="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" />
+                </div>
+                <div class="field">
+                  <label for="cpf">CPF</label>
+                  <input id="cpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" />
+                </div>
+                <div class="field">
+                  <label for="phone">Telefone</label>
+                  <input id="phone" type="text" inputmode="numeric" maxlength="15" placeholder="(00) 00000-0000" />
+                </div>
+                <div class="field">
+                  <label for="zip_code">CEP</label>
+                  <input id="zip_code" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" />
+                </div>
+                <div class="field full">
+                  <label for="street_name">Rua / Avenida</label>
+                  <input id="street_name" type="text" autocomplete="address-line1" placeholder="Nome da rua" />
+                </div>
+                <div class="field">
+                  <label for="street_number">Número</label>
+                  <input id="street_number" type="text" placeholder="123" />
+                </div>
+                <div class="field">
+                  <label for="neighborhood">Bairro</label>
+                  <input id="neighborhood" type="text" placeholder="Centro" />
+                </div>
+                <div class="field">
+                  <label for="city">Cidade</label>
+                  <input id="city" type="text" placeholder="Sua cidade" />
+                </div>
+                <div class="field">
+                  <label for="federal_unit">UF</label>
+                  <input id="federal_unit" type="text" maxlength="2" placeholder="SP" />
+                </div>
+              </div>
+            </div>
+
+            <div id="cardLoader" class="loader"><div class="spinner"></div><div id="cardLoaderText">Preparando o formulário seguro do cartão...</div></div>
+            <div id="cardStatus" class="status info">Carregando o formulário de pagamento com proteção extra contra duplicidade.</div>
+            <div id="paymentBrick_container"></div>
+            <button id="cardRetry" class="retry hidden">Recarregar formulário</button>
+
+            <ul class="help-list">
+              <li>Não clique duas vezes no pagamento.</li>
+              <li>Se aparecer recusa por risco, aguarde um pouco antes de tentar novamente.</li>
+              <li>Evite trocar várias vezes de cartão na mesma sequência.</li>
+            </ul>
           </div>
         </div>
 
-        <div id="paymentBrick_container"></div>
-        <div id="loader" class="loader">Enviando pagamento com segurança… não feche a página e não clique novamente.</div>
-        <div id="status" class="status"></div>
-      </section>
+        <div id="tab-pix" class="tabpane">
+          <div class="paybox">
+            <h2>PIX do mês</h2>
+            <p class="lead">Essa opção gera um QR Code para liberar 30 dias do seu plano. No fim do período, o próximo mês deve ser pago novamente.</p>
 
-      <aside class="card">
-        <h2>Resumo</h2>
-        <div class="summary-row"><span>Produto</span><strong>LINERA-NEST</strong></div>
-        <div class="summary-row"><span>Plano</span><strong id="sumPlan">-</strong></div>
-        <div class="summary-row"><span>Valor</span><strong id="sumAmount">-</strong></div>
-        <div class="summary-row"><span>Renovação</span><strong>Automática</strong></div>
-        <div class="summary-row"><span>Device ID</span><strong id="sumDevice">carregando…</strong></div>
+            <div class="pix-wrap">
+              <div class="pix-card">
+                <button class="pix-btn" id="pixBtn">Gerar PIX agora</button>
+                <div id="pixSideStatus" class="status info" style="margin-top:16px">Ao gerar o PIX, o QR Code aparecerá ao lado e o sistema acompanhará a confirmação automaticamente.</div>
+              </div>
 
-        <ul class="tips">
-          <li>Não clique duas vezes para pagar.</li>
-          <li>Use dados reais e completos do titular.</li>
-          <li>Se houver recusa por risco, aguarde um pouco antes de tentar de novo.</li>
-        </ul>
-        <p class="small">Esta página bloqueia reenvio imediato da mesma tentativa para reduzir falso positivo de antifraude.</p>
-      </aside>
+              <div>
+                <img id="qrImg" class="qr hidden" alt="QR Code PIX" />
+                <div id="pixStatus" class="status info hidden"></div>
+                <div id="pixCodeBox" class="code-box hidden">
+                  <div style="font-weight:800; margin-bottom:8px">Código PIX copia e cola</div>
+                  <textarea id="pixCode" readonly></textarea>
+                  <button id="copyPix" class="copy">Copiar código PIX</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    const statusBox = document.getElementById("status");
-    const loader = document.getElementById("loader");
-    const planSelect = document.getElementById("plan");
-    const sumPlan = document.getElementById("sumPlan");
-    const sumAmount = document.getElementById("sumAmount");
-    const sumDevice = document.getElementById("sumDevice");
+    const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+    const qs = new URLSearchParams(location.search);
+    const emailParam = (qs.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
+    const pcs = String(qs.get('pcs') || localStorage.getItem('linera_pcs') || '').trim();
 
-    let brickController = null;
     let mp = null;
-    let config = null;
-    let submitting = false;
-    let lastPayloadFingerprint = "";
+    let brickController = null;
+    let publicKey = '';
+    let planInfo = null;
+    let cardSubmitting = false;
+    let lastFingerprint = '';
+    let pixPaymentId = '';
+    let pixPollTimer = null;
 
-    function qs(name) {
-      return new URLSearchParams(window.location.search).get(name) || "";
+    function money(v){ return Number(v || 0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+    function setText(id, txt){ document.getElementById(id).textContent = txt; }
+    function show(el){ el.classList.remove('hidden'); }
+    function hide(el){ el.classList.add('hidden'); }
+    function onlyDigits(v){ return String(v || '').replace(/\D+/g, ''); }
+    function normalizeEmail(v){ return String(v || '').trim().toLowerCase(); }
+    function normalizeName(v){ return String(v || '').trim().replace(/\s+/g, ' '); }
+
+    function showCardStatus(text, cls='info'){
+      const el = document.getElementById('cardStatus');
+      el.className = `status ${cls}`;
+      el.textContent = text;
     }
 
-    function onlyDigits(value) {
-      return String(value || "").replace(/\D+/g, "");
+    function showPixStatus(text, cls='info'){
+      const el = document.getElementById('pixStatus');
+      el.className = `status ${cls}`;
+      show(el);
+      el.textContent = text;
     }
 
-    function normalizeEmail(value) {
-      return String(value || "").trim().toLowerCase();
-    }
-
-    function normalizeName(value) {
-      return String(value || "").trim().replace(/\s+/g, " ");
+    function getDeviceId(){
+      return window.MP_DEVICE_SESSION_ID || '';
     }
 
     function formatCpf(value) {
       const d = onlyDigits(value).slice(0, 11);
       return d
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
     }
 
     function formatPhone(value) {
       const d = onlyDigits(value).slice(0, 11);
-      if (d.length <= 10) {
-        return d
-          .replace(/(\d{2})(\d)/, "($1) $2")
-          .replace(/(\d{4})(\d)/, "$1-$2");
-      }
-      return d
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{5})(\d)/, "$1-$2");
+      if (d.length <= 10) return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
+      return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
     }
 
-    function showStatus(type, message) {
-      statusBox.className = `status show ${type}`;
-      statusBox.textContent = message;
-    }
-
-    function clearStatus() {
-      statusBox.className = "status";
-      statusBox.textContent = "";
-    }
-
-    function setLoading(on) {
-      loader.classList.toggle("show", !!on);
-    }
-
-    function getDeviceId() {
-      return window.MP_DEVICE_SESSION_ID || "";
+    function formatZip(value) {
+      const d = onlyDigits(value).slice(0, 8);
+      return d.replace(/(\d{5})(\d)/, '$1-$2');
     }
 
     async function sha256Hex(text) {
       const data = new TextEncoder().encode(text);
-      const hash = await crypto.subtle.digest("SHA-256", data);
-      return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, "0")).join("");
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    async function makeLocalFingerprint() {
-      const email = normalizeEmail(document.getElementById("email").value);
-      const cpf = onlyDigits(document.getElementById("cpf").value);
-      const plan = planSelect.value;
-      return await sha256Hex([email, cpf, plan].join("|"));
+    function getFullName(){ return normalizeName(document.getElementById('full_name').value); }
+    function getEmail(){ return normalizeEmail(document.getElementById('email').value); }
+    function getCpf(){ return onlyDigits(document.getElementById('cpf').value); }
+
+    async function makeAttemptFingerprint() {
+      return await sha256Hex([getEmail(), getCpf(), pcs].join('|'));
     }
 
-    function isRecentLocalAttempt(fp) {
+    function wasRecentAttempt(fp) {
       try {
-        const raw = localStorage.getItem("linera_last_checkout_attempt");
+        const raw = localStorage.getItem('linera_last_checkout_attempt');
         if (!raw) return false;
         const data = JSON.parse(raw);
         if (!data || data.fingerprint !== fp) return false;
@@ -330,212 +276,255 @@
       }
     }
 
-    function saveLocalAttempt(fp) {
-      localStorage.setItem("linera_last_checkout_attempt", JSON.stringify({
-        fingerprint: fp,
-        at: Date.now(),
-      }));
+    function saveAttempt(fp) {
+      localStorage.setItem('linera_last_checkout_attempt', JSON.stringify({ fingerprint: fp, at: Date.now() }));
     }
 
     function validatePayerFields() {
-      const fullName = normalizeName(document.getElementById("full_name").value);
-      const email = normalizeEmail(document.getElementById("email").value);
-      const cpf = onlyDigits(document.getElementById("cpf").value);
-
-      if (fullName.length < 5) {
-        throw new Error("Digite o nome completo do titular.");
-      }
-      if (!email || !email.includes("@")) {
-        throw new Error("Digite um e-mail válido.");
-      }
-      if (cpf.length !== 11) {
-        throw new Error("Digite um CPF válido com 11 dígitos.");
-      }
-    }
-
-    function updateSummary() {
-      const selected = config?.plans?.find(p => p.code === planSelect.value || p.id === planSelect.value);
-      sumPlan.textContent = selected?.title || selected?.code || "-";
-      sumAmount.textContent = typeof selected?.amount === "number" && selected.amount > 0
-        ? selected.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-        : "ver plano";
-      sumDevice.textContent = getDeviceId() || "não disponível";
+      if (getFullName().length < 5) throw new Error('Digite o nome completo do titular.');
+      if (!getEmail() || !getEmail().includes('@')) throw new Error('Digite um e-mail válido.');
+      if (getCpf().length !== 11) throw new Error('Digite um CPF válido com 11 dígitos.');
+      if (!getDeviceId()) throw new Error('O Device ID não foi carregado ainda. Atualize a página e tente novamente.');
     }
 
     async function loadConfig() {
-      const res = await fetch("/api/config", { cache: "no-store" });
+      const res = await fetch(`${WORKER}/api/mp/public_config`, { cache: 'no-store' });
       const data = await res.json();
-      if (!data.ok) throw new Error("Não foi possível carregar a configuração.");
-      config = data;
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Falha ao carregar configuração pública.');
+      publicKey = String(data.public_key || '').trim();
+      if (!publicKey) throw new Error('MP_PUBLIC_KEY não configurado no Worker.');
     }
 
-    function fillPlans() {
-      planSelect.innerHTML = "";
-      for (const p of config.plans || []) {
-        const option = document.createElement("option");
-        option.value = p.code || p.id;
-        option.textContent = p.title
-          ? `${p.title}${p.amount ? ` — ${Number(p.amount).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}` : ""}`
-          : (p.code || p.id);
-        planSelect.appendChild(option);
+    async function loadPlan() {
+      if (!emailParam || !pcs) {
+        location.href = 'comprar.html';
+        return;
       }
-
-      const fromQuery = qs("plan");
-      if (fromQuery) {
-        const matched = [...planSelect.options].find(opt => opt.value === fromQuery);
-        if (matched) planSelect.value = fromQuery;
-      }
-
-      updateSummary();
-      planSelect.addEventListener("change", updateSummary);
+      localStorage.setItem('linera_email', emailParam);
+      localStorage.setItem('linera_pcs', pcs);
+      document.getElementById('email').value = emailParam;
+      setText('emailOut', emailParam);
+      setText('pcsOut', `${pcs} PCs`);
+      const res = await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(pcs)}`, { cache: 'no-store' });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Falha ao carregar plano.');
+      planInfo = data;
+      setText('planOut', data.plan_name || `Plano ${pcs} PCs`);
+      setText('priceOut', `R$ ${money(data.amount)}`);
     }
 
-    function mountMasks() {
-      const cpf = document.getElementById("cpf");
-      const phone = document.getElementById("phone");
-      cpf.addEventListener("input", () => cpf.value = formatCpf(cpf.value));
-      phone.addEventListener("input", () => phone.value = formatPhone(phone.value));
-    }
+    async function createCardBrick(force = false) {
+      if (brickController && !force) return;
+      hide(document.getElementById('cardRetry'));
+      document.getElementById('cardLoader').style.display = 'flex';
+      document.getElementById('cardLoaderText').textContent = 'Preparando o formulário seguro do cartão...';
+      showCardStatus('Carregando o formulário de pagamento com proteção extra contra duplicidade.', 'info');
 
-    async function createBrick() {
       if (brickController) {
         try { brickController.unmount(); } catch {}
         brickController = null;
       }
 
-      mp = new MercadoPago(config.public_key, { locale: "pt-BR" });
+      mp = new MercadoPago(publicKey, { locale: 'pt-BR' });
       const bricksBuilder = mp.bricks();
-      const selectedPlan = config.plans.find(p => p.code === planSelect.value || p.id === planSelect.value);
-      const amount = Number(selectedPlan?.amount || 1);
-
-      brickController = await bricksBuilder.create("cardPayment", "paymentBrick_container", {
+      brickController = await bricksBuilder.create('cardPayment', 'paymentBrick_container', {
         initialization: {
-          amount,
-          payer: {
-            email: normalizeEmail(document.getElementById("email").value),
-          },
+          amount: Number(planInfo?.amount || 1),
+          payer: { email: getEmail() || emailParam },
         },
         customization: {
-          visual: {
-            style: {
-              theme: "default",
-            },
-          },
-          paymentMethods: {
-            maxInstallments: 1,
-          },
+          visual: { style: { theme: 'default' } },
+          paymentMethods: { maxInstallments: 1 },
         },
         callbacks: {
           onReady: () => {
-            updateSummary();
+            document.getElementById('cardLoader').style.display = 'none';
+            setText('deviceOut', getDeviceId() || 'aguardando...');
+            showCardStatus('Formulário pronto. Revise os dados do titular e envie apenas uma vez.', 'ok');
           },
           onError: (error) => {
-            console.error("brick_error", error);
-            showStatus("error", "O formulário do cartão encontrou um problema. Atualize a página e tente novamente.");
+            console.error('brick_error', error);
+            document.getElementById('cardLoader').style.display = 'none';
+            show(document.getElementById('cardRetry'));
+            showCardStatus('O formulário do cartão encontrou um problema. Clique em recarregar formulário.', 'error');
           },
           onSubmit: async (cardFormData) => {
-            clearStatus();
-            validatePayerFields();
-
-            const fingerprint = await makeLocalFingerprint();
-            if (submitting) {
-              showStatus("warn", "Já existe uma tentativa em andamento. Aguarde a resposta do pagamento.");
-              return;
-            }
-            if (fingerprint && (lastPayloadFingerprint === fingerprint || isRecentLocalAttempt(fingerprint))) {
-              showStatus("warn", "Você acabou de tentar pagar com os mesmos dados. Aguarde alguns segundos antes de reenviar.");
-              return;
-            }
-
-            const deviceId = getDeviceId();
-            if (!deviceId) {
-              showStatus("warn", "O Device ID não foi carregado. Atualize a página antes de tentar pagar.");
-              return;
-            }
-
-            submitting = true;
-            lastPayloadFingerprint = fingerprint;
-            saveLocalAttempt(fingerprint);
-            setLoading(true);
-
             try {
-              const payload = {
-                plan_code: planSelect.value,
-                full_name: normalizeName(document.getElementById("full_name").value),
-                email: normalizeEmail(document.getElementById("email").value),
-                cpf: onlyDigits(document.getElementById("cpf").value),
-                phone: onlyDigits(document.getElementById("phone").value),
-                device_id: deviceId,
-                referrer: document.referrer || "",
-                user_agent: navigator.userAgent || "",
-                card_token_id:
-                  cardFormData.token ||
-                  cardFormData.tokenId ||
-                  cardFormData.cardTokenId ||
-                  "",
-                payment_method_id:
-                  cardFormData.payment_method_id ||
-                  cardFormData.paymentMethodId ||
-                  "",
-                issuer_id:
-                  cardFormData.issuer_id ??
-                  cardFormData.issuerId ??
-                  null,
-                installments:
-                  Number(cardFormData.installments || 1),
-              };
-
-              const res = await fetch("/api/create-subscription", {
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify(payload),
-              });
-
-              const result = await res.json().catch(() => ({}));
-
-              if (!res.ok || !result.ok) {
-                const rawText = String(result.message || result.error || "Pagamento recusado.");
-                const text = /high_risk/i.test(rawText)
-                  ? "O cartão foi recusado por análise de risco. Confirme se nome, CPF e e-mail do titular estão corretos e aguarde um pouco antes de tentar novamente. Evite repetir várias tentativas seguidas."
-                  : rawText;
-                showStatus(res.status === 429 ? "warn" : "error", text);
+              validatePayerFields();
+              const fingerprint = await makeAttemptFingerprint();
+              if (cardSubmitting) {
+                showCardStatus('Já existe uma tentativa em andamento. Aguarde a resposta do pagamento.', 'warn');
+                return;
+              }
+              if (fingerprint && (fingerprint === lastFingerprint || wasRecentAttempt(fingerprint))) {
+                showCardStatus('Você acabou de tentar pagar com os mesmos dados. Aguarde alguns segundos antes de reenviar.', 'warn');
                 return;
               }
 
-              showStatus("success", "Assinatura criada com sucesso. Redirecionando…");
-              const successUrl = new URL("/sucesso.html", window.location.origin);
-              if (result.preapproval_id) successUrl.searchParams.set("preapproval_id", result.preapproval_id);
-              if (result.external_reference) successUrl.searchParams.set("ref", result.external_reference);
-              window.location.href = successUrl.toString();
+              cardSubmitting = true;
+              lastFingerprint = fingerprint;
+              saveAttempt(fingerprint);
+              document.getElementById('cardLoader').style.display = 'flex';
+              document.getElementById('cardLoaderText').textContent = 'Enviando pagamento com segurança...';
+              showCardStatus('Estamos enviando sua assinatura com Device ID e dados completos do titular.', 'info');
+
+              const payload = {
+                email: getEmail(),
+                pcs: Number(pcs),
+                full_name: getFullName(),
+                cpf: getCpf(),
+                phone: onlyDigits(document.getElementById('phone').value),
+                zip_code: onlyDigits(document.getElementById('zip_code').value),
+                street_name: document.getElementById('street_name').value.trim(),
+                street_number: document.getElementById('street_number').value.trim(),
+                neighborhood: document.getElementById('neighborhood').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                federal_unit: document.getElementById('federal_unit').value.trim().toUpperCase(),
+                device_id: getDeviceId(),
+                card_token_id: cardFormData.token || cardFormData.tokenId || cardFormData.cardTokenId || '',
+                payment_method_id: cardFormData.payment_method_id || cardFormData.paymentMethodId || '',
+                issuer_id: cardFormData.issuer_id ?? cardFormData.issuerId ?? '',
+                installments: Number(cardFormData.installments || 1),
+              };
+
+              const res = await fetch(`${WORKER}/api/mp/criar_assinatura_cartao`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+              });
+              const data = await res.json().catch(() => ({}));
+
+              if (!res.ok || !data.ok) {
+                const rawText = String(data.detail || data.message || data.error || 'Pagamento recusado.');
+                const msg = /high_risk/i.test(rawText)
+                  ? 'O cartão foi recusado por análise de risco. Confirme nome, CPF, e-mail e aguarde um pouco antes de tentar novamente. Evite várias tentativas seguidas.'
+                  : rawText;
+                showCardStatus(msg, res.status === 429 ? 'warn' : 'error');
+                return;
+              }
+
+              localStorage.setItem('linera_checkout_ref', data.checkout_ref || '');
+              localStorage.setItem('linera_preapproval_id', data.preapproval_id || '');
+
+              if (data.charge_confirmed || data.license_status === 'active') {
+                showCardStatus('Pagamento aprovado. Redirecionando...', 'ok');
+                location.href = `sucesso.html?checkout_ref=${encodeURIComponent(data.checkout_ref || '')}&email=${encodeURIComponent(getEmail())}&pcs=${encodeURIComponent(pcs)}&origem=cartao`;
+                return;
+              }
+
+              showCardStatus('Assinatura criada. O primeiro pagamento ainda está sendo confirmado pelo Mercado Pago. Você será levado para a página de sucesso.', 'ok');
+              setTimeout(() => {
+                location.href = `sucesso.html?checkout_ref=${encodeURIComponent(data.checkout_ref || '')}&email=${encodeURIComponent(getEmail())}&pcs=${encodeURIComponent(pcs)}&origem=cartao`;
+              }, 1000);
             } catch (err) {
-              console.error("submit_error", err);
-              showStatus("error", String(err?.message || err || "Falha ao enviar o pagamento."));
+              showCardStatus(String(err?.message || err || 'Falha ao enviar o pagamento.'), 'error');
             } finally {
-              submitting = false;
-              setLoading(false);
+              cardSubmitting = false;
+              document.getElementById('cardLoader').style.display = 'none';
             }
-          },
-        },
+          }
+        }
       });
     }
 
-    async function init() {
-      mountMasks();
-      await loadConfig();
-      if (!config.public_key) {
-        throw new Error("A public key do Mercado Pago não foi configurada no Worker.");
+    async function createPix(){
+      document.getElementById('pixBtn').disabled = true;
+      showPixStatus('Gerando o QR Code PIX...', 'info');
+      try {
+        const res = await fetch(`${WORKER}/api/mp/criar_pix`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email: getEmail() || emailParam, pcs: Number(pcs) })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok || !data.payment_id) throw new Error(data.detail || data.error || 'Falha ao gerar PIX.');
+        pixPaymentId = data.payment_id;
+        localStorage.setItem('linera_pix_payment_id', pixPaymentId);
+        if (data.qr_code_base64) {
+          const img = document.getElementById('qrImg');
+          img.src = `data:image/png;base64,${data.qr_code_base64}`;
+          show(img);
+        }
+        if (data.qr_code) {
+          document.getElementById('pixCode').value = data.qr_code;
+          show(document.getElementById('pixCodeBox'));
+        }
+        showPixStatus('PIX gerado. Faça o pagamento e aguarde a confirmação automática.', 'ok');
+        document.getElementById('pixSideStatus').textContent = 'PIX gerado com sucesso. Acompanhe a confirmação automática nesta página.';
+        startPixPolling();
+      } catch (err) {
+        showPixStatus(`Erro ao gerar PIX:\n${err.message || String(err)}`, 'error');
+        document.getElementById('pixBtn').disabled = false;
       }
-      fillPlans();
-      document.getElementById("email").addEventListener("blur", updateSummary);
-      setTimeout(updateSummary, 600);
-      setTimeout(updateSummary, 1600);
-      await createBrick();
     }
 
-    init().catch(err => {
-      console.error(err);
-      showStatus("error", String(err?.message || err || "Falha ao iniciar a página."));
+    function startPixPolling(){
+      clearTimeout(pixPollTimer);
+      const loop = async () => {
+        if (!pixPaymentId) return;
+        try {
+          const res = await fetch(`${WORKER}/api/mp/pix_status?payment_id=${encodeURIComponent(pixPaymentId)}`);
+          const data = await res.json();
+          if (data.ok && data.status === 'approved') {
+            showPixStatus('Pagamento PIX aprovado. Ativando sua licença...', 'ok');
+            const conf = await fetch(`${WORKER}/api/mp/confirmar_pix?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(getEmail() || emailParam)}&pcs=${encodeURIComponent(pcs)}`);
+            const confData = await conf.json();
+            if (confData.ok) {
+              location.href = `sucesso.html?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(getEmail() || emailParam)}&pcs=${encodeURIComponent(pcs)}`;
+              return;
+            }
+          } else {
+            showPixStatus('PIX gerado. Estamos aguardando a confirmação do pagamento...', 'info');
+          }
+        } catch {
+          showPixStatus('Falha ao consultar o status do PIX. Tentando novamente...', 'info');
+        }
+        pixPollTimer = setTimeout(loop, 5000);
+      };
+      loop();
+    }
+
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tabpane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+        if (btn.dataset.tab === 'card' && !brickController) {
+          await createCardBrick();
+        }
+      });
     });
+
+    document.getElementById('cardRetry').addEventListener('click', async () => {
+      await createCardBrick(true);
+    });
+    document.getElementById('pixBtn').addEventListener('click', createPix);
+    document.getElementById('copyPix').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(document.getElementById('pixCode').value || '');
+        document.getElementById('copyPix').textContent = 'Código copiado';
+        setTimeout(() => document.getElementById('copyPix').textContent = 'Copiar código PIX', 1800);
+      } catch {}
+    });
+
+    document.getElementById('cpf').addEventListener('input', e => e.target.value = formatCpf(e.target.value));
+    document.getElementById('phone').addEventListener('input', e => e.target.value = formatPhone(e.target.value));
+    document.getElementById('zip_code').addEventListener('input', e => e.target.value = formatZip(e.target.value));
+
+    (async function init(){
+      try {
+        await loadConfig();
+        await loadPlan();
+        setText('deviceOut', getDeviceId() || 'aguardando...');
+        document.getElementById('email').value = emailParam;
+        await createCardBrick();
+      } catch (err) {
+        document.getElementById('cardLoader').style.display = 'none';
+        show(document.getElementById('cardRetry'));
+        showCardStatus(`Erro ao carregar a página:\n${err.message || String(err)}`, 'error');
+      }
+    })();
   </script>
 </body>
 </html>
