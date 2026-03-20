@@ -2,299 +2,70 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>LINERA-NEST | Pagamentos</title>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
   <style>
-    :root{
-      --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#475569;
-      --primary:#0b1f3b; --primary-hover:#091a31; --line:#e2e8f0;
-      --soft:#f8fafc; --green:#15803d; --green-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2;
-      --shadow:0 12px 28px rgba(15,23,42,.07);
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
-    .wrap{max-width:1180px;margin:20px auto;padding:0 16px}
-    .grid{display:grid;grid-template-columns:380px 1fr;gap:18px;align-items:start}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
-    .summary{padding:22px}
-    .pill{display:inline-block;padding:7px 14px;border:1px solid #bcd0f7;border-radius:999px;background:#f4f8ff;color:#1d4ed8;font-weight:800;margin-bottom:14px}
-    h1{margin:0 0 10px;font-size:30px;line-height:1.1}
-    .muted{color:var(--muted);font-size:15px;line-height:1.55}
-    .rows{margin-top:18px;border-top:1px solid var(--line)}
-    .row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px dashed var(--line);font-size:15px}
-    .row .label{color:var(--muted)}
-    .row .value{font-weight:800;text-align:right}
-    .value.price{font-size:28px;color:#166534}
-    .info{margin-top:18px;padding:14px 16px;border-radius:18px;background:#fff8e6;border:1px solid #f3d36a;color:#9a5800;line-height:1.45}
-    .back{display:inline-flex;align-items:center;justify-content:center;margin-top:18px;padding:14px 18px;border-radius:16px;background:#fff;border:1px solid #d7deea;color:var(--text);text-decoration:none;font-weight:800}
-    .panel{padding:22px}
-    .tabs{display:flex;gap:10px;margin-bottom:18px}
-    .tab{border:1px solid #c8d3e2;background:#fff;color:var(--primary);padding:14px 22px;border-radius:16px;font-weight:800;cursor:pointer;font-size:16px}
-    .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .tabpane{display:none}
-    .tabpane.active{display:block}
-    .paybox{border:1px solid var(--line);border-radius:22px;background:#fff;padding:22px;min-height:540px}
-    h2{margin:0 0 10px;font-size:24px}
-    .lead{margin:0 0 16px;color:var(--muted);font-size:15px;line-height:1.5}
-    .status{margin-top:14px;padding:14px 16px;border-radius:16px;line-height:1.5;font-size:15px;white-space:pre-line}
-    .status.info{background:#f8fafc;border:1px solid #dbe3ef;color:#334155}
-    .status.ok{background:var(--green-soft);border:1px solid #bbf7d0;color:var(--green)}
-    .status.error{background:var(--danger-soft);border:1px solid #fecaca;color:var(--danger)}
-    .loader{display:flex;align-items:center;gap:12px;margin-top:12px;color:#334155;font-weight:700}
-    .spinner{width:20px;height:20px;border-radius:50%;border:3px solid #dbe3ef;border-top-color:var(--primary);animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .retry{margin-top:16px;padding:13px 18px;border:0;border-radius:14px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer}
-    .pix-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
-    .pix-card{border:1px dashed #c9d5e6;border-radius:20px;padding:18px;background:#fafcff}
-    .pix-btn{padding:16px 22px;border:0;border-radius:16px;background:var(--primary);color:#fff;font-size:17px;font-weight:800;cursor:pointer}
-    .qr{width:100%;max-width:280px;border-radius:18px;border:1px solid var(--line);background:#fff;padding:10px}
-    .code-box{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px}
-    textarea{width:100%;min-height:120px;border:0;resize:vertical;outline:none;font-family:inherit;font-size:14px;color:#0f172a}
-    .copy{margin-top:10px;padding:12px 16px;border:0;border-radius:14px;background:#0f172a;color:#fff;font-weight:800;cursor:pointer}
-    .hidden{display:none}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .pix-wrap{grid-template-columns:1fr} }
+    :root{--bg:#f4f6fb;--card:#fff;--text:#0f172a;--muted:#475569;--line:#d7e0ec;--primary:#0b2146;--primary-hover:#091a37;--ok:#15803d;--danger:#b91c1c;--danger-bg:#fff1f2;--pix-bg:#ecfdf5}
+    *{box-sizing:border-box} body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1220px;margin:0 auto;padding:18px}.shell{display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px}.badge{display:inline-block;padding:9px 16px;border:1px solid #b8cdf8;border-radius:999px;background:#f3f7ff;color:#1d4ed8;font-weight:800}
+    h1{margin:14px 0 8px;font-size:28px;line-height:1.1} p{margin:0;color:var(--muted);line-height:1.5}
+    .summary{margin-top:26px;border-top:1px solid var(--line);padding-top:18px}.row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid #e9eef5}.row:last-child{border-bottom:0}
+    .label{color:#334155}.value{font-weight:800;text-align:right}.price-big{font-size:28px;color:#166534}
+    .note{margin-top:18px;padding:14px 16px;border:1px solid #f5d17a;background:#fff8e6;color:#92400e;border-radius:18px;line-height:1.5}
+    .back-btn{display:inline-block;margin-top:20px;padding:14px 18px;border:1px solid var(--line);border-radius:16px;text-decoration:none;color:var(--text);font-weight:800;background:#fff}
+    .main.card{padding:18px 18px 22px}.tabs{display:flex;gap:10px;margin-bottom:18px}.tab{border:1px solid #bfcce0;background:#fff;color:var(--primary);padding:14px 22px;border-radius:18px;font-size:16px;font-weight:900;cursor:pointer}.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .pane{display:none}.pane.active{display:block}.pane-box{border:1px solid var(--line);border-radius:24px;padding:24px;min-height:560px;background:#fff}.pane-title{margin:0 0 8px;font-size:22px}.pane-sub{margin:0 0 20px;color:var(--muted)}
+    #brick_container{min-height:380px}.status{margin-top:18px;padding:14px 16px;border-radius:18px;white-space:pre-line;line-height:1.5}.status.info{background:#f8fafc;border:1px solid #dbe4f0;color:#334155}.status.error{background:var(--danger-bg);border:1px solid #fecaca;color:var(--danger)}.status.ok{background:#effcf4;border:1px solid #bbf7d0;color:#166534}
+    .pix-grid{display:grid;grid-template-columns:1.2fr .9fr;gap:18px;align-items:start}.pix-btn{padding:16px 24px;border:0;background:var(--primary);color:#fff;border-radius:16px;font-size:18px;font-weight:900;cursor:pointer}.pix-box{border:1px dashed #a7f3d0;background:var(--pix-bg);border-radius:20px;padding:20px;display:none}.pix-box.active{display:block}
+    .pix-code{width:100%;min-height:120px;border:1px solid #cbd5e1;border-radius:12px;padding:12px;font-size:13px}.copy-btn{margin-top:12px;padding:12px 16px;border:0;background:#065f46;color:#fff;border-radius:12px;font-weight:800;cursor:pointer}.qr-wrap img{max-width:250px;width:100%;height:auto;display:block;margin:auto}.small{font-size:13px;color:var(--muted)}
+    .loader{display:inline-block;width:18px;height:18px;border:3px solid #cbd5e1;border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:8px}.inline-help{margin-top:12px;font-size:14px;color:#475569}
+    @keyframes spin{to{transform:rotate(360deg)}} @media (max-width:980px){.shell{grid-template-columns:1fr}.pix-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="grid">
-      <div class="card summary">
-        <span class="pill">Pagamento do LINERA-NEST</span>
-        <h1>Finalize sua compra</h1>
-        <p class="muted">Escolha abaixo a forma de pagamento que faz mais sentido para sua operação.</p>
-
-        <div class="rows">
-          <div class="row"><div class="label">Email</div><div class="value" id="emailOut">-</div></div>
-          <div class="row"><div class="label">Plano</div><div class="value" id="planOut">-</div></div>
-          <div class="row"><div class="label">Computadores</div><div class="value" id="pcsOut">-</div></div>
-          <div class="row"><div class="label">Valor</div><div class="value price" id="priceOut">R$ --</div></div>
-        </div>
-
-        <div class="info">
-          <strong>Cartão:</strong> assinatura mensal com renovação automática.<br>
-          <strong>PIX:</strong> pagamento do mês atual, sem renovação automática.
-        </div>
-
-        <a class="back" href="comprar.html">Voltar e alterar plano</a>
+  <div class="wrap"><div class="shell">
+    <aside class="card">
+      <span class="badge">Pagamento do LINERA-NEST</span>
+      <h1>Finalize sua compra</h1>
+      <p>Escolha abaixo a forma de pagamento que faz mais sentido para sua operação.</p>
+      <div class="summary">
+        <div class="row"><div class="label">Email</div><div class="value" id="sumEmail">-</div></div>
+        <div class="row"><div class="label">Plano</div><div class="value" id="sumPlan">-</div></div>
+        <div class="row"><div class="label">Computadores</div><div class="value" id="sumPcs">-</div></div>
+        <div class="row"><div class="label">Valor</div><div class="value price-big" id="sumPrice">R$ --</div></div>
       </div>
-
-      <div class="card panel">
-        <div class="tabs">
-          <button class="tab active" data-tab="card">Cartão de crédito</button>
-          <button class="tab" data-tab="pix">PIX</button>
-        </div>
-
-        <div id="tab-card" class="tabpane active">
-          <div class="paybox">
-            <h2>Cartão e assinatura automática</h2>
-            <p class="lead">Você será levado ao ambiente seguro do Mercado Pago para cadastrar o cartão e iniciar sua assinatura mensal do LINERA-NEST.</p>
-            <div class="loader" id="cardLoader"><div class="spinner"></div><div id="cardLoaderText">Preparando seu checkout de cartão...</div></div>
-            <div id="cardStatus" class="status info">Estamos montando o link de checkout do seu plano com os dados que você já informou.</div>
-            <button id="cardRetry" class="retry hidden">Tentar novamente</button>
-          </div>
-        </div>
-
-        <div id="tab-pix" class="tabpane">
-          <div class="paybox">
-            <h2>PIX do mês</h2>
-            <p class="lead">Essa opção gera um QR Code para liberar 30 dias do seu plano. No fim do período, o próximo mês deve ser pago novamente.</p>
-
-            <div class="pix-wrap">
-              <div class="pix-card">
-                <button class="pix-btn" id="pixBtn">Gerar PIX agora</button>
-                <div id="pixSideStatus" class="status info" style="margin-top:16px">Ao gerar o PIX, o QR Code aparecerá ao lado e o sistema acompanhará a confirmação automaticamente.</div>
-              </div>
-
-              <div>
-                <img id="qrImg" class="qr hidden" alt="QR Code PIX" />
-                <div id="pixStatus" class="status info hidden"></div>
-                <div id="pixCodeBox" class="code-box hidden">
-                  <div style="font-weight:800; margin-bottom:8px">Código PIX copia e cola</div>
-                  <textarea id="pixCode" readonly></textarea>
-                  <button id="copyPix" class="copy">Copiar código PIX</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
-    const qs = new URLSearchParams(location.search);
-    const email = (qs.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
-    const pcs = (qs.get('pcs') || localStorage.getItem('linera_pcs') || '').trim();
-
-    let cardStarted = false;
-    let pixPaymentId = '';
-    let pixPollTimer = null;
-
-    function money(v){ return Number(v || 0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-    function setText(id, txt){ document.getElementById(id).textContent = txt; }
-    function show(el){ el.classList.remove('hidden'); }
-    function hide(el){ el.classList.add('hidden'); }
-
-    function showCardStatus(text, cls='info'){
-      const el = document.getElementById('cardStatus');
-      el.className = `status ${cls}`;
-      el.textContent = text;
-    }
-
-    function showPixStatus(text, cls='info'){
-      const el = document.getElementById('pixStatus');
-      el.className = `status ${cls}`;
-      show(el);
-      el.textContent = text;
-    }
-
-    async function loadPlan(){
-      if (!email || !pcs) {
-        location.href = 'comprar.html';
-        return null;
-      }
-      localStorage.setItem('linera_email', email);
-      localStorage.setItem('linera_pcs', pcs);
-      setText('emailOut', email);
-      setText('pcsOut', `${pcs} PCs`);
-
-      const res = await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(pcs)}`);
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || 'Falha ao carregar plano');
-      setText('planOut', data.plan_name || `Plano ${pcs} PCs`);
-      setText('priceOut', `R$ ${money(data.amount)}`);
-      localStorage.setItem('linera_plan_name', data.plan_name || `Plano ${pcs} PCs`);
-      localStorage.setItem('linera_amount', String(data.amount || ''));
-      return data;
-    }
-
-    async function startCardCheckout(force=false){
-      if (cardStarted && !force) return;
-      cardStarted = true;
-      hide(document.getElementById('cardRetry'));
-      document.getElementById('cardLoader').style.display = 'flex';
-      document.getElementById('cardLoaderText').textContent = 'Preparando seu checkout de cartão...';
-      showCardStatus('Estamos montando o link de checkout do seu plano com os dados que você já informou.', 'info');
-
-      try {
-        const res = await fetch(`${WORKER}/api/mp/criar_assinatura_link`, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ email, pcs: Number(pcs) })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok || !data.init_point) {
-          throw new Error(data.detail || data.error || 'Falha ao criar checkout do cartão.');
-        }
-
-        localStorage.setItem('linera_checkout_ref', data.checkout_ref || '');
-        localStorage.setItem('linera_preapproval_id', data.preapproval_id || '');
-
-        showCardStatus('Checkout criado com sucesso. Redirecionando para o pagamento com cartão...', 'ok');
-        document.getElementById('cardLoaderText').textContent = 'Redirecionando...';
-
-        setTimeout(() => {
-          location.href = data.init_point;
-        }, 900);
-      } catch (err) {
-        cardStarted = false;
-        document.getElementById('cardLoader').style.display = 'none';
-        showCardStatus(`Erro ao iniciar assinatura:\n${err.message || String(err)}`, 'error');
-        show(document.getElementById('cardRetry'));
-      }
-    }
-
-    async function createPix(){
-      document.getElementById('pixBtn').disabled = true;
-      showPixStatus('Gerando o QR Code PIX...', 'info');
-      try {
-        const res = await fetch(`${WORKER}/api/mp/criar_pix`, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ email, pcs: Number(pcs) })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok || !data.payment_id) {
-          throw new Error(data.detail || data.error || 'Falha ao gerar PIX.');
-        }
-
-        pixPaymentId = data.payment_id;
-        localStorage.setItem('linera_pix_payment_id', pixPaymentId);
-
-        if (data.qr_code_base64) {
-          const img = document.getElementById('qrImg');
-          img.src = `data:image/png;base64,${data.qr_code_base64}`;
-          show(img);
-        }
-        if (data.qr_code) {
-          document.getElementById('pixCode').value = data.qr_code;
-          show(document.getElementById('pixCodeBox'));
-        }
-        showPixStatus('PIX gerado. Faça o pagamento e aguarde a confirmação automática.', 'ok');
-        document.getElementById('pixSideStatus').textContent = 'PIX gerado com sucesso. Acompanhe a confirmação automática nesta página.';
-        startPixPolling();
-      } catch (err) {
-        showPixStatus(`Erro ao gerar PIX:\n${err.message || String(err)}`, 'error');
-        document.getElementById('pixBtn').disabled = false;
-      }
-    }
-
-    function startPixPolling(){
-      clearTimeout(pixPollTimer);
-      const loop = async () => {
-        if (!pixPaymentId) return;
-        try {
-          const res = await fetch(`${WORKER}/api/mp/pix_status?payment_id=${encodeURIComponent(pixPaymentId)}`);
-          const data = await res.json();
-          if (data.ok && data.status === 'approved') {
-            showPixStatus('Pagamento PIX aprovado. Ativando sua licença...', 'ok');
-            const conf = await fetch(`${WORKER}/api/mp/confirmar_pix?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
-            const confData = await conf.json();
-            if (confData.ok) {
-              location.href = `sucesso.html?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
-              return;
-            }
-          } else {
-            showPixStatus('PIX gerado. Estamos aguardando a confirmação do pagamento...', 'info');
-          }
-        } catch (err) {
-          showPixStatus('Falha ao consultar o status do PIX. Tentando novamente...', 'info');
-        }
-        pixPollTimer = setTimeout(loop, 5000);
-      };
-      loop();
-    }
-
-    document.querySelectorAll('.tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tabpane').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
-        if (btn.dataset.tab === 'card') startCardCheckout();
-      });
-    });
-
-    document.getElementById('cardRetry').addEventListener('click', () => startCardCheckout(true));
-    document.getElementById('pixBtn').addEventListener('click', createPix);
-    document.getElementById('copyPix').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(document.getElementById('pixCode').value || '');
-        document.getElementById('copyPix').textContent = 'Código copiado';
-        setTimeout(() => document.getElementById('copyPix').textContent = 'Copiar código PIX', 1800);
-      } catch {}
-    });
-
-    (async function init(){
-      try {
-        await loadPlan();
-        startCardCheckout();
-      } catch (err) {
-        showCardStatus(`Erro ao carregar o plano:\n${err.message || String(err)}`, 'error');
-        document.getElementById('cardLoader').style.display = 'none';
-      }
-    })();
-  </script>
-</body>
-</html>
+      <div class="note"><div><b>Cartão:</b> assinatura mensal com renovação automática.</div><div style="margin-top:8px"><b>PIX:</b> pagamento do mês atual, sem renovação automática.</div></div>
+      <a href="comprar.html" class="back-btn">Voltar e alterar plano</a>
+    </aside>
+    <main class="main card">
+      <div class="tabs"><button class="tab active" data-tab="card">Cartão de crédito</button><button class="tab" data-tab="pix">PIX</button></div>
+      <section class="pane active" id="pane-card"><div class="pane-box"><h2 class="pane-title">Cartão e assinatura automática</h2><p class="pane-sub">Preencha os dados abaixo para iniciar sua assinatura mensal do LINERA-NEST sem sair do seu site.</p><div id="brick_container"></div><div class="inline-help">Os campos do cartão são renderizados pelo Mercado Pago dentro desta página.</div><div id="cardStatus" class="status info"><span class="loader"></span>Carregando checkout do cartão...</div></div></section>
+      <section class="pane" id="pane-pix"><div class="pane-box"><h2 class="pane-title">PIX do mês</h2><p class="pane-sub">Gere um QR Code para liberar 30 dias do seu plano. Ao final do período, o próximo mês deve ser pago novamente.</p><div class="pix-grid"><div><button class="pix-btn" id="pixBtn">Gerar PIX agora</button><div id="pixStatus" class="status info" style="display:none"></div></div><div id="pixBox" class="pix-box"><div class="qr-wrap" id="pixQrWrap"></div><div class="small" style="margin:14px 0 8px">Código copia e cola</div><textarea class="pix-code" id="pixCode" readonly></textarea><button class="copy-btn" id="copyPixBtn">Copiar código PIX</button></div></div></div></section>
+    </main>
+  </div></div>
+<script>
+const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
+const MP_PUBLIC_KEY='APP_USR-3bdc8221-3105-4b85-bea0-216201a15648';
+const mp=new MercadoPago(MP_PUBLIC_KEY,{locale:'pt-BR'});
+const qs=new URLSearchParams(location.search);
+const email=(qs.get('email')||localStorage.getItem('linera_email')||'').trim().toLowerCase();
+const pcs=Number(qs.get('pcs')||localStorage.getItem('linera_pcs')||0);
+const PLAN_NAMES={2:'Plano Oficina',5:'Plano Equipe',10:'Plano Produção',50:'Plano Fábrica'};
+const sumEmail=document.getElementById('sumEmail'),sumPlan=document.getElementById('sumPlan'),sumPcs=document.getElementById('sumPcs'),sumPrice=document.getElementById('sumPrice');
+const cardStatus=document.getElementById('cardStatus'),pixStatus=document.getElementById('pixStatus'),pixBtn=document.getElementById('pixBtn'),pixBox=document.getElementById('pixBox'),pixCode=document.getElementById('pixCode'),pixQrWrap=document.getElementById('pixQrWrap'),copyPixBtn=document.getElementById('copyPixBtn');
+sumEmail.textContent=email||'-';sumPlan.textContent=PLAN_NAMES[pcs]||`Plano ${pcs} PCs`;sumPcs.textContent=pcs?`${pcs} PCs`:'-';
+if(!email||!pcs){cardStatus.className='status error';cardStatus.textContent='Dados de compra não encontrados. Volte para a página de compra e selecione o plano novamente.';pixBtn.disabled=true;}
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.pane').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById(`pane-${btn.dataset.tab}`).classList.add('active');}));
+function formatMoney(value,currency){const n=Number(value||0);return new Intl.NumberFormat('pt-BR',{style:'currency',currency:currency||'BRL'}).format(n)}
+async function loadPlanInfo(){try{const res=await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(pcs)}`);const data=await res.json();if(res.ok&&data.ok){sumPrice.textContent=formatMoney(data.transaction_amount,data.currency_id||'BRL');if(data.plan_name)sumPlan.textContent=data.plan_name;}}catch(_){}}
+async function mountCardForm(){if(!email||!pcs)return;try{const planRes=await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(pcs)}`);const planData=await planRes.json();if(!planRes.ok||!planData.ok)throw new Error(planData.error||'Não foi possível carregar os dados do plano.');const amount=Number(planData.transaction_amount||0);if(!amount)throw new Error('Valor do plano não encontrado.');cardStatus.className='status info';cardStatus.innerHTML='<span class="loader"></span>Carregando campos do cartão...';
+const cardForm=mp.cardForm({amount:String(amount),autoMount:true,form:{id:'brick_container',cardholderName:{id:'form-cardholderName',placeholder:'Titular do cartão'},cardholderEmail:{id:'form-cardholderEmail',placeholder:'E-mail'},cardNumber:{id:'form-cardNumber',placeholder:'Número do cartão'},expirationDate:{id:'form-expirationDate',placeholder:'MM/AA'},securityCode:{id:'form-securityCode',placeholder:'CVV'},installments:{id:'form-installments'},identificationType:{id:'form-identificationType'},identificationNumber:{id:'form-identificationNumber',placeholder:'CPF'},issuer:{id:'form-issuer'}},callbacks:{onFormMounted:(error)=>{if(error){cardStatus.className='status error';cardStatus.textContent='Não foi possível montar o checkout do cartão: '+error.message;return;}const emailInput=document.getElementById('form-cardholderEmail');if(emailInput&&email)emailInput.value=email;cardStatus.className='status info';cardStatus.textContent='Preencha os dados do cartão para iniciar a assinatura.';},onSubmit:async(event)=>{event.preventDefault();cardStatus.className='status info';cardStatus.innerHTML='<span class="loader"></span>Enviando dados do cartão...';const data=cardForm.getCardFormData();const token=data.token;if(!token){cardStatus.className='status error';cardStatus.textContent='O token do cartão não foi gerado. Confira os campos e tente novamente.';return;}try{const res=await fetch(`${WORKER}/api/mp/criar_assinatura_cartao`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,pcs,card_token_id:token,payment_method_id:data.paymentMethodId||'',issuer_id:data.issuerId||'',installments:Number(data.installments||1),identification_type:data.identificationType||'',identification_number:data.identificationNumber||''})});const json=await res.json();if(!res.ok||!json.ok)throw new Error(json.detail||json.error||'Falha ao criar assinatura.');cardStatus.className='status ok';cardStatus.textContent='Assinatura criada com sucesso. Redirecionando...';location.href=`sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&preapproval_id=${encodeURIComponent(json.preapproval_id||'')}&modo=cartao`;}catch(err){cardStatus.className='status error';cardStatus.textContent='Erro ao iniciar assinatura:\n'+(err.message||String(err));}}}});
+}catch(err){cardStatus.className='status error';cardStatus.textContent='Erro ao montar checkout do cartão:\n'+(err.message||String(err));}}
+async function gerarPix(){pixBtn.disabled=true;pixStatus.style.display='block';pixStatus.className='status info';pixStatus.innerHTML='<span class="loader"></span>Gerando PIX...';try{const res=await fetch(`${WORKER}/api/mp/criar_pix`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,pcs})});const data=await res.json();if(!res.ok||!data.ok)throw new Error(data.detail||data.error||'Não foi possível gerar o PIX.');localStorage.setItem('linera_pix_payment_id',String(data.payment_id||''));localStorage.setItem('linera_email',email);localStorage.setItem('linera_pcs',String(pcs));pixBox.classList.add('active');pixStatus.className='status ok';pixStatus.textContent='PIX gerado. Pague pelo QR Code ou copie o código abaixo.';pixCode.value=data.qr_code||'';pixQrWrap.innerHTML=data.qr_code_base64?`<img alt="QR Code PIX" src="data:image/png;base64,${data.qr_code_base64}" />`:'';pollPix(data.payment_id);}catch(err){pixStatus.className='status error';pixStatus.textContent='Erro ao gerar PIX:\n'+(err.message||String(err));pixBtn.disabled=false;}}
+async function pollPix(paymentId){let tries=0;const loop=async()=>{tries++;try{const res=await fetch(`${WORKER}/api/mp/consultar_pix?payment_id=${encodeURIComponent(paymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);const data=await res.json();if(res.ok&&data.ok&&data.status==='approved'){pixStatus.className='status ok';pixStatus.textContent='PIX aprovado. Redirecionando...';location.href=`sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}&payment_id=${encodeURIComponent(paymentId)}&modo=pix`;return;}if(tries<60){setTimeout(loop,5000)}else{pixStatus.className='status info';pixStatus.textContent='PIX ainda pendente. Após pagar, aguarde alguns segundos ou recarregue esta página.';pixBtn.disabled=false;}}catch(_){if(tries<60)setTimeout(loop,5000);else pixBtn.disabled=false;}};setTimeout(loop,5000)}
+pixBtn.addEventListener('click',gerarPix);copyPixBtn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(pixCode.value||'');copyPixBtn.textContent='Código copiado';setTimeout(()=>copyPixBtn.textContent='Copiar código PIX',2000)}catch(_){}});
+loadPlanInfo();mountCardForm();
+</script>
+</body></html>
