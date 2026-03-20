@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LINERA-NEST | Assinatura</title>
+  <title>LINERA-NEST | Assinatura de Licença</title>
   <style>
     :root{
       --bg:#f6f7fb;
@@ -14,159 +14,253 @@
       --primary-hover:#091a31;
       --line:#e2e8f0;
       --soft:#eef2f7;
+      --green:#15803d;
+      --green-soft:#ecfdf5;
       --yellow:#a16207;
+      --yellow-soft:#fefce8;
       --danger:#b91c1c;
-      --shadow:0 12px 28px rgba(15,23,42,.07);
-      --shadow-strong:0 18px 35px rgba(11,31,59,.18);
+      --danger-soft:#fef2f2;
+      --shadow: 0 12px 28px rgba(15,23,42,.07);
+      --shadow-strong: 0 18px 35px rgba(11,31,59,.18);
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
-    .wrap{max-width:1080px;margin:26px auto 40px;padding:0 16px}
-    .hero{background:linear-gradient(135deg,#0b1f3b 0%,#123568 100%);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-strong);margin-bottom:16px;position:relative;overflow:hidden}
-    .hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.07)}
-    .hero-top{display:flex;gap:12px;align-items:center;margin-bottom:8px;position:relative;z-index:1}
-    .hero-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto}
-    .hero h1{margin:0;font-size:20px;line-height:1.2;font-weight:800}
-    .hero p{margin:0;color:rgba(255,255,255,.92);font-size:14px;line-height:1.45;max-width:780px;position:relative;z-index:1}
-    .banner{margin-top:14px;background:#fff;color:#111827;border-radius:14px;border:2px solid #f59e0b;padding:14px;box-shadow:0 8px 18px rgba(0,0,0,.08);position:relative;z-index:1}
-    .banner .tag{display:inline-block;background:#f59e0b;color:#fff;font-weight:800;font-size:12px;padding:4px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-    .banner strong{color:#7c2d12}
-    .layout{display:grid;grid-template-columns:1.05fr 1.4fr;gap:16px;align-items:start}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
-    .card h2{margin:0 0 10px 0;font-size:16px;font-weight:800}
-    .muted{color:var(--muted);font-size:14px;line-height:1.45}
-    .field{margin-top:10px}
-    label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-    input[type="email"]{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:15px;outline:none;transition:.15s ease}
-    input[type="email"]:focus{border-color:#94a3b8;box-shadow:0 0 0 4px rgba(11,31,59,.08)}
-    .helper{margin-top:8px;font-size:13px;color:var(--muted);line-height:1.4}
-    .steps,.security,.faq{margin-top:14px}
-    .steps{padding:12px;border-radius:12px;border:1px solid var(--line);background:#fbfcff}
-    .steps ol{margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.5}
-    .steps li+li{margin-top:4px}
-    .pill{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;font-size:13px;color:var(--muted)}
-    .pill+.pill{margin-top:8px}
-    .ico{width:26px;height:26px;border-radius:8px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
-    .faq{border-top:1px solid var(--line);padding-top:14px}
-    .faq h3{margin:0 0 8px 0;font-size:14px}
-    .faq p{margin:6px 0 0 0;font-size:13px;color:var(--muted);line-height:1.45}
-    .plans{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .plan{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;display:flex;flex-direction:column;gap:10px;position:relative;transition:.15s ease;box-shadow:0 8px 20px rgba(15,23,42,.04)}
-    .plan:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(15,23,42,.08)}
-    .plan.highlight{border:2px solid #0b1f3b;box-shadow:0 14px 30px rgba(11,31,59,.10)}
-    .top-tag{position:absolute;top:-10px;right:12px;background:#0b1f3b;color:#fff;font-size:11px;font-weight:800;padding:4px 8px;border-radius:999px;text-transform:uppercase}
-    .plan-head{display:flex;align-items:center;gap:10px}
-    .plan-icon{width:38px;height:38px;border-radius:12px;background:#eef2f7;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 auto}
-    .plan-name{font-size:15px;font-weight:800;line-height:1.2}
-    .plan-sub{color:var(--muted);font-size:12px;margin-top:2px}
-    .price{display:flex;align-items:flex-end;gap:4px;margin-top:2px}
-    .currency{font-size:14px;color:var(--muted);font-weight:700}
-    .value{font-size:28px;line-height:1;font-weight:900;color:var(--text);letter-spacing:-.3px}
-    .period{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:3px}
-    .features{margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.45;min-height:60px}
-    .features li+li{margin-top:4px}
-    .buy-btn{margin-top:auto;border:0;border-radius:12px;background:var(--primary);color:#fff;font-weight:800;font-size:14px;padding:12px 14px;cursor:pointer;transition:.15s ease;width:100%}
-    .buy-btn:hover{background:var(--primary-hover)}
-    .buy-btn.secondary{background:#1f2937}.buy-btn.secondary:hover{background:#111827}
-    .footer{margin-top:14px;text-align:center;color:var(--muted);font-size:12px}
-    .msg{margin-top:10px;color:var(--danger);font-size:13px;font-weight:600;min-height:18px}
-    @media (max-width:980px){.layout{grid-template-columns:1fr}}
-    @media (max-width:720px){.plans{grid-template-columns:1fr}.hero h1{font-size:18px}}
+    * { box-sizing: border-box; }
+    body{ margin:0; background:var(--bg); color:var(--text); font-family:"Segoe UI", Arial, sans-serif; }
+    .wrap{ max-width:1080px; margin:26px auto 40px; padding:0 16px; }
+    .hero{ background:linear-gradient(135deg, #0b1f3b 0%, #123568 100%); color:#fff; border-radius:20px; padding:22px; box-shadow:var(--shadow-strong); margin-bottom:16px; overflow:hidden; position:relative; }
+    .hero::after{ content:""; position:absolute; right:-40px; top:-40px; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,.07); pointer-events:none; }
+    .hero-top{ display:flex; gap:12px; align-items:center; margin-bottom:8px; position:relative; z-index:1; }
+    .hero-icon{ width:44px; height:44px; border-radius:14px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:22px; flex:0 0 auto; }
+    .hero h1{ margin:0; font-size:20px; line-height:1.2; font-weight:800; letter-spacing:.2px; }
+    .hero p{ margin:0; color:rgba(255,255,255,.92); font-size:14px; line-height:1.45; max-width:780px; position:relative; z-index:1; }
+    .banner-important{ margin-top:14px; background:#fff; color:#111827; border-radius:14px; border:2px solid #f59e0b; padding:14px; box-shadow:0 8px 18px rgba(0,0,0,.08); position:relative; z-index:1; }
+    .banner-important-top{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .banner-important .badge{ background:#f59e0b; color:#fff; font-weight:800; font-size:12px; padding:4px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.4px; }
+    .banner-important .title{ font-weight:800; font-size:15px; color:#92400e; }
+    .banner-important p{ margin:0; color:#3f3f46; font-size:14px; line-height:1.45; }
+    .layout{ display:grid; grid-template-columns:1.05fr 1.4fr; gap:16px; align-items:start; }
+    .card{ background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); padding:18px; }
+    .card h2{ margin:0 0 10px; font-size:16px; font-weight:800; }
+    .muted{ color:var(--muted); font-size:14px; line-height:1.45; }
+    .field{ margin-top:10px; }
+    label{ display:block; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
+    input[type="email"]{ width:100%; border:1px solid #cbd5e1; border-radius:12px; padding:12px 14px; font-size:15px; outline:none; transition:.15s ease; }
+    input[type="email"]:focus{ border-color:#94a3b8; box-shadow:0 0 0 4px rgba(11,31,59,.08); }
+    .helper{ margin-top:8px; font-size:13px; color:var(--muted); line-height:1.4; }
+    .helper strong{ color:var(--text); }
+    .status{ margin-top:12px; padding:12px 14px; border-radius:12px; font-size:14px; line-height:1.4; display:none; }
+    .status.show{ display:block; }
+    .status.error{ background:var(--danger-soft); color:var(--danger); border:1px solid #fecaca; }
+    .status.ok{ background:var(--green-soft); color:var(--green); border:1px solid #bbf7d0; }
+    .plans-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .plans-head h2{ margin:0; font-size:16px; font-weight:800; }
+    .plans-head .mini{ color:var(--muted); font-size:13px; }
+    .plan-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; }
+    .plan{ position:relative; border:1px solid var(--line); background:#fff; border-radius:18px; padding:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; min-height:100%; }
+    .plan.highlight{ border:2px solid var(--primary); }
+    .tag{ position:absolute; top:-12px; right:16px; background:var(--primary); color:#fff; font-size:12px; font-weight:800; padding:5px 10px; border-radius:999px; box-shadow:0 6px 16px rgba(11,31,59,.18); text-transform:uppercase; letter-spacing:.2px; }
+    .plan-head{ display:flex; gap:12px; align-items:center; }
+    .plan-icon{ width:46px; height:46px; border-radius:14px; background:var(--soft); display:flex; align-items:center; justify-content:center; font-size:22px; flex:0 0 auto; }
+    .plan-name{ font-weight:800; font-size:16px; color:var(--text); }
+    .plan-sub{ color:var(--muted); font-size:14px; margin-top:2px; }
+    .price{ margin:16px 0 14px; display:flex; align-items:flex-end; gap:6px; font-weight:800; color:var(--text); }
+    .currency{ font-size:18px; line-height:1; }
+    .value{ font-size:40px; line-height:.95; letter-spacing:-.8px; }
+    .period{ font-size:16px; color:var(--muted); font-weight:700; padding-bottom:5px; }
+    .price.loading .value{ font-size:22px; letter-spacing:0; }
+    .features{ padding:0 0 0 18px; margin:0 0 18px; color:#334155; line-height:1.55; }
+    .buy-btn{ margin-top:auto; width:100%; border:none; border-radius:14px; background:var(--primary); color:#fff; font-size:16px; font-weight:800; padding:14px 16px; cursor:pointer; transition:.15s ease; }
+    .buy-btn:hover{ background:var(--primary-hover); transform:translateY(-1px); }
+    .buy-btn.secondary{ background:#1e293b; }
+    .buy-btn.secondary:hover{ background:#0f172a; }
+    .foot-note{ margin-top:12px; color:var(--muted); font-size:13px; }
+    .footer{ text-align:center; color:var(--muted); font-size:13px; margin-top:18px; }
+    @media (max-width: 900px){ .layout{ grid-template-columns:1fr; } }
+    @media (max-width: 700px){ .plan-grid{ grid-template-columns:1fr; } .value{ font-size:34px; } }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="hero">
       <div class="hero-top">
-        <div class="hero-icon">✂️</div>
-        <h1>Assine o LINERA-NEST e automatize seus planos de corte</h1>
+        <div class="hero-icon">🧩</div>
+        <div>
+          <h1>Assine o LINERA-NEST</h1>
+        </div>
       </div>
       <p>
-        Escolha o plano ideal para sua equipe, finalize o pagamento com segurança e baixe seu arquivo de licença (.lic) para ativar o programa em poucos cliques.
+        Controle o uso do seu otimizador com uma licença simples, organizada e pronta para crescer com a sua operação.
+        Escolha o plano, informe o seu e-mail e finalize com <strong>cartão</strong> ou <strong>PIX</strong>.
       </p>
-      <div class="banner">
-        <div class="tag">Importante</div>
-        <div><strong>Use um e-mail válido e com acesso fácil.</strong> Ele será usado para localizar sua licença e facilitar o suporte, caso você precise.</div>
+
+      <div class="banner-important">
+        <div class="banner-important-top">
+          <span class="badge">Importante</span>
+          <div class="title">Seu e-mail é parte da ativação</div>
+        </div>
+        <p>
+          Use o <strong>mesmo e-mail</strong> que você quer vincular à licença. Após o pagamento confirmado,
+          a página de sucesso já libera o download do arquivo <strong>.lic</strong>.
+        </p>
       </div>
     </div>
 
     <div class="layout">
       <div class="card">
-        <h2>📩 Antes de escolher o plano</h2>
-        <p class="muted">Digite abaixo o e-mail que você quer vincular à sua licença do LINERA-NEST.</p>
+        <h2>Antes de escolher o plano</h2>
+        <p class="muted">
+          Digite o e-mail que será usado para baixar e ativar a licença do programa.
+        </p>
+
         <div class="field">
-          <label for="email">E-mail do comprador</label>
-          <input id="email" type="email" placeholder="ex: voce@empresa.com.br" />
-          <div class="helper"><strong>Dica:</strong> use um e-mail que você consiga acessar no momento da compra e depois.</div>
+          <label for="email">E-mail da licença</label>
+          <input id="email" type="email" placeholder="voce@empresa.com" autocomplete="email" />
         </div>
-        <div class="msg" id="msg"></div>
-        <div class="steps">
-          <ol>
-            <li>Digite seu e-mail.</li>
-            <li>Escolha o plano ideal.</li>
-            <li>Na próxima tela, escolha pagar com cartão ou PIX.</li>
-            <li>Depois da confirmação, baixe a licença e ative o programa.</li>
-          </ol>
+
+        <div class="helper">
+          Esse e-mail será usado no fluxo de compra e também na liberação do arquivo de licença.
         </div>
-        <div class="security">
-          <div class="pill"><div class="ico">🔒</div><div>Pagamento processado com segurança pelo Mercado Pago</div></div>
-          <div class="pill"><div class="ico">🧾</div><div>Cartão para assinatura automática ou PIX para 30 dias de liberação</div></div>
-          <div class="pill"><div class="ico">💾</div><div>Licença entregue em arquivo <b>.lic</b> para uso no LINERA-NEST</div></div>
-        </div>
-        <div class="faq">
-          <h3>❓ Dúvida rápida</h3>
-          <p>Na próxima página você escolhe entre <b>cartão</b> e <b>PIX</b>. O resumo do plano aparece antes de pagar.</p>
-        </div>
+
+        <div id="msg" class="status error"></div>
+        <div id="loadMsg" class="status ok"></div>
       </div>
 
       <div>
-        <div class="plans">
+        <div class="plans-head">
+          <h2>Escolha o plano ideal</h2>
+          <div class="mini">Valores carregados diretamente dos seus planos no Mercado Pago.</div>
+        </div>
+
+        <div class="plan-grid">
           <div class="plan">
-            <div class="plan-head"><div class="plan-icon">🛠️</div><div><div class="plan-name">Plano Oficina</div><div class="plan-sub">2 PCs • Ideal para uso enxuto</div></div></div>
-            <div class="price"><span class="currency">R$</span><span class="value">49,90</span><span class="period">/mês</span></div>
-            <ul class="features"><li>Até 2 computadores</li><li>Perfeito para operação menor</li><li>Liberação por licença .lic</li></ul>
+            <div class="plan-head">
+              <div class="plan-icon">🛠️</div>
+              <div>
+                <div class="plan-name">Plano Oficina</div>
+                <div class="plan-sub">2 PCs • Ideal para uso enxuto</div>
+              </div>
+            </div>
+            <div class="price loading"><span class="currency">R$</span><span class="value" id="price-2">--</span><span class="period">/mês</span></div>
+            <ul class="features">
+              <li>Até 2 computadores</li>
+              <li>Renovação automática no cartão</li>
+              <li>Liberação de 30 dias no PIX</li>
+            </ul>
             <button class="buy-btn" onclick="go(2)">Escolher plano Oficina</button>
           </div>
+
           <div class="plan highlight">
-            <div class="top-tag">Mais escolhido</div>
-            <div class="plan-head"><div class="plan-icon">👥</div><div><div class="plan-name">Plano Equipe</div><div class="plan-sub">5 PCs • Melhor equilíbrio</div></div></div>
-            <div class="price"><span class="currency">R$</span><span class="value">89,90</span><span class="period">/mês</span></div>
-            <ul class="features"><li>Até 5 computadores</li><li>Excelente custo-benefício</li><li>Ideal para equipes pequenas e médias</li></ul>
+            <div class="tag">Mais escolhido</div>
+            <div class="plan-head">
+              <div class="plan-icon">👥</div>
+              <div>
+                <div class="plan-name">Plano Equipe</div>
+                <div class="plan-sub">5 PCs • Melhor equilíbrio</div>
+              </div>
+            </div>
+            <div class="price loading"><span class="currency">R$</span><span class="value" id="price-5">--</span><span class="period">/mês</span></div>
+            <ul class="features">
+              <li>Até 5 computadores</li>
+              <li>Ideal para equipes pequenas/médias</li>
+              <li>Excelente custo-benefício</li>
+            </ul>
             <button class="buy-btn" onclick="go(5)">Escolher plano Equipe</button>
           </div>
+
           <div class="plan">
-            <div class="plan-head"><div class="plan-icon">🏭</div><div><div class="plan-name">Plano Produção</div><div class="plan-sub">10 PCs • Operação maior</div></div></div>
-            <div class="price"><span class="currency">R$</span><span class="value">149,90</span><span class="period">/mês</span></div>
-            <ul class="features"><li>Até 10 computadores</li><li>Para múltiplos postos de trabalho</li><li>Escalável para crescimento</li></ul>
+            <div class="plan-head">
+              <div class="plan-icon">🏭</div>
+              <div>
+                <div class="plan-name">Plano Produção</div>
+                <div class="plan-sub">10 PCs • Operação maior</div>
+              </div>
+            </div>
+            <div class="price loading"><span class="currency">R$</span><span class="value" id="price-10">--</span><span class="period">/mês</span></div>
+            <ul class="features">
+              <li>Até 10 computadores</li>
+              <li>Ideal para produção com múltiplos postos</li>
+              <li>Escalável para crescimento</li>
+            </ul>
             <button class="buy-btn" onclick="go(10)">Escolher plano Produção</button>
           </div>
+
           <div class="plan">
-            <div class="plan-head"><div class="plan-icon">🏢</div><div><div class="plan-name">Plano Fábrica</div><div class="plan-sub">50 PCs • Operação ampla</div></div></div>
-            <div class="price"><span class="currency">R$</span><span class="value">499,90</span><span class="period">/mês</span></div>
-            <ul class="features"><li>Até 50 computadores</li><li>Para empresas com múltiplas equipes</li><li>Gestão centralizada de licenças</li></ul>
+            <div class="plan-head">
+              <div class="plan-icon">🏢</div>
+              <div>
+                <div class="plan-name">Plano Fábrica</div>
+                <div class="plan-sub">50 PCs • Operação ampla</div>
+              </div>
+            </div>
+            <div class="price loading"><span class="currency">R$</span><span class="value" id="price-50">--</span><span class="period">/mês</span></div>
+            <ul class="features">
+              <li>Até 50 computadores</li>
+              <li>Para empresas com múltiplas equipes/estações</li>
+              <li>Gestão centralizada de licenças</li>
+            </ul>
             <button class="buy-btn secondary" onclick="go(50)">Escolher plano Fábrica</button>
           </div>
         </div>
+
+        <div class="foot-note">Cartão: assinatura mensal com renovação automática. PIX: libera 30 dias e pode ser renovado manualmente.</div>
       </div>
     </div>
 
-    <div class="footer">LINERA-NEST • Licenciamento mensal para operação de corte</div>
+    <div class="footer">LINERA-NEST • Licenciamento por assinatura mensal</div>
   </div>
 
   <script>
+    const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+
+    function moneyBRL(v){
+      const n = Number(v || 0);
+      return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function showStatus(id, text, cls){
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = `status show ${cls}`;
+    }
+
+    async function loadPrice(pcs){
+      const out = document.getElementById(`price-${pcs}`);
+      try {
+        const res = await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(pcs)}`);
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Falha ao buscar preço');
+        out.textContent = moneyBRL(data.amount);
+        out.parentElement.classList.remove('loading');
+      } catch (err) {
+        out.textContent = '--';
+        out.parentElement.classList.remove('loading');
+      }
+    }
+
     function go(pcs){
-      const msg = document.getElementById('msg');
       const email = (document.getElementById('email').value || '').trim().toLowerCase();
       if (!email || !email.includes('@')) {
-        msg.textContent = 'Digite um e-mail válido antes de escolher o plano.';
+        showStatus('msg', 'Digite um e-mail válido antes de escolher o plano.', 'error');
         document.getElementById('email').focus();
         return;
       }
-      msg.textContent = '';
+
       localStorage.setItem('linera_email', email);
       localStorage.setItem('linera_pcs', String(pcs));
-      window.location.href = `https://linera-site.pages.dev/pagamentos.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
+      window.location.href = `pagamentos.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}`;
     }
+
+    document.getElementById('email').addEventListener('input', () => {
+      const v = document.getElementById('email').value.trim().toLowerCase();
+      localStorage.setItem('linera_email', v);
+      document.getElementById('msg').className = 'status error';
+    });
+
+    (async function init(){
+      const savedEmail = localStorage.getItem('linera_email') || '';
+      if (savedEmail) document.getElementById('email').value = savedEmail;
+      await Promise.all([2,5,10,50].map(loadPrice));
+      showStatus('loadMsg', 'Valores atualizados automaticamente a partir dos seus planos cadastrados.', 'ok');
+    })();
   </script>
 </body>
 </html>
