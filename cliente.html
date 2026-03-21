@@ -64,7 +64,7 @@ function clearSession(){ localStorage.removeItem('linera_session'); }
 function authHeaders(extra={}){ const s=getSession(); return {'Content-Type':'application/json', ...(s?.token?{'Authorization':'Bearer '+s.token}:{}) , ...extra}; }
 function showStatus(el, cls, text){ el.className='status show '+cls; el.textContent=text; }
 function formatDateBr(value){ if(!value) return '-'; const d=new Date(value); if(isNaN(d.getTime())) return String(value).slice(0,10); return d.toLocaleDateString('pt-BR'); }
-function formatBillingLabel(lic){ return lic.billing_label || (lic.renewal_method==='pix_subscription_email' ? 'PIX recorrente por e-mail' : (lic.renewal_method==='card_auto' ? 'Cartão' : '-')); }
+function formatBillingLabel(lic){ return lic.billing_label || (lic.renewal_method==='manual_pix' ? 'PIX' : (lic.renewal_method==='card_auto' ? 'Cartão' : '-')); }
 
 async function api(path, opts={}){ const res=await fetch(WORKER+path, opts); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false){ throw new Error(data.detail||data.error||'Falha na operação.'); } return data; }
 function redirectAfterAuth(){
@@ -82,11 +82,9 @@ function cardHtml(lic){
     ? 'Renovação automática desativada'
     : (lic.renewal_method==='card_auto'
         ? 'Renovação automática no cartão'
-        : (lic.renewal_method==='pix_subscription_email'
-            ? 'Cobranças recorrentes por PIX enviadas por e-mail'
-            : (lic.renewal_method==='pix_auto_requested'
-                ? 'Preferência por PIX recorrente registrada'
-                : 'Renovação sob consulta')));
+        : (lic.renewal_method==='manual_pix'
+            ? 'Renovação manual por PIX'
+            : 'Renovação sob consulta'));
 
   return `<div class="lic-card">
     <h3>${lic.plan_name||('Plano '+lic.pcs+' PCs')}</h3>
