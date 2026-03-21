@@ -42,7 +42,7 @@
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://www.mercadopago.com/v2/security.js" view="pagamentos"></script>
 </head><body><div class="wrap">
-<div class="topbar"><div><strong>Pagamento</strong><div class="muted">Finalize a compra usando o e-mail da sua conta.</div></div><div class="actions"><a class="btn secondary" href="cliente.html">Área do cliente</a><a class="btn secondary" href="comprar.html">Planos</a></div></div>
+<div class="topbar"><div><strong>Pagamento</strong><div class="muted">A primeira cobrança acontece na hora. Depois disso, o sistema prepara a renovação futura conforme o meio escolhido.</div></div><div class="actions"><a class="btn secondary" href="cliente.html">Área do cliente</a><a class="btn secondary" href="comprar.html">Planos</a></div></div>
 <div id="msg" class="status info"></div>
 <div class="layout">
   <div class="box">
@@ -169,5 +169,7 @@ async function checkPix(){
 }
 function startPixPolling(){ stopPixPolling(); pollTimer=setTimeout(checkPix,5000); }
 el('btnPix').onclick=gerarPix;
-(async()=>{ try{ await loadPlanInfo(); await mountCardBrick(); }catch(e){ show('msg','error',e.message||String(e)); el('cardLoader').style.display='none'; const cardWrap = el('cardWrap'); if(cardWrap){ const c = el('cardBrick_container'); if(c) c.innerHTML=''; } } })();
+const initialTab=(params.get('tab')||'').toLowerCase()==='pix' ? 'pix' : 'card';
+switchTab(initialTab);
+(async()=>{ try{ await loadPlanInfo(); await mountCardBrick(); if(initialTab==='pix'){} }catch(e){ show('msg','error',e.message||String(e)); el('cardLoader').style.display='none'; const cardWrap = el('cardWrap'); if(cardWrap){ const c = el('cardBrick_container'); if(c) c.innerHTML=''; } } })();
 </script></body></html>

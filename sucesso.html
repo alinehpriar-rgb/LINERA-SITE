@@ -162,5 +162,17 @@ Validade: ${data.valid_until || '-'}`, 'ok2');
 
     if (origem === 'pix' || paymentId) handlePix(); else handleCard();
   </script>
-</body>
+<script>
+(function(){
+  const qp = new URLSearchParams(location.search);
+  const origem = qp.get('origem') || '';
+  const banner = document.getElementById('banner');
+  if (!banner) return;
+  if (origem === 'cartao') {
+    banner.textContent = 'Pagamento inicial no cartão em processamento final. Depois da aprovação, a licença é liberada e a próxima cobrança fica preparada para o próximo mês.';
+  } else if (origem === 'pix') {
+    banner.textContent = 'Pagamento PIX em validação. Quando for aprovado, a licença é liberada e a próxima cobrança PIX fica preparada para o próximo mês.';
+  }
+})();
+</script></body>
 </html>

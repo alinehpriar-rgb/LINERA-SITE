@@ -33,6 +33,13 @@
     .grid{display:grid;gap:16px}
     .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
     @media (max-width:760px){.grid.two{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
+.row-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.row-actions .btn{min-width:0}
+.billing-box{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fafcff}
+.billing-note{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.4}
+.pix-inline{margin-top:14px;padding:14px;border:1px dashed #cbd5e1;border-radius:14px;background:#fff}
+.pix-inline img{max-width:220px;border:1px solid var(--line);border-radius:12px}
+.pix-inline textarea{width:100%;min-height:92px;margin-top:10px;border:1px solid #cbd5e1;border-radius:12px;padding:10px 12px;font-size:14px}
 
 .lic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .lic-card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
@@ -56,6 +63,9 @@ function setSession(v){ localStorage.setItem('linera_session', JSON.stringify(v)
 function clearSession(){ localStorage.removeItem('linera_session'); }
 function authHeaders(extra={}){ const s=getSession(); return {'Content-Type':'application/json', ...(s?.token?{'Authorization':'Bearer '+s.token}:{}) , ...extra}; }
 function showStatus(el, cls, text){ el.className='status show '+cls; el.textContent=text; }
+function formatDateBr(value){ if(!value) return '-'; const d=new Date(value); if(isNaN(d.getTime())) return String(value).slice(0,10); return d.toLocaleDateString('pt-BR'); }
+function formatBillingLabel(lic){ return lic.billing_label || (lic.renewal_method==='pix_subscription_email' ? 'PIX recorrente por e-mail' : (lic.renewal_method==='card_auto' ? 'Cartão' : '-')); }
+
 async function api(path, opts={}){ const res=await fetch(WORKER+path, opts); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false){ throw new Error(data.detail||data.error||'Falha na operação.'); } return data; }
 function redirectAfterAuth(){
   const qp=new URLSearchParams(location.search);
@@ -68,22 +78,37 @@ function redirectAfterAuth(){
 const msg=document.getElementById('msg');
 function requireAuth(){ const s=getSession(); if(!s?.token){ location.href='login.html'; return null; } return s; }
 function cardHtml(lic){
-  const renewal = lic.auto_renew===false ? 'Renovação automática desativada' : 'Renovação automática ativa';
+  const renewal = lic.renewal_status==='cancelled' || lic.auto_renew===false
+    ? 'Renovação automática desativada'
+    : (lic.renewal_method==='card_auto'
+        ? 'Renovação automática no cartão'
+        : (lic.renewal_method==='pix_subscription_email'
+            ? 'Cobranças recorrentes por PIX enviadas por e-mail'
+            : (lic.renewal_method==='pix_auto_requested'
+                ? 'Preferência por PIX recorrente registrada'
+                : 'Renovação sob consulta')));
+
   return `<div class="lic-card">
     <h3>${lic.plan_name||('Plano '+lic.pcs+' PCs')}</h3>
     <div class="muted">${renewal}</div>
     <div class="kv">
       <div><strong>Status</strong><br>${lic.status||'-'}</div>
-      <div><strong>Validade</strong><br>${lic.valid_until||'-'}</div>
+      <div><strong>Validade</strong><br>${formatDateBr(lic.valid_until)}</div>
       <div><strong>Computadores</strong><br>${lic.pcs} PCs</div>
       <div><strong>Slots ocupados</strong><br>${lic.devices_active||0}</div>
     </div>
-    <div class="actions" style="margin-top:14px">
-      <a class="btn small" href="pagamentos.html?pcs=${encodeURIComponent(String(lic.pcs))}">Pagar / renovar</a>
+    <div class="billing-box">
+      <div><strong>Meio de cobrança atual</strong><br>${formatBillingLabel(lic)}</div>
+      <div class="billing-note">${lic.renewal_note||'-'}</div>
+    </div>
+    <div class="row-actions">
+      <a class="btn small" href="${WORKER}/api/licenca?email=${encodeURIComponent(lic.email)}&pcs=${encodeURIComponent(String(lic.pcs))}" target="_blank" rel="noopener">Baixar licença</a>
       <button class="btn secondary small" onclick="clearSlots(${lic.pcs})">Esvaziar slots</button>
-      <button class="btn secondary small" onclick="resendLicense(${lic.pcs})">Reenviar licença</button>
+      <button class="btn secondary small" onclick="openCardCheckout(${lic.pcs})">Trocar cartão</button>
+      <button class="btn secondary small" onclick="togglePixRenew(${lic.pcs})">Pagar por PIX</button>
       <button class="btn danger small" onclick="cancelSubscription(${lic.pcs})">Cancelar assinatura</button>
     </div>
+    <div id="pixRenew_${lic.pcs}" class="pix-inline" style="display:none"></div>
   </div>`;
 }
 async function loadOverview(){
@@ -98,8 +123,10 @@ async function loadOverview(){
   } catch(e){ showStatus(msg,'error',e.message||String(e)); }
 }
 async function clearSlots(pcs){ if(!confirm('Deseja esvaziar todos os slots deste plano?')) return; try{ await api('/api/client/clear-slots',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok','Slots esvaziados com sucesso.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
-async function resendLicense(pcs){ try{ await api('/api/client/resend-license',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok','Solicitação de reenvio registrada.'); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
 async function cancelSubscription(pcs){ if(!confirm('Deseja cancelar a renovação automática deste plano?')) return; try{ const data=await api('/api/client/cancel-subscription',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok',data.cancelled_at_gateway ? 'Assinatura cancelada com sucesso.' : 'Renovação automática desativada no sistema.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
+async function setRenewalMethod(pcs, method){ try{ const data=await api('/api/client/set-renewal-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs,method})}); showStatus(msg,'ok',data.renewal_note||'Preferência de renovação atualizada.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
+function openCardCheckout(pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(String(pcs))}&tab=card`; }
+async function togglePixRenew(pcs){ const box=document.getElementById(`pixRenew_${pcs}`); if(!box) return; if(box.style.display==='block'){ box.style.display='none'; box.innerHTML=''; return; } box.style.display='block'; box.innerHTML='<div class="muted">Gerando PIX...</div>'; try{ const session=getSession(); const email=session?.user?.email||''; const data=await api('/api/mp/criar_pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,pcs})}); box.innerHTML=`${data.qr_code_base64 ? `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX"/>` : ''}${data.qr_code ? `<textarea readonly>${data.qr_code}</textarea><div class="row-actions"><button class="btn secondary small" onclick="navigator.clipboard.writeText(${JSON.stringify('')}||'')">Copiar manualmente</button></div>` : ''}<div class="billing-note">Pague este PIX para renovar imediatamente. Depois da confirmação, a próxima cobrança recorrente ficará programada para o mês seguinte.</div>`; if(data.qr_code){ const btn=document.createElement('button'); btn.className='btn secondary small'; btn.textContent='Copiar código PIX'; btn.onclick=()=>navigator.clipboard.writeText(data.qr_code||''); const row=document.createElement('div'); row.className='row-actions'; row.appendChild(btn); box.appendChild(row); } }catch(e){ box.innerHTML=''; showStatus(msg,'error',e.message||String(e)); } }
 document.getElementById('btnLogout').onclick=()=>{ clearSession(); location.href='comprar.html'; };
 document.getElementById('btnChangePassword').onclick=async()=>{ const currentPassword=prompt('Digite sua senha atual:'); if(!currentPassword) return; const newPassword=prompt('Digite a nova senha:'); if(!newPassword) return; try{ await api('/api/auth/change-password',{method:'POST',headers:authHeaders(),body:JSON.stringify({current_password:currentPassword,new_password:newPassword})}); showStatus(msg,'ok','Senha alterada com sucesso.'); }catch(e){ showStatus(msg,'error',e.message||String(e)); } };
 loadOverview();
