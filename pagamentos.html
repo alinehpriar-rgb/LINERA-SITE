@@ -99,7 +99,7 @@ const el=id=>document.getElementById(id);
 const sumEmail=el('sumEmail'), sumPlan=el('sumPlan'), sumPcs=el('sumPcs'), sumPrice=el('sumPrice'), msg=el('msg');
 sumEmail.textContent=email; sumPlan.textContent=PLAN_NAMES[pcs]||`Plano ${pcs} PCs`; sumPcs.textContent=`${pcs} PCs`;
 if(!pcs){ showStatus(msg,'error','Plano não informado. Volte e escolha um plano.'); }
-async function loadPlanInfo(){ const data=await api(`/api/plan_info?pcs=${pcs}`); amount=Number(data.amount||0); MP_PUBLIC_KEY=data.public_key||''; sumPrice.textContent='R$ '+amount.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+async function loadPlanInfo(){ const data=await api(`/api/plan_info?pcs=${pcs}`); amount=Number(data.amount||0); MP_PUBLIC_KEY=String(data.public_key||'').trim(); sumPrice.textContent='R$ '+amount.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); if(!MP_PUBLIC_KEY){ throw new Error('MP_PUBLIC_KEY não configurada no Worker. Configure a variável MP_PUBLIC_KEY no Cloudflare e publique novamente.'); } }
 function getDeviceId(){ return String(window.MP_DEVICE_SESSION_ID||'').trim(); }
 function hideAllStatus(){ ['cardStatus','pixStatus','msg'].forEach(id=>{ const x=el(id); if(x) x.className='status info'; }); }
 function show(id, cls, text){ showStatus(el(id),cls,text); }
@@ -169,5 +169,5 @@ async function checkPix(){
 }
 function startPixPolling(){ stopPixPolling(); pollTimer=setTimeout(checkPix,5000); }
 el('btnPix').onclick=gerarPix;
-(async()=>{ try{ await loadPlanInfo(); await mountCardBrick(); }catch(e){ show('msg','error',e.message||String(e)); el('cardLoader').style.display='none'; } })();
+(async()=>{ try{ await loadPlanInfo(); await mountCardBrick(); }catch(e){ show('msg','error',e.message||String(e)); el('cardLoader').style.display='none'; const cardWrap = el('cardWrap'); if(cardWrap){ const c = el('cardBrick_container'); if(c) c.innerHTML=''; } } })();
 </script></body></html>
