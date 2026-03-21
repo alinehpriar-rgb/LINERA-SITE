@@ -1,12 +1,106 @@
-<!doctype html><html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Área do cliente | LINERA-NEST</title><style>:root{--bg:#f6f7fb;--card:#fff;--text:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#0b1f3b;--danger:#b91c1c;}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Segoe UI,Arial,sans-serif;color:var(--text)}.wrap{max-width:1100px;margin:26px auto;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.btn{display:inline-flex;padding:12px 16px;border-radius:14px;text-decoration:none;font-weight:800;border:1px solid #e2e8f0;background:#fff;color:#0f172a;cursor:pointer}.primary{background:#0b1f3b;color:#fff;border-color:#0b1f3b}.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 28px rgba(15,23,42,.07)}.licenses{display:grid;gap:12px}.license{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fafcff} .muted{color:#475569} .row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap} .msg{margin-top:12px;padding:12px;border-radius:12px;display:none}</style></head><body><div class="wrap"><div class="top"><div><h1 style="margin:0">Área do cliente</h1><div class="muted" id="hello"></div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="comprar_portal.html">Comprar / renovar</a><button class="btn" id="logout">Sair</button></div></div><div class="grid"><div class="card"><h2 style="margin-top:0">Minhas licenças</h2><div id="licenses" class="licenses"></div><div id="msg" class="msg"></div></div><div class="card"><h2 style="margin-top:0">Conta</h2><p class="muted">Use esta área para acompanhar sua licença, trocar senha e solicitar reenvio da licença por e-mail.</p><button class="btn" id="resend">Reenviar última licença por e-mail</button> <button class="btn" id="cancel">Solicitar cancelamento</button><hr style="border:none;border-top:1px solid #e2e8f0;margin:18px 0"><h3>Trocar senha</h3><input id="current" type="password" placeholder="Senha atual" style="width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:10px"><input id="newpwd" type="password" placeholder="Nova senha" style="width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:12px"><button class="btn primary" style="margin-top:12px" id="changePwd">Salvar nova senha</button></div></div></div>
+<!doctype html><html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Área do cliente | LINERA-NEST</title><style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#0f172a; --muted:#475569; --primary:#0b1f3b;
+      --primary-hover:#091a31; --line:#e2e8f0; --soft:#eef2f7; --green:#15803d;
+      --green-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2; --shadow:0 12px 28px rgba(15,23,42,.07);
+      --shadow-strong:0 18px 35px rgba(11,31,59,.18);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
+    .wrap{max-width:1080px;margin:26px auto 40px;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    .hero{background:linear-gradient(135deg,#0b1f3b 0%,#123568 100%);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-strong);margin-bottom:16px}
+    .hero h1{margin:0 0 8px;font-size:22px}
+    .hero p{margin:0;color:rgba(255,255,255,.92);font-size:14px;line-height:1.45}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn,.btn-link{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:14px;padding:12px 16px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn{background:var(--primary);color:#fff}
+    .btn:hover{background:var(--primary-hover)}
+    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .btn.danger{background:#991b1b}
+    .btn.small{padding:10px 12px;font-size:14px}
+    .muted{color:var(--muted)}
+    .status{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.4;display:none;white-space:pre-line}
+    .status.show{display:block}
+    .status.error{background:var(--danger-soft);color:var(--danger);border:1px solid #fecaca}
+    .status.ok{background:var(--green-soft);color:var(--green);border:1px solid #bbf7d0}
+    .status.info{background:#f8fafc;color:#334155;border:1px solid #dbe3ef}
+    input,select{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
+    input:focus,select:focus{border-color:#94a3b8;box-shadow:0 0 0 4px rgba(11,31,59,.08)}
+    label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+    .field{margin-top:12px}
+    .grid{display:grid;gap:16px}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:760px){.grid.two{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
+
+.lic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.lic-card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.kv div{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fafcff}
+@media (max-width:760px){.lic-grid{grid-template-columns:1fr} .kv{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+  <div class="topbar">
+    <div><strong id="userName">Área do cliente</strong><div class="muted">Acompanhe licenças, renovação e configurações da sua conta.</div></div>
+    <div class="actions"><a class="btn secondary" href="comprar.html">Planos</a><button class="btn secondary" id="btnChangePassword">Trocar senha</button><button class="btn secondary" id="btnLogout">Sair</button></div>
+  </div>
+  <div id="msg" class="status info"></div>
+  <div class="card" id="accountCard" style="margin-bottom:16px"></div>
+  <div id="licensesWrap" class="lic-grid"></div>
+</div>
 <script>
-const API='https://linera-lic.alineh-pri-ar.workers.dev', token=localStorage.getItem('linera_token')||''; if(!token) location.href='login.html';
-const msg=document.getElementById('msg'); function flash(t,ok=false){msg.style.display='block';msg.textContent=t;msg.style.background=ok?'#ecfdf5':'#fef2f2';msg.style.border='1px solid '+(ok?'#bbf7d0':'#fecaca');msg.style.color=ok?'#166534':'#b91c1c';}
-async function api(path, options={}){ options.headers=Object.assign({'Authorization':'Bearer '+token}, options.headers||{}); const r=await fetch(API+path,options); const d=await r.json().catch(()=>({})); if(!r.ok||d.ok===false) throw new Error(d.error||d.detail||'Erro'); return d; }
-async function load(){ try{ const d=await api('/api/customer/license'); document.getElementById('hello').textContent=(d.customer?.name||'Cliente')+' · '+(d.customer?.email||''); const box=document.getElementById('licenses'); box.innerHTML=''; (d.licenses||[]).forEach(lic=>{ const div=document.createElement('div'); div.className='license'; const devices=Object.keys(lic.devices||{}); div.innerHTML=`<div class="row"><strong>${lic.plan_name||('Plano '+lic.pcs+' PCs')}</strong><span class="muted">${lic.status||''}</span></div><div class="muted">Validade: ${lic.valid_until||'-'}</div><div class="muted">Assinatura: ${lic.subscription_id||'—'}</div><div class="muted">Slots ativos: ${devices.length} / ${lic.pcs}</div>`; if(devices.length){ const area=document.createElement('div'); area.style.marginTop='10px'; area.innerHTML=devices.map(id=>`<button class="btn" data-pcs="${lic.pcs}" data-id="${id}">Esvaziar slot ${id.slice(0,10)}...</button>`).join(' '); div.appendChild(area); } box.appendChild(div); }); if(!(d.licenses||[]).length) box.innerHTML='<div class="license">Nenhuma licença encontrada ainda.</div>'; document.querySelectorAll('[data-id]').forEach(b=>b.onclick=async()=>{ try{ await api('/api/customer/clear_device',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pcs:Number(b.dataset.pcs),device_id:b.dataset.id})}); flash('Slot liberado com sucesso.',true); load(); }catch(e){ flash(e.message); } }); }catch(e){ flash(e.message); } }
-load();
-document.getElementById('logout').onclick=()=>{ localStorage.removeItem('linera_token'); location.href='login.html'; };
-document.getElementById('changePwd').onclick=async()=>{ try{ await api('/api/customer/change_password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({current_password:current.value,new_password:newpwd.value})}); flash('Senha atualizada com sucesso.',true); current.value=''; newpwd.value=''; }catch(e){ flash(e.message); } };
-document.getElementById('resend').onclick=async()=>{ try{ const d=await api('/api/customer/license'); const lic=(d.licenses||[])[0]; if(!lic) return flash('Nenhuma licença para reenviar.'); await api('/api/customer/resend_license',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pcs:lic.pcs})}); flash('Reenvio solicitado. O e-mail ficou na fila do sistema.',true); }catch(e){ flash(e.message); } };
-document.getElementById('cancel').onclick=async()=>{ try{ const d=await api('/api/customer/license'); const lic=(d.licenses||[])[0]; if(!lic) return flash('Nenhuma assinatura encontrada.'); await api('/api/customer/cancel_subscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pcs:lic.pcs})}); flash('Pedido de cancelamento registrado.',true); }catch(e){ flash(e.message); } };
+const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+const PLAN_NAMES = {2:'Plano Oficina',5:'Plano Equipe',10:'Plano Produção',50:'Plano Fábrica'};
+function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
+function setSession(v){ localStorage.setItem('linera_session', JSON.stringify(v)); }
+function clearSession(){ localStorage.removeItem('linera_session'); }
+function authHeaders(extra={}){ const s=getSession(); return {'Content-Type':'application/json', ...(s?.token?{'Authorization':'Bearer '+s.token}:{}) , ...extra}; }
+function showStatus(el, cls, text){ el.className='status show '+cls; el.textContent=text; }
+async function api(path, opts={}){ const res=await fetch(WORKER+path, opts); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false){ throw new Error(data.detail||data.error||'Falha na operação.'); } return data; }
+function redirectAfterAuth(){
+  const qp=new URLSearchParams(location.search);
+  const pcs=qp.get('pcs')||localStorage.getItem('linera_checkout_pcs')||'';
+  const intent=qp.get('intent')||'';
+  if(intent==='checkout' && pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(pcs)}`; return; }
+  location.href='cliente.html';
+}
+
+const msg=document.getElementById('msg');
+function requireAuth(){ const s=getSession(); if(!s?.token){ location.href='login.html'; return null; } return s; }
+function cardHtml(lic){
+  const renewal = lic.auto_renew===false ? 'Renovação automática desativada' : 'Renovação automática ativa';
+  return `<div class="lic-card">
+    <h3>${lic.plan_name||('Plano '+lic.pcs+' PCs')}</h3>
+    <div class="muted">${renewal}</div>
+    <div class="kv">
+      <div><strong>Status</strong><br>${lic.status||'-'}</div>
+      <div><strong>Validade</strong><br>${lic.valid_until||'-'}</div>
+      <div><strong>Computadores</strong><br>${lic.pcs} PCs</div>
+      <div><strong>Slots ocupados</strong><br>${lic.devices_active||0}</div>
+    </div>
+    <div class="actions" style="margin-top:14px">
+      <a class="btn small" href="pagamentos.html?pcs=${encodeURIComponent(String(lic.pcs))}">Pagar / renovar</a>
+      <button class="btn secondary small" onclick="clearSlots(${lic.pcs})">Esvaziar slots</button>
+      <button class="btn secondary small" onclick="resendLicense(${lic.pcs})">Reenviar licença</button>
+      <button class="btn danger small" onclick="cancelSubscription(${lic.pcs})">Cancelar assinatura</button>
+    </div>
+  </div>`;
+}
+async function loadOverview(){
+  requireAuth();
+  try {
+    const data=await api('/api/client/overview',{headers:authHeaders() });
+    document.getElementById('userName').textContent=data.user.name || data.user.email;
+    document.getElementById('accountCard').innerHTML=`<strong>${data.user.name||'-'}</strong><div class="muted">${data.user.email}</div>`;
+    const wrap=document.getElementById('licensesWrap');
+    if(!data.licenses.length){ wrap.innerHTML=`<div class="card"><h3>Nenhuma licença ativa ainda</h3><p class="muted">Você ainda não concluiu uma compra. Quando finalizar o pagamento, sua licença aparecerá aqui.</p><a class="btn" href="comprar.html">Escolher plano</a></div>`; return; }
+    wrap.innerHTML=data.licenses.map(cardHtml).join('');
+  } catch(e){ showStatus(msg,'error',e.message||String(e)); }
+}
+async function clearSlots(pcs){ if(!confirm('Deseja esvaziar todos os slots deste plano?')) return; try{ await api('/api/client/clear-slots',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok','Slots esvaziados com sucesso.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
+async function resendLicense(pcs){ try{ await api('/api/client/resend-license',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok','Solicitação de reenvio registrada.'); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
+async function cancelSubscription(pcs){ if(!confirm('Deseja cancelar a renovação automática deste plano?')) return; try{ const data=await api('/api/client/cancel-subscription',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok',data.cancelled_at_gateway ? 'Assinatura cancelada com sucesso.' : 'Renovação automática desativada no sistema.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
+document.getElementById('btnLogout').onclick=()=>{ clearSession(); location.href='comprar.html'; };
+document.getElementById('btnChangePassword').onclick=async()=>{ const currentPassword=prompt('Digite sua senha atual:'); if(!currentPassword) return; const newPassword=prompt('Digite a nova senha:'); if(!newPassword) return; try{ await api('/api/auth/change-password',{method:'POST',headers:authHeaders(),body:JSON.stringify({current_password:currentPassword,new_password:newPassword})}); showStatus(msg,'ok','Senha alterada com sucesso.'); }catch(e){ showStatus(msg,'error',e.message||String(e)); } };
+loadOverview();
 </script></body></html>

@@ -1,1 +1,135 @@
-<!doctype html><html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" /><title>LINERA-NEST | Escolha seu plano</title><style>:root{--bg:#f6f7fb;--card:#fff;--text:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#0b1f3b;--shadow:0 12px 28px rgba(15,23,42,.07)}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Segoe UI,Arial,sans-serif;color:var(--text)}.wrap{max-width:1100px;margin:24px auto;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.btn{display:inline-flex;padding:12px 16px;border-radius:14px;text-decoration:none;font-weight:800;border:1px solid var(--line);background:#fff;color:var(--text)}.hero{background:linear-gradient(135deg,#0b1f3b,#123568);color:#fff;border-radius:22px;padding:24px;box-shadow:0 18px 35px rgba(11,31,59,.18)}.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column}.price{font-size:32px;font-weight:900;margin:8px 0;color:#15803d}.features{padding-left:20px;line-height:1.8;color:#334155;min-height:96px}.buy{margin-top:auto;padding:14px 16px;border:none;border-radius:16px;background:#0b1f3b;color:#fff;font-weight:800;cursor:pointer}.muted{color:#475569}@media(max-width:980px){.plans{grid-template-columns:1fr 1fr}}@media(max-width:640px){.plans{grid-template-columns:1fr}}</style></head><body><div class="wrap"><div class="top"><div><strong>LINERA-NEST</strong><div class="muted" id="hello">Escolha o plano ideal para sua operação.</div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="cadastro.html">Criar conta</a><a class="btn" href="login.html">Entrar</a><a class="btn" href="cliente.html">Área do cliente</a></div></div><div class="hero"><h1 style="margin:0 0 8px">Escolha seu plano</h1><div style="max-width:760px;line-height:1.55">Comece agora, organize sua operação e acompanhe tudo pela área do cliente. Cartão com renovação automática e PIX com renovação pelo portal.</div></div><div class="plans" id="plans"></div></div><script>const API='https://linera-lic.alineh-pri-ar.workers.dev'; const plans=[{pcs:2,title:'Plano Oficina',topics:['Até 2 computadores','Ideal para pequenos negócios','Mais organização na rotina']},{pcs:5,title:'Plano Empresa',topics:['Até 5 computadores','Para equipes em crescimento','Mais fluidez na operação']},{pcs:10,title:'Plano Industrial',topics:['Até 10 computadores','Para operações maiores','Mais controle e produtividade']},{pcs:50,title:'Plano Corporativo',topics:['Até 50 computadores','Para empresas com múltiplas equipes/estações','Gestão centralizada de licenças']}]; const token=localStorage.getItem('linera_token')||''; const nm=localStorage.getItem('linera_name')||''; if(token && nm) document.getElementById('hello').textContent='Olá, '+nm+'. Escolha o plano ou renove sua licença.'; async function amount(pcs){ try{ const r=await fetch(API+'/api/plan_info?pcs='+pcs,{cache:'no-store'}); const d=await r.json(); return d.amount?Number(d.amount).toFixed(2).replace('.',','):'--'; }catch{return '--';}} (async()=>{ const box=document.getElementById('plans'); for(const p of plans){ const val=await amount(p.pcs); const el=document.createElement('div'); el.className='card'; el.innerHTML=`<h2 style="margin:0">${p.title}</h2><div class="price">R$ ${val}<span style="font-size:14px;color:#475569;font-weight:700"> / mês</span></div><ul class="features">${p.topics.map(t=>`<li>${t}</li>`).join('')}</ul><button class="buy">Escolher plano</button>`; el.querySelector('.buy').onclick=()=>location.href=`pagamentos.html?pcs=${p.pcs}`; box.appendChild(el);} })();</script></body></html>
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>LINERA-NEST | Planos</title>
+<style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#0f172a; --muted:#475569; --primary:#0b1f3b;
+      --primary-hover:#091a31; --line:#e2e8f0; --soft:#eef2f7; --green:#15803d;
+      --green-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2; --shadow:0 12px 28px rgba(15,23,42,.07);
+      --shadow-strong:0 18px 35px rgba(11,31,59,.18);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
+    .wrap{max-width:1080px;margin:26px auto 40px;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    .hero{background:linear-gradient(135deg,#0b1f3b 0%,#123568 100%);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-strong);margin-bottom:16px}
+    .hero h1{margin:0 0 8px;font-size:22px}
+    .hero p{margin:0;color:rgba(255,255,255,.92);font-size:14px;line-height:1.45}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn,.btn-link{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:14px;padding:12px 16px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn{background:var(--primary);color:#fff}
+    .btn:hover{background:var(--primary-hover)}
+    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .btn.danger{background:#991b1b}
+    .btn.small{padding:10px 12px;font-size:14px}
+    .muted{color:var(--muted)}
+    .status{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.4;display:none;white-space:pre-line}
+    .status.show{display:block}
+    .status.error{background:var(--danger-soft);color:var(--danger);border:1px solid #fecaca}
+    .status.ok{background:var(--green-soft);color:var(--green);border:1px solid #bbf7d0}
+    .status.info{background:#f8fafc;color:#334155;border:1px solid #dbe3ef}
+    input,select{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
+    input:focus,select:focus{border-color:#94a3b8;box-shadow:0 0 0 4px rgba(11,31,59,.08)}
+    label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+    .field{margin-top:12px}
+    .grid{display:grid;gap:16px}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:760px){.grid.two{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
+
+.plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.plan{position:relative;border:1px solid var(--line);background:#fff;border-radius:18px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.plan.highlight{border:2px solid var(--primary)}
+.tag{position:absolute;top:-12px;right:16px;background:var(--primary);color:#fff;font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px}
+.price{margin:16px 0 14px;display:flex;align-items:flex-end;gap:6px;font-weight:800}
+.value{font-size:40px;line-height:.95}
+.period{font-size:16px;color:var(--muted);font-weight:700;padding-bottom:5px}
+.features{padding:0 0 0 18px;margin:0 0 18px;color:#334155;line-height:1.55}
+.footer{text-align:center;color:var(--muted);font-size:13px;margin-top:18px}
+@media (max-width:760px){.plan-grid{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+  <div class="topbar">
+    <div class="muted" id="welcomeText">Escolha seu plano e avance para o pagamento.</div>
+    <div class="actions">
+      <a class="btn secondary" id="btnCriarConta" href="cadastro.html">Criar conta</a>
+      <a class="btn secondary" id="btnEntrar" href="login.html">Entrar</a>
+      <a class="btn secondary" id="btnCliente" href="cliente.html" style="display:none">Área do cliente</a>
+    </div>
+  </div>
+  <div class="hero"><h1>Assine o LINERA-NEST</h1><p>Escolha o plano ideal para sua operação. O cadastro vem antes do pagamento para que o cliente já tenha acesso à área do cliente, histórico e gestão da licença.</p></div>
+  <div id="msg" class="status info"></div>
+  <div class="plan-grid">
+    <div class="plan highlight">
+      <div class="tag">Mais escolhido</div>
+      <h3>Plano Oficina</h3><div class="muted">Estrutura enxuta para começar bem</div>
+      <div class="price"><span>R$</span><span class="value" id="price-2">--</span><span class="period">/mês</span></div>
+      <ul class="features"><li>Até 2 computadores</li><li>Ideal para pequenos negócios</li><li>Mais organização na rotina</li></ul>
+      <button class="btn" onclick="choosePlan(2)">Escolher plano</button>
+    </div>
+    <div class="plan">
+      <h3>Plano Equipe</h3><div class="muted">Para times pequenos em crescimento</div>
+      <div class="price"><span>R$</span><span class="value" id="price-5">--</span><span class="period">/mês</span></div>
+      <ul class="features"><li>Até 5 computadores</li><li>Ideal para equipes enxutas</li><li>Mais fluidez no trabalho</li></ul>
+      <button class="btn" onclick="choosePlan(5)">Escolher plano</button>
+    </div>
+    <div class="plan">
+      <h3>Plano Produção</h3><div class="muted">Mais capacidade para operação intensa</div>
+      <div class="price"><span>R$</span><span class="value" id="price-10">--</span><span class="period">/mês</span></div>
+      <ul class="features"><li>Até 10 computadores</li><li>Mais produtividade para a equipe</li><li>Escala com mais controle</li></ul>
+      <button class="btn" onclick="choosePlan(10)">Escolher plano</button>
+    </div>
+    <div class="plan">
+      <h3>Plano Fábrica</h3><div class="muted">Pensado para operações maiores</div>
+      <div class="price"><span>R$</span><span class="value" id="price-50">--</span><span class="period">/mês</span></div>
+      <ul class="features"><li>Até 50 computadores</li><li>Para múltiplas equipes/estações</li><li>Gestão centralizada de licenças</li></ul>
+      <button class="btn" onclick="choosePlan(50)">Escolher plano</button>
+    </div>
+  </div>
+  <div class="footer">LINERA-NEST • Licenciamento por assinatura mensal</div>
+</div>
+<script>
+
+const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+const PLAN_NAMES = {2:'Plano Oficina',5:'Plano Equipe',10:'Plano Produção',50:'Plano Fábrica'};
+function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
+function setSession(v){ localStorage.setItem('linera_session', JSON.stringify(v)); }
+function clearSession(){ localStorage.removeItem('linera_session'); }
+function authHeaders(extra={}){ const s=getSession(); return {'Content-Type':'application/json', ...(s?.token?{'Authorization':'Bearer '+s.token}:{}) , ...extra}; }
+function showStatus(el, cls, text){ el.className='status show '+cls; el.textContent=text; }
+async function api(path, opts={}){ const res=await fetch(WORKER+path, opts); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false){ throw new Error(data.detail||data.error||'Falha na operação.'); } return data; }
+function redirectAfterAuth(){
+  const qp=new URLSearchParams(location.search);
+  const pcs=qp.get('pcs')||localStorage.getItem('linera_checkout_pcs')||'';
+  const intent=qp.get('intent')||'';
+  if(intent==='checkout' && pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(pcs)}`; return; }
+  location.href='cliente.html';
+}
+
+function moneyBRL(v){ return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+async function loadPrice(pcs){ try{ const data=await api(`/api/plan_info?pcs=${pcs}`); document.getElementById('price-'+pcs).textContent=moneyBRL(data.amount); }catch{ document.getElementById('price-'+pcs).textContent='--'; } }
+function syncHeader(){
+  const s=getSession(); const btnEntrar=document.getElementById('btnEntrar'); const btnCriar=document.getElementById('btnCriarConta'); const btnCliente=document.getElementById('btnCliente'); const welcome=document.getElementById('welcomeText');
+  if(s?.token && s?.user?.email){
+    btnCliente.style.display='inline-flex';
+    btnCriar.style.display='none';
+    btnEntrar.textContent='Sair';
+    btnEntrar.href='#';
+    btnEntrar.onclick=(e)=>{e.preventDefault(); clearSession(); syncHeader(); showStatus(document.getElementById('msg'),'ok','Você saiu da sua conta.'); };
+    welcome.textContent=`Olá, ${s.user.name||s.user.email}. Você já pode ir direto ao pagamento ou acessar sua área do cliente.`;
+  } else {
+    btnCliente.style.display='none';
+    btnCriar.style.display='inline-flex';
+    btnEntrar.textContent='Entrar';
+    btnEntrar.href='login.html';
+    btnEntrar.onclick=null;
+    welcome.textContent='Escolha seu plano e avance para o pagamento.';
+  }
+}
+function choosePlan(pcs){
+  localStorage.setItem('linera_checkout_pcs', String(pcs));
+  const s=getSession();
+  if(s?.token) { location.href=`pagamentos.html?pcs=${encodeURIComponent(String(pcs))}`; return; }
+  location.href=`cadastro.html?intent=checkout&pcs=${encodeURIComponent(String(pcs))}`;
+}
+(async function(){ syncHeader(); await Promise.all([2,5,10,50].map(loadPrice)); })();
+</script></body></html>

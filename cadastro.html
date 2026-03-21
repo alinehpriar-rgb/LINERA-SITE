@@ -1,22 +1,78 @@
-<!doctype html>
-<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cadastro | LINERA-NEST</title>
-<style>
-:root{--bg:#f6f7fb;--card:#fff;--text:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#0b1f3b;--ok:#15803d;--danger:#b91c1c;}
-*{box-sizing:border-box} body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)} .wrap{max-width:520px;margin:40px auto;padding:0 16px} .card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 12px 28px rgba(15,23,42,.07)} h1{margin:0 0 8px} p{color:var(--muted)} label{display:block;font-weight:700;margin:16px 0 6px} input{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:14px} button{margin-top:18px;width:100%;padding:15px;border:none;border-radius:16px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer} .msg{margin-top:16px;padding:14px;border-radius:14px;display:none;white-space:pre-line} .ok{display:block;background:#ecfdf5;border:1px solid #bbf7d0;color:#166534} .err{display:block;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c} .links{margin-top:16px;text-align:center}</style></head>
-<body><div class="wrap"><div class="card"><h1>Criar conta</h1><p>Cadastre-se para acompanhar sua licença, renovar e gerenciar seus computadores.</p>
-<label>Nome</label><input id="name" autocomplete="name">
-<label>E-mail</label><input id="email" type="email" autocomplete="email">
-<label>Senha</label><input id="password" type="password" autocomplete="new-password">
-<button id="btn">Criar conta</button><div id="msg" class="msg"></div><div class="links"><a href="login.html">Já tenho conta</a></div></div></div>
+<!doctype html><html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Criar conta | LINERA-NEST</title><style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#0f172a; --muted:#475569; --primary:#0b1f3b;
+      --primary-hover:#091a31; --line:#e2e8f0; --soft:#eef2f7; --green:#15803d;
+      --green-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2; --shadow:0 12px 28px rgba(15,23,42,.07);
+      --shadow-strong:0 18px 35px rgba(11,31,59,.18);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
+    .wrap{max-width:1080px;margin:26px auto 40px;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    .hero{background:linear-gradient(135deg,#0b1f3b 0%,#123568 100%);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-strong);margin-bottom:16px}
+    .hero h1{margin:0 0 8px;font-size:22px}
+    .hero p{margin:0;color:rgba(255,255,255,.92);font-size:14px;line-height:1.45}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn,.btn-link{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:14px;padding:12px 16px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn{background:var(--primary);color:#fff}
+    .btn:hover{background:var(--primary-hover)}
+    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .btn.danger{background:#991b1b}
+    .btn.small{padding:10px 12px;font-size:14px}
+    .muted{color:var(--muted)}
+    .status{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.4;display:none;white-space:pre-line}
+    .status.show{display:block}
+    .status.error{background:var(--danger-soft);color:var(--danger);border:1px solid #fecaca}
+    .status.ok{background:var(--green-soft);color:var(--green);border:1px solid #bbf7d0}
+    .status.info{background:#f8fafc;color:#334155;border:1px solid #dbe3ef}
+    input,select{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
+    input:focus,select:focus{border-color:#94a3b8;box-shadow:0 0 0 4px rgba(11,31,59,.08)}
+    label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+    .field{margin-top:12px}
+    .grid{display:grid;gap:16px}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:760px){.grid.two{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
+</style></head>
+<body><div class="wrap"><div class="hero"><h1>Criar conta</h1><p>Seu cadastro é feito antes do pagamento para liberar área do cliente, histórico da licença e renovação.</p></div>
+<div class="card" style="max-width:640px;margin:0 auto">
+  <div class="muted">Já tem conta? <a href="#" id="loginLink">Entrar</a></div>
+  <div class="field"><label>Nome</label><input id="name" placeholder="Seu nome"/></div>
+  <div class="field"><label>E-mail</label><input id="email" type="email" placeholder="voce@empresa.com"/></div>
+  <div class="field"><label>Senha</label><input id="password" type="password" placeholder="Mínimo de 6 caracteres"/></div>
+  <div id="msg" class="status info"></div>
+  <div class="actions" style="margin-top:14px"><button class="btn" id="btnCreate">Criar conta</button><a class="btn secondary" href="comprar.html">Voltar</a></div>
+</div></div>
 <script>
-const API='https://linera-lic.alineh-pri-ar.workers.dev'; const msg=document.getElementById('msg');
-function show(t,ok=false){msg.className='msg '+(ok?'ok':'err');msg.style.display='block';msg.textContent=t;}
-document.getElementById('btn').onclick=async()=>{
- const body={name:name.value.trim(),email:email.value.trim(),password:password.value};
- const r=await fetch(API+'/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
- const d=await r.json().catch(()=>({}));
- if(!r.ok||!d.ok) return show(d.error||'Não foi possível cadastrar.');
- localStorage.setItem('linera_token',d.token); localStorage.setItem('linera_email',d.customer.email); localStorage.setItem('linera_name',d.customer.name||'');
- location.href='comprar_portal.html';
+const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+const PLAN_NAMES = {2:'Plano Oficina',5:'Plano Equipe',10:'Plano Produção',50:'Plano Fábrica'};
+function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
+function setSession(v){ localStorage.setItem('linera_session', JSON.stringify(v)); }
+function clearSession(){ localStorage.removeItem('linera_session'); }
+function authHeaders(extra={}){ const s=getSession(); return {'Content-Type':'application/json', ...(s?.token?{'Authorization':'Bearer '+s.token}:{}) , ...extra}; }
+function showStatus(el, cls, text){ el.className='status show '+cls; el.textContent=text; }
+async function api(path, opts={}){ const res=await fetch(WORKER+path, opts); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false){ throw new Error(data.detail||data.error||'Falha na operação.'); } return data; }
+function redirectAfterAuth(){
+  const qp=new URLSearchParams(location.search);
+  const pcs=qp.get('pcs')||localStorage.getItem('linera_checkout_pcs')||'';
+  const intent=qp.get('intent')||'';
+  if(intent==='checkout' && pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(pcs)}`; return; }
+  location.href='cliente.html';
+}
+
+const qp=new URLSearchParams(location.search);
+document.getElementById('loginLink').href=`login.html?${qp.toString()}`;
+document.getElementById('btnCreate').onclick=async()=>{
+ const msg=document.getElementById('msg');
+ try {
+   const name=document.getElementById('name').value.trim();
+   const email=document.getElementById('email').value.trim().toLowerCase();
+   const password=document.getElementById('password').value;
+   if(!name||!email||!password) throw new Error('Preencha nome, e-mail e senha.');
+   const data=await api('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});
+   setSession({token:data.token,user:data.user});
+   showStatus(msg,'ok','Conta criada com sucesso. Redirecionando...');
+   redirectAfterAuth();
+ } catch(e) { showStatus(msg,'error',e.message||String(e)); }
 };
 </script></body></html>

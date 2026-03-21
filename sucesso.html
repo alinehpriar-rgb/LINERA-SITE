@@ -45,7 +45,7 @@
 
       <div class="actions">
         <a id="downloadBtn" class="btn primary hidden" href="#" download>Baixar licença</a>
-        <a class="btn secondary" href="comprar.html">Voltar para os planos</a>
+        <a class="btn secondary" href="cliente.html">Voltar para os planos</a>
       </div>
 
       <h3>Como usar o arquivo .lic</h3>
@@ -162,18 +162,5 @@ Validade: ${data.valid_until || '-'}`, 'ok2');
 
     if (origem === 'pix' || paymentId) handlePix(); else handleCard();
   </script>
-
-<script>
-window.addEventListener('DOMContentLoaded', function(){
-  const token = localStorage.getItem('linera_token') || '';
-  const actions = document.querySelector('.actions') || document.body;
-  const a = document.createElement('a');
-  a.href = token ? 'cliente.html' : 'login.html';
-  a.className = 'btn secondary';
-  a.textContent = token ? 'Ir para área do cliente' : 'Entrar na área do cliente';
-  actions.appendChild(a);
-});
-</script>
-
 </body>
 </html>
