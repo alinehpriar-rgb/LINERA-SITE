@@ -162,5 +162,18 @@ Validade: ${data.valid_until || '-'}`, 'ok2');
 
     if (origem === 'pix' || paymentId) handlePix(); else handleCard();
   </script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function(){
+  const token = localStorage.getItem('linera_token') || '';
+  const actions = document.querySelector('.actions') || document.body;
+  const a = document.createElement('a');
+  a.href = token ? 'cliente.html' : 'login.html';
+  a.className = 'btn secondary';
+  a.textContent = token ? 'Ir para área do cliente' : 'Entrar na área do cliente';
+  actions.appendChild(a);
+});
+</script>
+
 </body>
 </html>
