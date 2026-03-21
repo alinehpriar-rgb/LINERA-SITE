@@ -200,7 +200,7 @@
           </div>
         </div>
 
-        <div class="foot-note">Cartão: assinatura mensal com renovação automática. PIX: libera 30 dias e pode ser renovado manualmente.</div>
+        <div class="foot-note"></div>
       </div>
     </div>
 
@@ -243,14 +243,12 @@
         return;
       }
 
-      localStorage.setItem('linera_email', email);
       localStorage.setItem('linera_pcs', String(pcs));
       window.location.href = `pagamentos.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}`;
     }
 
     document.getElementById('email').addEventListener('input', () => {
       const v = document.getElementById('email').value.trim().toLowerCase();
-      localStorage.setItem('linera_email', v);
       document.getElementById('msg').className = 'status error';
     });
 
@@ -260,5 +258,18 @@
       await Promise.all([2,5,10,50].map(loadPrice));
     })();
   </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const selectors = ['#email', 'input[type="email"]', 'input[name="email"]'];
+  for (const sel of selectors) {
+    const el = document.querySelector(sel);
+    if (el) {
+      el.value = '';
+    }
+  }
+});
+</script>
+
 </body>
 </html>
