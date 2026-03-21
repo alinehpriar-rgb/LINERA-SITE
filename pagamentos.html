@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pagamento do LINERA-NEST</title>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
-  <script src="https://www.mercadopago.com/v2/security.js" view="checkout"></script>
+  <script src="https://www.mercadopago.com/v2/security.js" view="pagamentos"></script>
   <style>
     :root{
       --bg:#eef2f7; --card:#ffffff; --text:#0b2347; --muted:#42526b;
@@ -39,8 +39,8 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     #wallet_container,#pixArea,#cardBrick_container{margin-top:18px}
     .pix-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-    .copy-btn,.check-btn{appearance:none;border:0;background:var(--primary);color:#fff;padding:14px 18px;border-radius:16px;font-weight:800;cursor:pointer}
-    .copy-btn.secondary,.check-btn.secondary{background:#eef4ff;color:var(--primary);border:1px solid #c7d8fb}
+    .copy-btn{appearance:none;border:0;background:var(--primary);color:#fff;padding:14px 18px;border-radius:16px;font-weight:800;cursor:pointer}
+    .copy-btn.secondary{background:#eef4ff;color:var(--primary);border:1px solid #c7d8fb}
     .pix-code{width:100%;min-height:120px;padding:14px;border:1px solid var(--line);border-radius:16px;font-size:14px;line-height:1.45;resize:vertical;background:#fbfdff}
     .muted-mini{margin-top:12px;font-size:14px;color:var(--muted)}
     .qr-img{max-width:280px;width:100%;height:auto;border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px}
@@ -98,7 +98,7 @@
         <div id="pixArea"></div>
         <div id="pixStatus" class="status info hidden"></div>
       </section>
-          <input type="hidden" id="deviceId" value="" />
+      <input type="hidden" id="deviceId" value="" />
     </main>
   </div>
 
@@ -260,35 +260,29 @@
       cardBrickController = await bricksBuilder.create('cardPayment', 'cardBrick_container', {
         initialization: {
           amount,
-          payer: {
-            email,
-          },
+          payer: { email }
         },
         customization: {
           visual: {
+            hideFormTitle: true,
+            hidePaymentButton: false,
             style: {
-              theme: 'default',
-              customVariables: {
-                formBackgroundColor: '#ffffff',
-                baseColor: '#082554',
-                textPrimaryColor: '#0b2347',
-                textSecondaryColor: '#42526b',
-                inputBackgroundColor: '#ffffff',
-              },
-            },
+              theme: 'default'
+            }
           },
           paymentMethods: {
-            maxInstallments: 1,
-          },
+            maxInstallments: 1
+          }
         },
         callbacks: {
           onReady: () => {
             cardLoader.style.display = 'none';
+            syncDeviceId();
           },
           onError: (error) => {
             cardLoader.style.display = 'none';
-            console.error('Erro no Brick:', error);
-            showStatus(cardStatus, 'error', `Erro ao montar checkout do cartão:\n${error?.message || JSON.stringify(error)}`);
+            console.error(error);
+            showStatus(cardStatus, 'error', `Erro no checkout do cartão:\n${error?.message || JSON.stringify(error)}`);
           },
           onSubmit: async (cardFormData) => {
             if (cardSubmitRunning) return;
@@ -305,7 +299,9 @@
               const identificationNumber = cardFormData?.payer?.identification?.number || '';
               const deviceId = getDeviceId();
 
-              if (!token) throw new Error('O checkout do cartão não retornou o token do cartão.');
+              if (!token) {
+                throw new Error('O checkout do cartão não retornou o token do cartão.');
+              }
 
               const res = await fetch(`${WORKER}/api/mp/criar_assinatura_cartao`, {
                 method: 'POST',
@@ -339,6 +335,8 @@
             } catch (err) {
               console.error(err);
               showStatus(cardStatus, 'error', `Erro ao iniciar assinatura:\n${err.message || String(err)}`);
+            } finally {
+              cardSubmitRunning = false;
             }
           },
         },
@@ -372,7 +370,7 @@
         pixArea.innerHTML = `
           ${qrBase64 ? `<img class="qr-img" alt="QR Code PIX" src="data:image/png;base64,${qrBase64}">` : ''}
           ${qrText ? `<div class="muted-mini">Código PIX copia e cola</div><textarea class="pix-code" readonly>${qrText}</textarea>` : ''}
-          <div class="muted-mini">Após efetuar o pagamento, a confirmação será feita automaticamente.</div>
+          <div class="muted-mini">Após o pagamento, a página verifica automaticamente a aprovação.</div>
         `;
 
         const textarea = pixArea.querySelector('textarea');
@@ -397,20 +395,28 @@
           pixArea.appendChild(actions);
         }
 
-        showStatus(pixStatus, 'info', 'PIX gerado com sucesso. Aguardando confirmação automática...');
+        showStatus(pixStatus, 'info', 'PIX gerado com sucesso. Aguardando aprovação automática...');
         startPixAutoCheck();
       } catch (err) {
         console.error(err);
         showStatus(pixStatus, 'error', `Erro ao gerar PIX:\n${err.message || String(err)}`);
+      } finally {
+        pixSubmitRunning = false;
       }
     }
 
-    async function verificarPix() {
+    async function verificarPix(isAutomatic = false) {
       if (!pixPaymentId) {
-        showStatus(pixStatus, 'error', 'Gere um PIX antes de verificar o pagamento.');
+        if (!isAutomatic) {
+          showStatus(pixStatus, 'error', 'Gere um PIX antes de verificar o pagamento.');
+        }
         return;
       }
-      if (!isAutomatic) showStatus(pixStatus, 'info', 'Verificando pagamento PIX...');
+
+      if (!isAutomatic) {
+        showStatus(pixStatus, 'info', 'Verificando pagamento PIX...');
+      }
+
       try {
         const res = await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`);
         const data = await res.json().catch(() => ({}));
@@ -425,10 +431,14 @@
           return;
         }
 
-        if (!isAutomatic) showStatus(pixStatus, 'info', `Pagamento ainda não aprovado. Status atual: ${data.status || 'pendente'}`);
+        if (!isAutomatic) {
+          showStatus(pixStatus, 'info', `Pagamento ainda não aprovado. Status atual: ${data.status || 'pendente'}`);
+        }
       } catch (err) {
         console.error(err);
-        showStatus(pixStatus, 'error', `Erro ao verificar PIX:\n${err.message || String(err)}`);
+        if (!isAutomatic) {
+          showStatus(pixStatus, 'error', `Erro ao verificar PIX:\n${err.message || String(err)}`);
+        }
       }
     }
 
