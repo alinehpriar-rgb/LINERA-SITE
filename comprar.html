@@ -121,13 +121,12 @@
         </div>
 
         <div id="msg" class="status error"></div>
-        <div id="loadMsg" class="status ok"></div>
       </div>
 
       <div>
         <div class="plans-head">
           <h2>Escolha o plano ideal</h2>
-          <div class="mini">.</div>
+          
         </div>
 
         <div class="plan-grid">
@@ -259,7 +258,6 @@
       const savedEmail = localStorage.getItem('linera_email') || '';
       if (savedEmail) document.getElementById('email').value = savedEmail;
       await Promise.all([2,5,10,50].map(loadPrice));
-      showStatus('loadMsg', '', 'ok');
     })();
   </script>
 </body>
