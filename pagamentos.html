@@ -49,6 +49,15 @@
       .box{min-height:auto}
     }
   </style>
+
+<script>
+(function(){
+  const token = localStorage.getItem('linera_token') || '';
+  const emailSaved = localStorage.getItem('linera_email') || '';
+  window.LINERA_PORTAL = { token, emailSaved };
+})();
+</script>
+
 </head>
 <body>
   <div class="page">
@@ -448,5 +457,22 @@
       }
     })();
   </script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function(){
+  const email = localStorage.getItem('linera_email') || '';
+  const token = localStorage.getItem('linera_token') || '';
+  const e1 = document.querySelector('#email');
+  const e2 = document.querySelector('input[type="email"]');
+  if (e1 && email) e1.value = email;
+  if (!e1 && e2 && email) e2.value = email;
+  const back = document.createElement('a');
+  back.href = token ? 'cliente.html' : 'comprar_portal.html';
+  back.textContent = token ? 'Voltar para área do cliente' : 'Voltar para planos';
+  back.style.cssText = 'display:inline-block;margin:16px 0 0;color:#0b1f3b;font-weight:800;text-decoration:none';
+  (document.querySelector('.page,.wrap,.container') || document.body).prepend(back);
+});
+</script>
+
 </body>
 </html>
