@@ -127,7 +127,7 @@
       <div>
         <div class="plans-head">
           <h2>Escolha o plano ideal</h2>
-          <div class="mini">Valores carregados diretamente dos seus planos no Mercado Pago.</div>
+          <div class="mini">.</div>
         </div>
 
         <div class="plan-grid">
@@ -259,7 +259,7 @@
       const savedEmail = localStorage.getItem('linera_email') || '';
       if (savedEmail) document.getElementById('email').value = savedEmail;
       await Promise.all([2,5,10,50].map(loadPrice));
-      showStatus('loadMsg', 'Valores atualizados automaticamente a partir dos seus planos cadastrados.', 'ok');
+      showStatus('loadMsg', '', 'ok');
     })();
   </script>
 </body>
