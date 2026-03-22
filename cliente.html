@@ -1,131 +1,78 @@
-<!doctype html><html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Área do cliente | LINERA-NEST</title><style>
-    :root{
-      --bg:#f6f7fb; --card:#ffffff; --text:#0f172a; --muted:#475569; --primary:#0b1f3b;
-      --primary-hover:#091a31; --line:#e2e8f0; --soft:#eef2f7; --green:#15803d;
-      --green-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2; --shadow:0 12px 28px rgba(15,23,42,.07);
-      --shadow-strong:0 18px 35px rgba(11,31,59,.18);
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
-    .wrap{max-width:1080px;margin:26px auto 40px;padding:0 16px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
-    .hero{background:linear-gradient(135deg,#0b1f3b 0%,#123568 100%);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-strong);margin-bottom:16px}
-    .hero h1{margin:0 0 8px;font-size:22px}
-    .hero p{margin:0;color:rgba(255,255,255,.92);font-size:14px;line-height:1.45}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .btn,.btn-link{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:14px;padding:12px 16px;font-weight:800;text-decoration:none;cursor:pointer}
-    .btn{background:var(--primary);color:#fff}
-    .btn:hover{background:var(--primary-hover)}
-    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
-    .btn.danger{background:#991b1b}
-    .btn.small{padding:10px 12px;font-size:14px}
-    .muted{color:var(--muted)}
-    .status{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.4;display:none;white-space:pre-line}
-    .status.show{display:block}
-    .status.error{background:var(--danger-soft);color:var(--danger);border:1px solid #fecaca}
-    .status.ok{background:var(--green-soft);color:var(--green);border:1px solid #bbf7d0}
-    .status.info{background:#f8fafc;color:#334155;border:1px solid #dbe3ef}
-    input,select{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
-    input:focus,select:focus{border-color:#94a3b8;box-shadow:0 0 0 4px rgba(11,31,59,.08)}
-    label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-    .field{margin-top:12px}
-    .grid{display:grid;gap:16px}
-    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (max-width:760px){.grid.two{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
-.row-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.row-actions .btn{min-width:0}
-.billing-box{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fafcff}
-.billing-note{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.4}
-.pix-inline{margin-top:14px;padding:14px;border:1px dashed #cbd5e1;border-radius:14px;background:#fff}
-.pix-inline img{max-width:220px;border:1px solid var(--line);border-radius:12px}
-.pix-inline textarea{width:100%;min-height:92px;margin-top:10px;border:1px solid #cbd5e1;border-radius:12px;padding:10px 12px;font-size:14px}
-
-.lic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.lic-card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
-.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.kv div{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fafcff}
-@media (max-width:760px){.lic-grid{grid-template-columns:1fr} .kv{grid-template-columns:1fr}}
-</style></head><body><div class="wrap">
-  <div class="topbar">
-    <div><strong id="userName">Área do cliente</strong><div class="muted">Acompanhe licenças, renovação e configurações da sua conta.</div></div>
-    <div class="actions"><a class="btn secondary" href="comprar.html">Planos</a><button class="btn secondary" id="btnChangePassword">Trocar senha</button><button class="btn secondary" id="btnLogout">Sair</button></div>
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Área do cliente</title>
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0b1f3b}
+body{margin:0;font-family:Segoe UI,Arial;background:var(--bg);color:var(--text)}.wrap{max-width:1100px;margin:0 auto;padding:24px}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}.btn{background:var(--primary);color:#fff;border:0;border-radius:12px;padding:11px 14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}.btn.secondary{background:#fff;color:#111;border:1px solid var(--line)}.btn.danger{background:#7f1d1d}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 10px 24px rgba(15,23,42,.05)}.kv{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}.muted{color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.status{margin:12px 0;white-space:pre-wrap}.pix-inline{margin-top:12px;padding:14px;border:1px dashed #cbd5e1;border-radius:14px;background:#fff}.pix-inline img{max-width:220px;border:1px solid var(--line);border-radius:12px}.pix-inline textarea{width:100%;min-height:90px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}.kv{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+<div class="top"><div><h1>Área do cliente</h1><div class="muted" id="userLine"></div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn secondary" href="comprar.html">Planos</a><button class="btn secondary" id="btnSair">Sair</button></div></div>
+<div id="msg" class="status"></div>
+<div class="card" style="margin-bottom:18px">
+  <h3>Trocar senha</h3>
+  <div class="actions">
+    <input id="old_password" type="password" placeholder="Senha atual" style="padding:12px;border:1px solid #cbd5e1;border-radius:12px;flex:1;min-width:180px">
+    <input id="new_password" type="password" placeholder="Nova senha" style="padding:12px;border:1px solid #cbd5e1;border-radius:12px;flex:1;min-width:180px">
+    <button class="btn" id="btnPass">Salvar</button>
   </div>
-  <div id="msg" class="status info"></div>
-  <div class="card" id="accountCard" style="margin-bottom:16px"></div>
-  <div id="licensesWrap" class="lic-grid"></div>
+</div>
+<div class="grid" id="licGrid"></div>
 </div>
 <script>
-const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
-const PLAN_NAMES = {2:'Plano Oficina',5:'Plano Equipe',10:'Plano Produção',50:'Plano Fábrica'};
-function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
-function setSession(v){ localStorage.setItem('linera_session', JSON.stringify(v)); }
-function clearSession(){ localStorage.removeItem('linera_session'); }
-function authHeaders(extra={}){ const s=getSession(); return {'Content-Type':'application/json', ...(s?.token?{'Authorization':'Bearer '+s.token}:{}) , ...extra}; }
-function showStatus(el, cls, text){ el.className='status show '+cls; el.textContent=text; }
-function formatDateBr(value){ if(!value) return '-'; const d=new Date(value); if(isNaN(d.getTime())) return String(value).slice(0,10); return d.toLocaleDateString('pt-BR'); }
-function formatBillingLabel(lic){ return lic.billing_label || (lic.renewal_method==='manual_pix' ? 'PIX' : (lic.renewal_method==='card_auto' ? 'Cartão' : '-')); }
-
-async function api(path, opts={}){ const res=await fetch(WORKER+path, opts); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false){ throw new Error(data.detail||data.error||'Falha na operação.'); } return data; }
-function redirectAfterAuth(){
-  const qp=new URLSearchParams(location.search);
-  const pcs=qp.get('pcs')||localStorage.getItem('linera_checkout_pcs')||'';
-  const intent=qp.get('intent')||'';
-  if(intent==='checkout' && pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(pcs)}`; return; }
-  location.href='cliente.html';
-}
-
-const msg=document.getElementById('msg');
-function requireAuth(){ const s=getSession(); if(!s?.token){ location.href='login.html'; return null; } return s; }
-function cardHtml(lic){
-  const renewal = lic.renewal_status==='cancelled' || lic.auto_renew===false
-    ? 'Renovação automática desativada'
-    : (lic.renewal_method==='card_auto'
-        ? 'Renovação automática no cartão'
-        : (lic.renewal_method==='manual_pix'
-            ? 'Renovação manual por PIX'
-            : 'Renovação sob consulta'));
-
-  return `<div class="lic-card">
-    <h3>${lic.plan_name||('Plano '+lic.pcs+' PCs')}</h3>
-    <div class="muted">${renewal}</div>
-    <div class="kv">
-      <div><strong>Status</strong><br>${lic.status||'-'}</div>
-      <div><strong>Validade</strong><br>${formatDateBr(lic.valid_until)}</div>
-      <div><strong>Computadores</strong><br>${lic.pcs} PCs</div>
-      <div><strong>Slots ocupados</strong><br>${lic.devices_active||0}</div>
+const WORKER='';
+const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
+if(!sess?.token){ location.href='login.html'; }
+function authHeaders(){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json' } }
+function showMsg(t){ document.getElementById('msg').textContent=t||''; }
+function formatDateBr(v){ if(!v) return '-'; const d=new Date(v); if(isNaN(d)) return String(v).slice(0,10); return d.toLocaleDateString('pt-BR'); }
+function methodLabel(lic){ return lic.billing_label || (lic.renewal_method==='manual_pix_email'?'PIX por e-mail':(lic.renewal_method==='card_auto'?'Cartão':'-')); }
+async function api(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
+async function load(){
+  const data=await api('/api/client/overview',{headers:authHeaders()});
+  document.getElementById('userLine').textContent=`${data.user.name} • ${data.user.email}`;
+  const grid=document.getElementById('licGrid');
+  if(!data.licenses.length){ grid.innerHTML='<div class="card">Você ainda não possui licenças ativas.</div>'; return; }
+  grid.innerHTML=data.licenses.map(lic=>`
+    <div class="card">
+      <div class="muted">${lic.pcs} PCs</div>
+      <h3>${lic.plan_name}</h3>
+      <div class="kv">
+        <div><strong>Status</strong><br>${lic.status}</div>
+        <div><strong>Validade</strong><br>${formatDateBr(lic.valid_until)}</div>
+        <div><strong>Meio de cobrança</strong><br>${methodLabel(lic)}</div>
+        <div><strong>Valor</strong><br>R$ ${Number(lic.amount||0).toFixed(2).replace('.',',')}</div>
+      </div>
+      <div class="muted" style="margin-top:10px">${lic.renewal_note||''}</div>
+      <div class="actions">
+        <a class="btn" href="${WORKER}/api/licenca?email=${encodeURIComponent(lic.email)}&pcs=${encodeURIComponent(String(lic.pcs))}" target="_blank">Baixar licença</a>
+        <button class="btn secondary" onclick="clearSlots(${lic.pcs})">Esvaziar slots</button>
+        <button class="btn secondary" onclick="payCard(${lic.pcs})">Trocar cartão</button>
+        <button class="btn secondary" onclick="togglePix(${lic.pcs})">Pagar por PIX</button>
+        <button class="btn secondary" onclick="setMethod(${lic.pcs}, 'manual_pix_email')">Usar PIX mensal</button>
+        <button class="btn secondary" onclick="setMethod(${lic.pcs}, 'card_auto')">Usar cartão mensal</button>
+        <button class="btn danger" onclick="cancelSub(${lic.pcs})">Cancelar cobrança</button>
+      </div>
+      <div id="pix_${lic.pcs}" class="pix-inline" style="display:none"></div>
     </div>
-    <div class="billing-box">
-      <div><strong>Meio de cobrança atual</strong><br>${formatBillingLabel(lic)}</div>
-      <div class="billing-note">${lic.renewal_note||'-'}</div>
-    </div>
-    <div class="row-actions">
-      <a class="btn small" href="${WORKER}/api/licenca?email=${encodeURIComponent(lic.email)}&pcs=${encodeURIComponent(String(lic.pcs))}" target="_blank" rel="noopener">Baixar licença</a>
-      <button class="btn secondary small" onclick="clearSlots(${lic.pcs})">Esvaziar slots</button>
-      <button class="btn secondary small" onclick="openCardCheckout(${lic.pcs})">Trocar cartão</button>
-      <button class="btn secondary small" onclick="togglePixRenew(${lic.pcs})">Pagar por PIX</button>
-      <button class="btn danger small" onclick="cancelSubscription(${lic.pcs})">Cancelar assinatura</button>
-    </div>
-    <div id="pixRenew_${lic.pcs}" class="pix-inline" style="display:none"></div>
-  </div>`;
+  `).join('');
 }
-async function loadOverview(){
-  requireAuth();
-  try {
-    const data=await api('/api/client/overview',{headers:authHeaders() });
-    document.getElementById('userName').textContent=data.user.name || data.user.email;
-    document.getElementById('accountCard').innerHTML=`<strong>${data.user.name||'-'}</strong><div class="muted">${data.user.email}</div>`;
-    const wrap=document.getElementById('licensesWrap');
-    if(!data.licenses.length){ wrap.innerHTML=`<div class="card"><h3>Nenhuma licença ativa ainda</h3><p class="muted">Você ainda não concluiu uma compra. Quando finalizar o pagamento, sua licença aparecerá aqui.</p><a class="btn" href="comprar.html">Escolher plano</a></div>`; return; }
-    wrap.innerHTML=data.licenses.map(cardHtml).join('');
-  } catch(e){ showStatus(msg,'error',e.message||String(e)); }
+async function clearSlots(pcs){ try{ await api('/api/client/clear-slots',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showMsg('Slots limpos.'); load(); }catch(e){ showMsg(e.message); } }
+function payCard(pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(String(pcs))}&tab=card`; }
+async function togglePix(pcs){
+  const box=document.getElementById(`pix_${pcs}`);
+  if(box.style.display==='block'){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='block'; box.innerHTML='Gerando PIX...';
+  try{
+    const data=await api('/api/mp/criar_pix',{method:'POST',headers:authHeaders(),body:JSON.stringify({email:sess.user.email,pcs})});
+    box.innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}${data.qr_code?`<textarea readonly>${data.qr_code}</textarea>`:''}<div class="actions"><button class="btn secondary" id="copy_${pcs}">Copiar código PIX</button></div><div class="muted" style="margin-top:10px">Depois do pagamento, a validade é renovada automaticamente pelo sistema.</div>`;
+    document.getElementById(`copy_${pcs}`).onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
+  }catch(e){ box.innerHTML=e.message; }
 }
-async function clearSlots(pcs){ if(!confirm('Deseja esvaziar todos os slots deste plano?')) return; try{ await api('/api/client/clear-slots',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok','Slots esvaziados com sucesso.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
-async function cancelSubscription(pcs){ if(!confirm('Deseja cancelar a renovação automática deste plano?')) return; try{ const data=await api('/api/client/cancel-subscription',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showStatus(msg,'ok',data.cancelled_at_gateway ? 'Assinatura cancelada com sucesso.' : 'Renovação automática desativada no sistema.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
-async function setRenewalMethod(pcs, method){ try{ const data=await api('/api/client/set-renewal-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs,method})}); showStatus(msg,'ok',data.renewal_note||'Preferência de renovação atualizada.'); loadOverview(); }catch(e){ showStatus(msg,'error',e.message||String(e)); } }
-function openCardCheckout(pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(String(pcs))}&tab=card`; }
-async function togglePixRenew(pcs){ const box=document.getElementById(`pixRenew_${pcs}`); if(!box) return; if(box.style.display==='block'){ box.style.display='none'; box.innerHTML=''; return; } box.style.display='block'; box.innerHTML='<div class="muted">Gerando PIX...</div>'; try{ const session=getSession(); const email=session?.user?.email||''; const data=await api('/api/mp/criar_pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,pcs})}); box.innerHTML=`${data.qr_code_base64 ? `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX"/>` : ''}${data.qr_code ? `<textarea readonly>${data.qr_code}</textarea><div class="row-actions"><button class="btn secondary small" onclick="navigator.clipboard.writeText(${JSON.stringify('')}||'')">Copiar manualmente</button></div>` : ''}<div class="billing-note">Pague este PIX para renovar imediatamente. Depois da confirmação, a próxima cobrança recorrente ficará programada para o mês seguinte.</div>`; if(data.qr_code){ const btn=document.createElement('button'); btn.className='btn secondary small'; btn.textContent='Copiar código PIX'; btn.onclick=()=>navigator.clipboard.writeText(data.qr_code||''); const row=document.createElement('div'); row.className='row-actions'; row.appendChild(btn); box.appendChild(row); } }catch(e){ box.innerHTML=''; showStatus(msg,'error',e.message||String(e)); } }
-document.getElementById('btnLogout').onclick=()=>{ clearSession(); location.href='comprar.html'; };
-document.getElementById('btnChangePassword').onclick=async()=>{ const currentPassword=prompt('Digite sua senha atual:'); if(!currentPassword) return; const newPassword=prompt('Digite a nova senha:'); if(!newPassword) return; try{ await api('/api/auth/change-password',{method:'POST',headers:authHeaders(),body:JSON.stringify({current_password:currentPassword,new_password:newPassword})}); showStatus(msg,'ok','Senha alterada com sucesso.'); }catch(e){ showStatus(msg,'error',e.message||String(e)); } };
-loadOverview();
+async function setMethod(pcs, method){ try{ const data=await api('/api/client/set-payment-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs,method})}); showMsg(data.renewal_note||'Método atualizado.'); load(); }catch(e){ showMsg(e.message); } }
+async function cancelSub(pcs){ if(!confirm('Cancelar a cobrança futura deste plano?')) return; try{ await api('/api/client/cancel-subscription',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showMsg('Cobrança cancelada.'); load(); }catch(e){ showMsg(e.message); } }
+document.getElementById('btnPass').onclick=async()=>{ try{ await api('/api/client/change-password',{method:'POST',headers:authHeaders(),body:JSON.stringify({old_password:old_password.value,new_password:new_password.value})}); showMsg('Senha alterada.'); old_password.value=''; new_password.value=''; }catch(e){ showMsg(e.message); } };
+document.getElementById('btnSair').onclick=()=>{ localStorage.removeItem('linera_session'); location.href='comprar.html'; };
+load().catch(e=>showMsg(e.message||String(e)));
 </script></body></html>

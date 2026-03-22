@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Painel admin</title>
+<style>
+body{font-family:Segoe UI,Arial;background:#f6f8fb;margin:0}.wrap{max-width:1280px;margin:0 auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:18px}.big{font-size:28px;font-weight:800}.muted{color:#64748b}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.btn{background:#0b1f3b;color:#fff;border:0;border-radius:12px;padding:11px 14px;font-weight:700;cursor:pointer}.btn.secondary{background:#fff;color:#111;border:1px solid #e2e8f0}.tableWrap{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:18px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left}input{padding:10px 12px;border:1px solid #cbd5e1;border-radius:12px}.status{margin:12px 0;white-space:pre-wrap}
+@media (max-width:980px){.cards{grid-template-columns:repeat(2,1fr)}}@media (max-width:640px){.cards{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+<div class="top"><div><h1>Painel administrativo</h1><div class="muted">Controle completo de clientes, licenças, cobrança e renovação.</div></div><div class="toolbar"><a class="btn secondary" href="comprar.html">Site</a><button class="btn secondary" id="btnLogout">Sair</button></div></div>
+<div id="msg" class="status"></div>
+<div class="toolbar"><input id="search" placeholder="Buscar por e-mail ou plano"><button class="btn" id="btnRefresh">Atualizar</button><button class="btn" id="btnRunPix">Rodar PIX mensal</button></div>
+<div class="cards" id="totals"></div>
+<div class="tableWrap" style="margin-top:18px">
+  <h3>Licenças</h3>
+  <table><thead><tr><th>E-mail</th><th>Plano</th><th>Valor</th><th>Status</th><th>Validade</th><th>Meio</th><th>Renovação</th><th>Slots</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table>
+</div>
+</div>
+<script>
+const WORKER='';
+function authHeaders(){
+  const key=localStorage.getItem('linera_admin_key')||'';
+  const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
+  const h={};
+  if(key) h['x-admin-key']=key;
+  if(sess?.token) h['Authorization']=`Bearer ${sess.token}`;
+  h['Content-Type']='application/json';
+  return h;
+}
+async function api(path, opts={}){ const res=await fetch(`${WORKER}${path}`,{...opts,headers:{...(opts.headers||{}),...authHeaders()}}); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
+function msg(t){ document.getElementById('msg').textContent=t||''; }
+function d(v){ if(!v) return '-'; const x=new Date(v); return isNaN(x)?String(v).slice(0,10):x.toLocaleDateString('pt-BR'); }
+let lastData=null;
+function render(data){
+  lastData=data;
+  document.getElementById('totals').innerHTML = [
+    ['Clientes',data.totals.users],['Licenças ativas',data.totals.active_licenses],['Licenças inativas',data.totals.inactive_licenses],['Receita ativa',`R$ ${Number(data.totals.revenue_active||0).toFixed(2).replace('.',',')}`],
+    ['Cartão automático',data.totals.card_auto],['PIX por e-mail',data.totals.pix_email],['Licenças totais',data.totals.licenses],['E-mails na fila',data.totals.queued_emails]
+  ].map(([a,b])=>`<div class="card"><div class="muted">${a}</div><div class="big">${b}</div></div>`).join('');
+  applyFilter();
+}
+function applyFilter(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const list=(lastData?.licenses||[]).filter(x=>!q || String(x.email).toLowerCase().includes(q) || String(x.plan_name).toLowerCase().includes(q));
+  document.getElementById('tbody').innerHTML=list.map(l=>`
+    <tr>
+      <td>${l.email}</td>
+      <td>${l.plan_name}<br><span class="muted">${l.pcs} PCs</span></td>
+      <td>R$ ${Number(l.amount||0).toFixed(2).replace('.',',')}</td>
+      <td>${l.status}</td>
+      <td>${d(l.valid_until)}</td>
+      <td>${l.billing_label||'-'}</td>
+      <td>${l.renewal_method||'-'}<br><span class="muted">${l.renewal_status||''}</span></td>
+      <td>${l.devices_active||0}</td>
+      <td>
+        <button class="btn secondary" onclick="setStatus('${l.email}',${l.pcs},'active')">Ativar</button>
+        <button class="btn secondary" onclick="setStatus('${l.email}',${l.pcs},'inactive')">Inativar</button>
+        <button class="btn secondary" onclick="editDate('${l.email}',${l.pcs},'${String(l.valid_until||'').slice(0,10)}')">Validade</button>
+        <button class="btn secondary" onclick="deleteUser('${l.email}')">Excluir usuário</button>
+      </td>
+    </tr>
+  `).join('');
+}
+async function load(){ try{ const data=await api('/api/admin/overview'); render(data); }catch(e){ msg(e.message||String(e)); } }
+async function setStatus(email, pcs, status){ try{ await api('/api/admin/update-license',{method:'POST',body:JSON.stringify({email,pcs,status})}); msg('Licença atualizada.'); load(); }catch(e){ msg(e.message||String(e)); } }
+async function editDate(email, pcs, oldDate){ const v=prompt('Nova validade (YYYY-MM-DD)', oldDate||''); if(!v) return; try{ await api('/api/admin/update-license',{method:'POST',body:JSON.stringify({email,pcs,valid_until:v+'T00:00:00.000Z'})}); msg('Validade atualizada.'); load(); }catch(e){ msg(e.message||String(e)); } }
+async function deleteUser(email){ if(!confirm('Excluir/desativar o usuário? Isso cancela a cobrança futura e inativa as licenças.')) return; try{ await api('/api/admin/delete-user',{method:'POST',body:JSON.stringify({email})}); msg('Usuário desativado.'); load(); }catch(e){ msg(e.message||String(e)); } }
+document.getElementById('btnRefresh').onclick=load;
+document.getElementById('btnRunPix').onclick=async()=>{ try{ const data=await api('/api/admin/run-pix-renewals'); msg(`Rotina PIX executada. Itens: ${data.created.length}. Licenças inativadas: ${data.deactivated}`); load(); }catch(e){ msg(e.message||String(e)); } };
+document.getElementById('search').oninput=applyFilter;
+document.getElementById('btnLogout').onclick=()=>{ localStorage.removeItem('linera_admin_key'); location.href='admin-login.html'; };
+load();
+</script></body></html>

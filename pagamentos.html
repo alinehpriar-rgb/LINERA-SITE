@@ -1,175 +1,146 @@
-<!doctype html><html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Pagamento | LINERA-NEST</title>
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pagamento</title>
 <style>
-    :root{
-      --bg:#f6f7fb; --card:#ffffff; --text:#0f172a; --muted:#475569; --primary:#0b1f3b;
-      --primary-hover:#091a31; --line:#e2e8f0; --soft:#eef2f7; --green:#15803d;
-      --green-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2; --shadow:0 12px 28px rgba(15,23,42,.07);
-      --shadow-strong:0 18px 35px rgba(11,31,59,.18);
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
-    .wrap{max-width:1080px;margin:26px auto 40px;padding:0 16px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
-    .hero{background:linear-gradient(135deg,#0b1f3b 0%,#123568 100%);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-strong);margin-bottom:16px}
-    .hero h1{margin:0 0 8px;font-size:22px}
-    .hero p{margin:0;color:rgba(255,255,255,.92);font-size:14px;line-height:1.45}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .btn,.btn-link{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:14px;padding:12px 16px;font-weight:800;text-decoration:none;cursor:pointer}
-    .btn{background:var(--primary);color:#fff}
-    .btn:hover{background:var(--primary-hover)}
-    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
-    .btn.danger{background:#991b1b}
-    .btn.small{padding:10px 12px;font-size:14px}
-    .muted{color:var(--muted)}
-    .status{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.4;display:none;white-space:pre-line}
-    .status.show{display:block}
-    .status.error{background:var(--danger-soft);color:var(--danger);border:1px solid #fecaca}
-    .status.ok{background:var(--green-soft);color:var(--green);border:1px solid #bbf7d0}
-    .status.info{background:#f8fafc;color:#334155;border:1px solid #dbe3ef}
-    input,select{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
-    input:focus,select:focus{border-color:#94a3b8;box-shadow:0 0 0 4px rgba(11,31,59,.08)}
-    label{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-    .field{margin-top:12px}
-    .grid{display:grid;gap:16px}
-    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (max-width:760px){.grid.two{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
-
-.layout{display:grid;grid-template-columns:1fr 1fr;gap:16px} .box{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
-.price{font-size:30px;font-weight:800} .hidden{display:none} .qr-img{max-width:240px;border:1px solid var(--line);border-radius:12px} .pix-code{width:100%;min-height:120px} .copy-btn{margin-top:10px}
-@media (max-width:900px){.layout{grid-template-columns:1fr}}
+:root{--bg:#f6f8fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0b1f3b}
+body{margin:0;font-family:Segoe UI,Arial;background:var(--bg);color:var(--text)}.wrap{max-width:980px;margin:0 auto;padding:24px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 10px 24px rgba(15,23,42,.05)}
+.tabs{display:flex;gap:10px;margin:16px 0}.tab{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:700}.tab.active{background:var(--primary);color:#fff}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer}
+.hidden{display:none!important}.status{margin-top:12px;white-space:pre-wrap}.muted{color:var(--muted)}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{margin:10px 0}.field input{width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px}
+#pixBox img{max-width:240px;border:1px solid var(--line);border-radius:14px}.copy{width:100%;min-height:90px;margin-top:10px;border:1px solid #cbd5e1;border-radius:12px;padding:10px 12px}
+@media (max-width:760px){.row{grid-template-columns:1fr}}
 </style>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://www.mercadopago.com/v2/security.js" view="pagamentos"></script>
 </head><body><div class="wrap">
-<div class="topbar"><div><strong>Pagamento</strong><div class="muted">A primeira cobrança acontece na hora. Depois disso, o sistema prepara a renovação futura conforme o meio escolhido.</div></div><div class="actions"><a class="btn secondary" href="cliente.html">Área do cliente</a><a class="btn secondary" href="comprar.html">Planos</a></div></div>
-<div id="msg" class="status info"></div>
-<div class="layout">
-  <div class="box">
-    <h3>Resumo do pedido</h3>
-    <div class="grid">
-      <div><strong>E-mail</strong><div class="muted" id="sumEmail">-</div></div>
-      <div><strong>Plano</strong><div class="muted" id="sumPlan">-</div></div>
-      <div><strong>Licenças</strong><div class="muted" id="sumPcs">-</div></div>
-      <div><strong>Valor</strong><div class="price" id="sumPrice">R$ --</div></div>
+  <h1>Pagamento</h1>
+  <div class="muted">Cartão: cobrança imediata + renovação automática mensal. PIX: cobrança imediata + renovação mensal enviada por e-mail.</div>
+  <div class="card">
+    <div id="summary"></div>
+    <div class="tabs">
+      <button class="tab active" id="tabCard">Cartão</button>
+      <button class="tab" id="tabPix">PIX</button>
     </div>
-  </div>
-  <div class="box">
-    <div class="actions" style="margin-bottom:14px">
-      <button class="btn" id="tabCard">Cartão</button>
-      <button class="btn secondary" id="tabPix">PIX</button>
-    </div>
-    <div id="cardWrap">
-      <div class="muted" id="cardLoader">Carregando checkout do cartão...</div>
+    <div id="cardBox">
       <div id="cardBrick_container"></div>
-      <div id="cardStatus" class="status info"></div>
     </div>
-    <div id="pixWrap" class="hidden">
-      <div class="muted">Gere o PIX e a página acompanhará a aprovação automaticamente.</div>
-      <div class="actions" style="margin-top:12px"><button class="btn" id="btnPix">Gerar PIX</button></div>
-      <div id="pixArea" style="margin-top:14px"></div>
-      <div id="pixStatus" class="status info"></div>
+    <div id="pixBox" class="hidden">
+      <button class="btn" id="btnPix">Gerar PIX</button>
+      <div id="pixArea" class="status"></div>
     </div>
+    <div id="msg" class="status"></div>
   </div>
-</div></div>
+</div>
 <script>
-const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
-const PLAN_NAMES = {2:'Plano Oficina',5:'Plano Equipe',10:'Plano Produção',50:'Plano Fábrica'};
-function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
-function setSession(v){ localStorage.setItem('linera_session', JSON.stringify(v)); }
-function clearSession(){ localStorage.removeItem('linera_session'); }
-function authHeaders(extra={}){ const s=getSession(); return {'Content-Type':'application/json', ...(s?.token?{'Authorization':'Bearer '+s.token}:{}) , ...extra}; }
-function showStatus(el, cls, text){ el.className='status show '+cls; el.textContent=text; }
-async function api(path, opts={}){ const res=await fetch(WORKER+path, opts); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false){ throw new Error(data.detail||data.error||'Falha na operação.'); } return data; }
-function redirectAfterAuth(){
-  const qp=new URLSearchParams(location.search);
-  const pcs=qp.get('pcs')||localStorage.getItem('linera_checkout_pcs')||'';
-  const intent=qp.get('intent')||'';
-  if(intent==='checkout' && pcs){ location.href=`pagamentos.html?pcs=${encodeURIComponent(pcs)}`; return; }
-  location.href='cliente.html';
+const WORKER='';
+const params=new URLSearchParams(location.search);
+const pcs=Number(params.get('pcs')||0);
+const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
+if(!sess?.token){ location.href=`login.html?next=${encodeURIComponent(location.pathname+location.search)}`; }
+const email=sess?.user?.email||'';
+const name=sess?.user?.name||'';
+let planInfo=null, mp=null, pixPaymentId='', pollTimer=null;
+
+function authHeaders(){ return { Authorization:`Bearer ${sess.token}` } }
+function showMsg(text){ document.getElementById('msg').textContent=text; }
+function switchTab(tab){
+  document.getElementById('tabCard').classList.toggle('active',tab==='card');
+  document.getElementById('tabPix').classList.toggle('active',tab==='pix');
+  document.getElementById('cardBox').classList.toggle('hidden',tab!=='card');
+  document.getElementById('pixBox').classList.toggle('hidden',tab!=='pix');
+}
+document.getElementById('tabCard').onclick=()=>switchTab('card');
+document.getElementById('tabPix').onclick=()=>switchTab('pix');
+
+async function loadPlan(){
+  const res=await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(String(pcs))}`);
+  const data=await res.json();
+  if(!res.ok||!data.ok) throw new Error(data.error||'Plano inválido');
+  planInfo=data;
+  document.getElementById('summary').innerHTML=`<strong>${data.plan_name}</strong><br>Valor: R$ ${Number(data.amount).toFixed(2).replace('.',',')} por mês<br>E-mail: ${email}`;
+  if(!data.public_key) throw new Error('MP_PUBLIC_KEY não encontrada.');
+  mp=new MercadoPago(data.public_key,{locale:'pt-BR'});
 }
 
-const params=new URLSearchParams(location.search);
-const session=requireAuth();
-function requireAuth(){ const s=getSession(); if(!s?.token||!s?.user?.email){ const pcs=params.get('pcs')||localStorage.getItem('linera_checkout_pcs')||''; location.href=`login.html?intent=checkout&pcs=${encodeURIComponent(pcs)}`; throw new Error('unauthorized'); } return s; }
-const email=(session.user.email||'').trim().toLowerCase();
-const pcs=Number(params.get('pcs')||localStorage.getItem('linera_checkout_pcs')||0);
-let amount=0, MP_PUBLIC_KEY='', pixPaymentId='', pollTimer=null, cardBrickController=null;
-const el=id=>document.getElementById(id);
-const sumEmail=el('sumEmail'), sumPlan=el('sumPlan'), sumPcs=el('sumPcs'), sumPrice=el('sumPrice'), msg=el('msg');
-sumEmail.textContent=email; sumPlan.textContent=PLAN_NAMES[pcs]||`Plano ${pcs} PCs`; sumPcs.textContent=`${pcs} PCs`;
-if(!pcs){ showStatus(msg,'error','Plano não informado. Volte e escolha um plano.'); }
-async function loadPlanInfo(){ const data=await api(`/api/plan_info?pcs=${pcs}`); amount=Number(data.amount||0); MP_PUBLIC_KEY=String(data.public_key||'').trim(); sumPrice.textContent='R$ '+amount.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); if(!MP_PUBLIC_KEY){ throw new Error('MP_PUBLIC_KEY não configurada no Worker. Configure a variável MP_PUBLIC_KEY no Cloudflare e publique novamente.'); } }
-function getDeviceId(){ return String(window.MP_DEVICE_SESSION_ID||'').trim(); }
-function hideAllStatus(){ ['cardStatus','pixStatus','msg'].forEach(id=>{ const x=el(id); if(x) x.className='status info'; }); }
-function show(id, cls, text){ showStatus(el(id),cls,text); }
-function switchTab(tab){ el('cardWrap').classList.toggle('hidden',tab!=='card'); el('pixWrap').classList.toggle('hidden',tab!=='pix'); el('tabCard').className='btn'+(tab==='card'?'':' secondary'); el('tabPix').className='btn'+(tab==='pix'?'':' secondary'); }
-el('tabCard').onclick=()=>switchTab('card'); el('tabPix').onclick=()=>switchTab('pix');
-async function mountCardBrick(){
- if(!MP_PUBLIC_KEY) throw new Error('MP_PUBLIC_KEY não encontrada.');
- const mp=new MercadoPago(MP_PUBLIC_KEY,{locale:'pt-BR'});
- const bricksBuilder=mp.bricks();
- if(cardBrickController?.unmount) try{cardBrickController.unmount()}catch{}
- cardBrickController=await bricksBuilder.create('cardPayment','cardBrick_container',{
-   initialization:{amount,payer:{email}},
-   customization:{paymentMethods:{maxInstallments:1}},
-   callbacks:{
-     onReady:()=>{ el('cardLoader').style.display='none'; },
-     onError:(error)=>{ el('cardLoader').style.display='none'; show('cardStatus','error', error?.message || 'Erro ao montar checkout do cartão.'); },
-     onSubmit:async(cardFormData)=>{
-       show('cardStatus','info','Processando pagamento no cartão...');
-       try {
-         const token=cardFormData?.token;
-         if(!token) throw new Error('O token do cartão não foi retornado.');
-         const data=await api('/api/mp/pagar_primeira_mensalidade_cartao',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-           email, pcs,
-           card_token_id: token,
-           payment_method_id: cardFormData?.payment_method_id||'',
-           issuer_id: cardFormData?.issuer_id||'',
-           installments: Number(cardFormData?.installments||1)||1,
-           identification: {
-             type: cardFormData?.payer?.identification?.type || '',
-             number: cardFormData?.payer?.identification?.number || '',
-           },
-           device_id: getDeviceId(),
-         })});
-         localStorage.setItem('linera_checkout_ref', data.checkout_ref || '');
-         localStorage.setItem('linera_pcs', String(pcs));
-         location.href=`sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&checkout_ref=${encodeURIComponent(data.checkout_ref||'')}&preapproval_id=${encodeURIComponent(data.preapproval_id||'')}&origem=cartao`;
-       } catch(e) { show('cardStatus','error',e.message||String(e)); }
-     }
-   }
- });
-}
-async function gerarPix(){
-  show('pixStatus','info','Gerando PIX...');
-  try {
-    const data=await api('/api/mp/criar_pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,pcs,device_id:getDeviceId()})});
-    pixPaymentId=String(data.payment_id||'');
-    localStorage.setItem('linera_pix_payment_id', pixPaymentId);
-    el('pixArea').innerHTML=`${data.qr_code_base64 ? `<img class="qr-img" src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX"/>` : ''}
-      ${data.qr_code ? `<textarea class="pix-code" readonly>${data.qr_code}</textarea><button class="btn secondary copy-btn" id="copyPix">Copiar código PIX</button>`:''}`;
-    const copy=el('copyPix'); if(copy) copy.onclick=async()=>{ await navigator.clipboard.writeText(data.qr_code||''); show('pixStatus','ok','Código PIX copiado.'); };
-    startPixPolling();
-    show('pixStatus','info','PIX gerado com sucesso. Aguardando pagamento...');
-  } catch(e) { show('pixStatus','error',e.message||String(e)); }
-}
-function stopPixPolling(){ if(pollTimer) clearTimeout(pollTimer); pollTimer=null; }
-async function checkPix(){
-  if(!pixPaymentId) return;
-  try {
-    const data=await api(`/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}`);
-    if(data.status==='approved' || data.license_status==='active') {
-      stopPixPolling();
-      location.href=`sucesso.html?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&payment_id=${encodeURIComponent(pixPaymentId)}&origem=pix`;
-      return;
+function getDeviceId(){ return window.MP_DEVICE_SESSION_ID || ''; }
+
+async function mountCard(){
+  const bricks=mp.bricks();
+  await bricks.create("cardPayment", "cardBrick_container", {
+    initialization: { amount: Number(planInfo.amount), payer: { email } },
+    customization: { visual: { hideFormTitle: true } },
+    callbacks: {
+      onReady: ()=>{},
+      onError: (error)=>{ console.error(error); showMsg(typeof error==='string'?error:JSON.stringify(error)); },
+      onSubmit: async (cardFormData) => {
+        showMsg('Processando pagamento no cartão...');
+        try{
+          const payload = {
+            email, name, pcs,
+            card_token_id: cardFormData.token,
+            payment_method_id: cardFormData.payment_method_id,
+            issuer_id: cardFormData.issuer_id,
+            installments: Number(cardFormData.installments||1),
+            identification: {
+              type: cardFormData.payer?.identification?.type || 'CPF',
+              number: cardFormData.payer?.identification?.number || ''
+            },
+            device_id: getDeviceId(),
+          };
+          const res=await fetch(`${WORKER}/api/mp/pagar_primeira_mensalidade_cartao`,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify(payload)});
+          const data=await res.json();
+          if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha no pagamento');
+          location.href=`sucesso.html?origem=cartao&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&payment_id=${encodeURIComponent(data.payment_id||'')}&preapproval_id=${encodeURIComponent(data.preapproval_id||'')}`;
+        }catch(e){ showMsg(e.message||String(e)); throw e; }
+      }
     }
-  } catch(e) {}
-  pollTimer=setTimeout(checkPix,5000);
+  });
 }
-function startPixPolling(){ stopPixPolling(); pollTimer=setTimeout(checkPix,5000); }
-el('btnPix').onclick=gerarPix;
-const initialTab=(params.get('tab')||'').toLowerCase()==='pix' ? 'pix' : 'card';
-switchTab(initialTab);
-(async()=>{ try{ await loadPlanInfo(); await mountCardBrick(); if(initialTab==='pix'){} }catch(e){ show('msg','error',e.message||String(e)); el('cardLoader').style.display='none'; const cardWrap = el('cardWrap'); if(cardWrap){ const c = el('cardBrick_container'); if(c) c.innerHTML=''; } } })();
-</script></body></html>
+
+async function gerarPix(){
+  const box=document.getElementById('pixArea');
+  box.textContent='Gerando PIX...';
+  try{
+    const res=await fetch(`${WORKER}/api/mp/criar_pix`,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({email,pcs})});
+    const data=await res.json();
+    if(!res.ok||!data.ok) throw new Error(data.error||'Falha ao gerar PIX');
+    pixPaymentId=data.payment_id;
+    box.innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}
+      ${data.qr_code?`<textarea class="copy" readonly>${data.qr_code}</textarea>`:''}
+      <div style="margin-top:12px"><button class="btn" id="copyPix">Copiar código PIX</button></div>
+      <div class="muted" style="margin-top:10px">Depois do pagamento, a próxima cobrança PIX será enviada por e-mail.</div>`;
+    if(document.getElementById('copyPix')) document.getElementById('copyPix').onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
+    startPixPolling();
+  }catch(e){ box.textContent=e.message||String(e); }
+}
+
+function startPixPolling(){
+  stopPixPolling();
+  const loop=async()=>{
+    if(!pixPaymentId) return;
+    try{
+      const res=await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}`,{headers:{...authHeaders()}});
+      const data=await res.json();
+      if(data.status==='approved'){
+        stopPixPolling();
+        location.href=`sucesso.html?origem=pix&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&payment_id=${encodeURIComponent(pixPaymentId)}`;
+        return;
+      }
+    }catch(e){}
+    pollTimer=setTimeout(loop,5000);
+  };
+  pollTimer=setTimeout(loop,4000);
+}
+function stopPixPolling(){ if(pollTimer){ clearTimeout(pollTimer); pollTimer=null; } }
+document.getElementById('btnPix').onclick=gerarPix;
+
+(async()=>{
+  try{
+    await loadPlan();
+    await mountCard();
+    const initialTab=(params.get('tab')||'card').toLowerCase()==='pix'?'pix':'card';
+    switchTab(initialTab);
+  }catch(e){ showMsg(e.message||String(e)); }
+})();
+</script>
+</body></html>
