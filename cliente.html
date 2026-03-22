@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Área do cliente</title>
 <style>
-:root{--bg:#f6f8fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0b1f3b}
+:root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0f3b8c}
 body{margin:0;font-family:Segoe UI,Arial;background:var(--bg);color:var(--text)}.wrap{max-width:1100px;margin:0 auto;padding:24px}
-.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}.btn{background:var(--primary);color:#fff;border:0;border-radius:12px;padding:11px 14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}.btn.secondary{background:#fff;color:#111;border:1px solid var(--line)}.btn.danger{background:#7f1d1d}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 10px 24px rgba(15,23,42,.05)}.kv{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}.muted{color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.status{margin:12px 0;white-space:pre-wrap}.pix-inline{margin-top:12px;padding:14px;border:1px dashed #cbd5e1;border-radius:14px;background:#fff}.pix-inline img{max-width:220px;border:1px solid var(--line);border-radius:12px}.pix-inline textarea{width:100%;min-height:90px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.btn{background:var(--primary);color:#fff;border:0;border-radius:12px;padding:11px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.secondary{background:#fff;color:#111;border:1px solid var(--line)}.btn.danger{background:#7f1d1d}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 12px 30px rgba(15,23,42,.05)}.kv{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}.muted{color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.status{margin:12px 0;white-space:pre-wrap}.pix-inline{margin-top:12px;padding:14px;border:1px dashed #cbd5e1;border-radius:14px;background:#fff}.pix-inline img{max-width:220px;border:1px solid var(--line);border-radius:12px}.pix-inline textarea{width:100%;min-height:90px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
 @media (max-width:900px){.grid{grid-template-columns:1fr}.kv{grid-template-columns:1fr}}
 </style></head>
 <body><div class="wrap">
-<div class="top"><div><h1>Área do cliente</h1><div class="muted" id="userLine"></div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn secondary" href="comprar.html">Planos</a><button class="btn secondary" id="btnSair">Sair</button></div></div>
+<div class="top"><div><h1>Área do cliente</h1><div class="muted" id="userLine"></div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn secondary" href="comprar.html">Ver planos</a><button class="btn secondary" id="btnSair">Sair</button></div></div>
 <div id="msg" class="status"></div>
 <div class="card" style="margin-bottom:18px">
   <h3>Trocar senha</h3>
   <div class="actions">
     <input id="old_password" type="password" placeholder="Senha atual" style="padding:12px;border:1px solid #cbd5e1;border-radius:12px;flex:1;min-width:180px">
     <input id="new_password" type="password" placeholder="Nova senha" style="padding:12px;border:1px solid #cbd5e1;border-radius:12px;flex:1;min-width:180px">
-    <button class="btn" id="btnPass">Salvar</button>
+    <button class="btn" id="btnPass">Salvar senha</button>
   </div>
 </div>
 <div class="grid" id="licGrid"></div>
@@ -26,7 +26,7 @@ const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
 if(!sess?.token){ location.href='login.html'; }
 function authHeaders(){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json' } }
 function showMsg(t){ document.getElementById('msg').textContent=t||''; }
-function formatDateBr(v){ if(!v) return '-'; const d=new Date(v); if(isNaN(d)) return String(v).slice(0,10); return d.toLocaleDateString('pt-BR'); }
+function formatDateBr(v){ if(!v) return '-'; const d=new Date(v); return isNaN(d)?String(v).slice(0,10):d.toLocaleDateString('pt-BR'); }
 function methodLabel(lic){ return lic.billing_label || (lic.renewal_method==='manual_pix_email'?'PIX por e-mail':(lic.renewal_method==='card_auto'?'Cartão':'-')); }
 async function api(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
 async function load(){
@@ -66,7 +66,7 @@ async function togglePix(pcs){
   box.style.display='block'; box.innerHTML='Gerando PIX...';
   try{
     const data=await api('/api/mp/criar_pix',{method:'POST',headers:authHeaders(),body:JSON.stringify({email:sess.user.email,pcs})});
-    box.innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}${data.qr_code?`<textarea readonly>${data.qr_code}</textarea>`:''}<div class="actions"><button class="btn secondary" id="copy_${pcs}">Copiar código PIX</button></div><div class="muted" style="margin-top:10px">Depois do pagamento, a validade é renovada automaticamente pelo sistema.</div>`;
+    box.innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}${data.qr_code?`<textarea readonly>${data.qr_code}</textarea>`:''}<div class="actions"><button class="btn secondary" id="copy_${pcs}">Copiar código PIX</button></div><div class="muted" style="margin-top:10px">Depois do pagamento, a validade é renovada automaticamente.</div>`;
     document.getElementById(`copy_${pcs}`).onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
   }catch(e){ box.innerHTML=e.message; }
 }

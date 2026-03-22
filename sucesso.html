@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sucesso</title>
-<style>body{font-family:Segoe UI,Arial;background:#f6f8fb;margin:0}.box{max-width:760px;margin:40px auto;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:24px}.banner{padding:14px;border-radius:14px;background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:14px}.btn{background:#0b1f3b;color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}</style></head>
-<body><div class="box"><div id="banner" class="banner">Estamos validando sua compra.</div><div id="detail"></div><div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="cliente.html">Ir para área do cliente</a><a class="btn" href="comprar.html">Voltar aos planos</a></div></div>
+<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Compra concluída</title>
+<style>body{font-family:Segoe UI,Arial;background:#f8fafc;margin:0}.box{max-width:760px;margin:40px auto;background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:24px}.banner{padding:14px;border-radius:14px;background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:14px}.btn{background:#0f3b8c;color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}</style></head>
+<body><div class="box"><div id="banner" class="banner">Estamos finalizando seu acesso.</div><div id="detail"></div><div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="cliente.html">Ir para área do cliente</a><a class="btn" href="comprar.html">Voltar aos planos</a></div></div>
 <script>
 const qp=new URLSearchParams(location.search);
 const origem=qp.get('origem')||'';
@@ -11,6 +11,6 @@ const paymentId=qp.get('payment_id')||'';
 const preapprovalId=qp.get('preapproval_id')||'';
 document.getElementById('detail').innerHTML=`<strong>E-mail:</strong> ${email}<br><strong>Plano:</strong> ${pcs} PCs<br><strong>Pagamento:</strong> ${paymentId||'-'}<br><strong>Assinatura:</strong> ${preapprovalId||'-'}`;
 document.getElementById('banner').textContent = origem==='cartao'
-  ? 'Pagamento no cartão concluído. A licença foi liberada e a renovação automática mensal foi preparada.'
-  : 'Pagamento PIX concluído. A licença foi liberada e as próximas cobranças PIX serão enviadas por e-mail.';
+  ? 'Pagamento confirmado. Sua licença foi liberada e a renovação mensal no cartão foi preparada.'
+  : 'Pagamento PIX confirmado. Sua licença foi liberada e as próximas cobranças PIX serão enviadas por e-mail.';
 </script></body></html>

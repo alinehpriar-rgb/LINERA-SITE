@@ -1,36 +1,61 @@
 <!doctype html>
-<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pagamento</title>
+<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pagamento | LINERA-NEST</title>
 <style>
-:root{--bg:#f6f8fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0b1f3b}
-body{margin:0;font-family:Segoe UI,Arial;background:var(--bg);color:var(--text)}.wrap{max-width:980px;margin:0 auto;padding:24px}
-.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 10px 24px rgba(15,23,42,.05)}
-.tabs{display:flex;gap:10px;margin:16px 0}.tab{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:700}.tab.active{background:var(--primary);color:#fff}
-.btn{background:var(--primary);color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer}
-.hidden{display:none!important}.status{margin-top:12px;white-space:pre-wrap}.muted{color:var(--muted)}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{margin:10px 0}.field input{width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px}
-#pixBox img{max-width:240px;border:1px solid var(--line);border-radius:14px}.copy{width:100%;min-height:90px;margin-top:10px;border:1px solid #cbd5e1;border-radius:12px;padding:10px 12px}
-@media (max-width:760px){.row{grid-template-columns:1fr}}
+:root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0f3b8c;--gold:#f59e0b}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;margin-bottom:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 12px 30px rgba(15,23,42,.05)}
+.eyebrow{font-size:12px;font-weight:900;letter-spacing:.7px;color:#0f3b8c;text-transform:uppercase}
+h1{font-size:38px;line-height:1.1;margin:10px 0 12px}.sub{font-size:16px;line-height:1.7;color:#334155}
+.bullets{margin:16px 0 0;padding-left:18px;line-height:1.8}.bullets li strong{color:#0f3b8c}
+.highlight{border:2px solid rgba(245,158,11,.35);background:linear-gradient(180deg,#fffef8,#fff)}
+.price{font-size:42px;font-weight:900;margin:8px 0 0}
+.tabs{display:flex;gap:10px;margin:0 0 16px}.tab{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:800}.tab.active{background:var(--primary);color:#fff}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:14px;padding:12px 14px;font-weight:800;cursor:pointer}
+.hidden{display:none!important}.muted{color:var(--muted)}.status{margin-top:12px;white-space:pre-wrap}
+.copy{width:100%;min-height:92px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
+#pixBox img{max-width:240px;border:1px solid var(--line);border-radius:14px}.safe{margin-top:10px;padding:12px;border-radius:14px;background:#eff6ff;border:1px solid #bfdbfe;font-size:14px}
+@media (max-width:980px){.hero{grid-template-columns:1fr}h1{font-size:32px}}
 </style>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://www.mercadopago.com/v2/security.js" view="pagamentos"></script>
-</head><body><div class="wrap">
-  <h1>Pagamento</h1>
-  <div class="muted">Cartão: cobrança imediata + renovação automática mensal. PIX: cobrança imediata + renovação mensal enviada por e-mail.</div>
-  <div class="card">
-    <div id="summary"></div>
-    <div class="tabs">
-      <button class="tab active" id="tabCard">Cartão</button>
-      <button class="tab" id="tabPix">PIX</button>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="card">
+      <div class="eyebrow">Finalize sua compra</div>
+      <h1>Você está a um passo de profissionalizar sua operação.</h1>
+      <div class="sub">Com o LINERA-NEST, você centraliza o controle das licenças, reduz risco de uso desorganizado, ganha previsibilidade sobre validade e mantém tudo acessível em uma área do cliente simples de usar.</div>
+      <ul class="bullets">
+        <li><strong>Compra imediata</strong> e liberação rápida da licença</li>
+        <li><strong>Portal do cliente</strong> para baixar licença e acompanhar status</li>
+        <li><strong>Renovação prática</strong> no cartão ou por PIX mensal</li>
+        <li><strong>Mais controle</strong> sobre máquinas, validade e cobrança</li>
+      </ul>
+      <div class="safe">Pagamento seguro com integração Mercado Pago. No cartão, a renovação mensal fica automática. No PIX, as próximas cobranças são enviadas por e-mail perto do vencimento.</div>
     </div>
-    <div id="cardBox">
-      <div id="cardBrick_container"></div>
+    <div class="card highlight">
+      <div class="eyebrow">Resumo do plano</div>
+      <div id="summary">Carregando...</div>
+      <div class="tabs" style="margin-top:16px">
+        <button class="tab active" id="tabCard">Cartão</button>
+        <button class="tab" id="tabPix">PIX</button>
+      </div>
+      <div id="cardBox">
+        <div id="cardBrick_container"></div>
+      </div>
+      <div id="pixBox" class="hidden">
+        <button class="btn" id="btnPix">Gerar PIX agora</button>
+        <div id="pixArea" class="status"></div>
+      </div>
+      <div id="msg" class="status"></div>
     </div>
-    <div id="pixBox" class="hidden">
-      <button class="btn" id="btnPix">Gerar PIX</button>
-      <div id="pixArea" class="status"></div>
-    </div>
-    <div id="msg" class="status"></div>
   </div>
 </div>
+
 <script>
 const WORKER='';
 const params=new URLSearchParams(location.search);
@@ -42,7 +67,8 @@ const name=sess?.user?.name||'';
 let planInfo=null, mp=null, pixPaymentId='', pollTimer=null;
 
 function authHeaders(){ return { Authorization:`Bearer ${sess.token}` } }
-function showMsg(text){ document.getElementById('msg').textContent=text; }
+function money(v){ return Number(v).toFixed(2).replace('.',','); }
+function showMsg(t){ document.getElementById('msg').textContent=t||''; }
 function switchTab(tab){
   document.getElementById('tabCard').classList.toggle('active',tab==='card');
   document.getElementById('tabPix').classList.toggle('active',tab==='pix');
@@ -57,11 +83,15 @@ async function loadPlan(){
   const data=await res.json();
   if(!res.ok||!data.ok) throw new Error(data.error||'Plano inválido');
   planInfo=data;
-  document.getElementById('summary').innerHTML=`<strong>${data.plan_name}</strong><br>Valor: R$ ${Number(data.amount).toFixed(2).replace('.',',')} por mês<br>E-mail: ${email}`;
+  document.getElementById('summary').innerHTML = `
+    <div style="font-size:14px;color:#64748b;font-weight:800;letter-spacing:.7px;text-transform:uppercase">${data.plan_name}</div>
+    <div class="price">R$ ${money(data.amount)} <span style="font-size:15px;color:#64748b;font-weight:700">/ mês</span></div>
+    <div class="muted" style="margin-top:8px">E-mail da conta: ${email}</div>
+    <div class="muted">A primeira cobrança acontece no ato da compra.</div>
+  `;
   if(!data.public_key) throw new Error('MP_PUBLIC_KEY não encontrada.');
   mp=new MercadoPago(data.public_key,{locale:'pt-BR'});
 }
-
 function getDeviceId(){ return window.MP_DEVICE_SESSION_ID || ''; }
 
 async function mountCard(){
@@ -107,13 +137,14 @@ async function gerarPix(){
     pixPaymentId=data.payment_id;
     box.innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}
       ${data.qr_code?`<textarea class="copy" readonly>${data.qr_code}</textarea>`:''}
-      <div style="margin-top:12px"><button class="btn" id="copyPix">Copiar código PIX</button></div>
-      <div class="muted" style="margin-top:10px">Depois do pagamento, a próxima cobrança PIX será enviada por e-mail.</div>`;
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="copyPix">Copiar código PIX</button>
+      </div>
+      <div class="safe">Depois do pagamento, sua licença será liberada e as próximas cobranças PIX serão enviadas por e-mail antes do vencimento.</div>`;
     if(document.getElementById('copyPix')) document.getElementById('copyPix').onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
     startPixPolling();
   }catch(e){ box.textContent=e.message||String(e); }
 }
-
 function startPixPolling(){
   stopPixPolling();
   const loop=async()=>{
