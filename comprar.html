@@ -39,7 +39,7 @@
     .plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:24px}
     .plan{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 14px 30px rgba(15,23,42,.05);position:relative;display:flex;flex-direction:column}
     .plan.popular{border:2px solid var(--accent);transform:translateY(-4px);box-shadow:0 18px 40px rgba(245,158,11,.16)}
-    .ribbon{position:absolute;top:16px;right:16px;background:var(--accent);color:#111827;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900}
+    .ribbon{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#111827;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;margin-bottom:12px}
     .plan-name{font-size:22px;font-weight:900;margin:0 0 6px}
     .plan-sub{color:var(--muted);font-size:14px;font-weight:700}
     .price{display:flex;align-items:flex-end;gap:6px;margin:16px 0 10px;font-weight:900}
@@ -123,14 +123,11 @@
 <section class="section">
   <div class="wrap">
     <h2>Escolha o plano ideal para o seu perfil</h2>
-    <div class="muted">Todos os planos liberam a versão paga do sistema. O que muda é a quantidade de computadores autorizados para sua operação.</div>
+    
 
     <div class="plan-grid" id="plans"></div>
 
-    <div class="foot">
-      <strong>Como funciona a cobrança:</strong> no <strong>cartão</strong>, a primeira cobrança é imediata e as próximas ficam automáticas. No <strong>PIX</strong>, a primeira cobrança também é imediata e as próximas cobranças mensais são enviadas por e-mail perto do vencimento.
     </div>
-  </div>
 </section>
 
 <script>
@@ -140,35 +137,35 @@ const plans = [
     pcs:2,
     key:'2',
     name:'Plano Oficina',
-    sub:'Para operações enxutas',
-    desc:'Ideal para quem quer sair da improvisação e começar a cortar com mais controle, sem pesar no caixa.',
-    bullets:['Até 2 computadores','Ideal para marcenarias e serralherias menores','Mais organização e menos retrabalho']
+    sub:'Para começar a usar',
+    desc:'A forma mais simples de continuar usando o LINERA-NEST na versão paga e manter sua operação rodando.',
+    bullets:['Até 2 computadores','Ideal para uso inicial','Licença paga do sistema']
   },
   {
     pcs:5,
     key:'5',
-    name:'Plano Empresa',
+    name:'Plano Equipe',
     sub:'Melhor custo-benefício',
     featured:true,
     ribbon:'Mais vendido',
-    desc:'O plano mais indicado para empresas que já trabalham com equipe e querem crescer com controle, praticidade e ótimo custo por estação.',
+    desc:'A melhor escolha para quem já tem equipe, quer ganhar produtividade e continuar usando o software com excelente custo por estação.',
     bullets:['Até 5 computadores','Perfeito para equipes em crescimento','Melhor equilíbrio entre valor e escala']
   },
   {
     pcs:10,
     key:'10',
     name:'Plano Produção',
-    sub:'Para operações mais exigentes',
-    desc:'Mais capacidade para quem precisa de mais estações rodando o software e um fluxo de corte mais intenso.',
-    bullets:['Até 10 computadores','Mais escala para o time','Ideal para produção mais puxada']
+    sub:'Mais capacidade',
+    desc:'Pensado para operações que precisam de mais estações ativas e mais gente usando o otimizador no dia a dia.',
+    bullets:['Até 10 computadores','Mais escala para a produção','Ideal para operações mais exigentes']
   },
   {
     pcs:50,
     key:'50',
     name:'Plano Fábrica',
     sub:'Operação ampla',
-    desc:'Pensado para estruturas maiores, com várias estações, mais pessoas usando o sistema e necessidade de gestão centralizada.',
-    bullets:['Até 50 computadores','Para múltiplas equipes e estações','Mais controle para operações maiores']
+    desc:'Para empresas com várias estações, múltiplas equipes e necessidade de manter a versão paga ativa em larga escala.',
+    bullets:['Até 50 computadores','Para múltiplas equipes/estações','Gestão centralizada de licenças']
   }
 ];
 
@@ -193,7 +190,7 @@ document.getElementById('btnSair').onclick=()=>{ localStorage.removeItem('linera
 
 document.getElementById('plans').innerHTML = plans.map(p => `
   <div class="plan ${p.featured ? 'popular' : ''}">
-    ${p.ribbon ? `<div class="ribbon">${p.ribbon}</div>` : ''}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">${p.ribbon ? `<div class="ribbon">${p.ribbon}</div>` : `<div></div>`}<div></div></div>
     <div class="plan-name">${p.name}</div>
     <div class="plan-sub">${p.sub}</div>
     <div class="price loading">
