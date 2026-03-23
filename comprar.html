@@ -37,9 +37,9 @@
     .benefit{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 12px 28px rgba(15,23,42,.05)}
     .benefit .t{font-weight:800;margin-bottom:8px}
     .plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:24px}
-    .plan{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 14px 30px rgba(15,23,42,.05);position:relative;display:flex;flex-direction:column}
+    .plan{background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px 22px 22px;box-shadow:0 14px 30px rgba(15,23,42,.05);position:relative;display:flex;flex-direction:column}
     .plan.popular{border:2px solid var(--accent);transform:translateY(-4px);box-shadow:0 18px 40px rgba(245,158,11,.16)}
-    .ribbon{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#111827;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;margin-bottom:12px}
+    .ribbon{position:absolute;top:-14px;left:20px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#111827;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;box-shadow:0 8px 18px rgba(245,158,11,.22);z-index:2}
     .plan-name{font-size:22px;font-weight:900;margin:0 0 6px}
     .plan-sub{color:var(--muted);font-size:14px;font-weight:700}
     .price{display:flex;align-items:flex-end;gap:6px;margin:16px 0 10px;font-weight:900}
@@ -190,7 +190,7 @@ document.getElementById('btnSair').onclick=()=>{ localStorage.removeItem('linera
 
 document.getElementById('plans').innerHTML = plans.map(p => `
   <div class="plan ${p.featured ? 'popular' : ''}">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">${p.ribbon ? `<div class="ribbon">${p.ribbon}</div>` : `<div></div>`}<div></div></div>
+    ${p.ribbon ? `<div class="ribbon">${p.ribbon}</div>` : ``}
     <div class="plan-name">${p.name}</div>
     <div class="plan-sub">${p.sub}</div>
     <div class="price loading">

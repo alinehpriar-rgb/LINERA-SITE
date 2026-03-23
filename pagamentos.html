@@ -3,223 +3,210 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>LINERA-NEST | Otimizador de corte 1D para serralherias, marcenarias e fábricas</title>
+  <title>Pagamento | LINERA-NEST</title>
   <style>
     :root{
       --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
       --primary:#0f3b8c; --primary-dark:#0b2c69; --accent:#f59e0b; --ok:#15803d;
-      --hero1:#081226; --hero2:#0f3b8c; --hero3:#1d4ed8;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
-    .hero{background:linear-gradient(135deg,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);color:#fff;padding:24px 0 70px}
-    .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-    .brand{font-size:28px;font-weight:900;letter-spacing:.2px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:14px;font-weight:800;text-decoration:none;border:none;cursor:pointer}
-    .btn.light{background:#fff;color:#0f3b8c}
-    .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)}
-    .hidden{display:none!important}
-    .hero-grid{display:grid;grid-template-columns:1.18fr .82fr;gap:24px;align-items:center;padding-top:28px}
-    .eyebrow{font-size:12px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;opacity:.9}
-    h1{font-size:50px;line-height:1.04;margin:10px 0 16px;font-weight:900;max-width:760px}
-    .sub{font-size:18px;line-height:1.7;max-width:760px;color:rgba(255,255,255,.93)}
-    .hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-    .badge{padding:10px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:800}
-    .hero-card{background:rgba(255,255,255,.09);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.16);border-radius:26px;padding:22px}
-    .hero-card h3{margin:0 0 10px;font-size:20px}
-    .hero-list{margin:0;padding-left:18px;line-height:1.9}
-    .section{padding:34px 0}
-    .section h2{font-size:34px;margin:0 0 10px}
-    .muted{color:var(--muted)}
-    .benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:22px}
-    .benefit{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 12px 28px rgba(15,23,42,.05)}
-    .benefit .t{font-weight:800;margin-bottom:8px}
-    .plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:24px}
-    .plan{background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px 22px 22px;box-shadow:0 14px 30px rgba(15,23,42,.05);position:relative;display:flex;flex-direction:column}
-    .plan.popular{border:2px solid var(--accent);transform:translateY(-4px);box-shadow:0 18px 40px rgba(245,158,11,.16)}
-    .ribbon{position:absolute;top:-14px;left:20px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#111827;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;box-shadow:0 8px 18px rgba(245,158,11,.22);z-index:2}
-    .plan-name{font-size:22px;font-weight:900;margin:0 0 6px}
-    .plan-sub{color:var(--muted);font-size:14px;font-weight:700}
-    .price{display:flex;align-items:flex-end;gap:6px;margin:16px 0 10px;font-weight:900}
-    .currency{font-size:18px}
-    .value{font-size:44px;line-height:.92;letter-spacing:-1px}
-    .period{font-size:16px;color:var(--muted);font-weight:700;padding-bottom:5px}
-    .price.loading .value{font-size:22px;letter-spacing:0}
-    .desc{color:#334155;line-height:1.65;min-height:92px}
-    .features{padding-left:18px;line-height:1.85;color:#0f172a;margin:16px 0}
-    .features li strong{color:var(--primary)}
-    .cta{margin-top:auto}
-    .cta .btn{width:100%;background:var(--primary);color:#fff}
-    .cta .btn:hover{background:var(--primary-dark)}
-    .foot{margin-top:22px;padding:18px;border-radius:18px;background:#fff;border:1px solid var(--line)}
-    .foot strong{color:var(--primary)}
-    @media (max-width:1080px){ .plan-grid,.benefits{grid-template-columns:repeat(2,1fr)} .hero-grid{grid-template-columns:1fr} h1{font-size:42px} }
-    @media (max-width:680px){ .plan-grid,.benefits{grid-template-columns:1fr} h1{font-size:34px} .value{font-size:38px} }
+    body{margin:0;background:var(--bg);font-family:"Segoe UI",Arial,sans-serif;color:var(--text)}
+    .wrap{max-width:1140px;margin:0 auto;padding:24px 18px}
+    .layout{display:grid;grid-template-columns:1.02fr .98fr;gap:20px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 14px 28px rgba(15,23,42,.05)}
+    .eyebrow{font-size:12px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;color:var(--primary)}
+    h1{font-size:38px;line-height:1.08;margin:10px 0 14px}
+    .sub{font-size:16px;line-height:1.7;color:#334155}
+    .list{margin:16px 0 0;padding-left:18px;line-height:1.85}
+    .list li strong{color:var(--primary)}
+    .summary{border:2px solid rgba(245,158,11,.35);background:linear-gradient(180deg,#fffef8,#fff);position:sticky;top:20px}
+    .price{font-size:42px;font-weight:900;margin:8px 0 0}
+    .tabs{display:flex;gap:10px;margin:16px 0}.tab{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:800}.tab.active{background:var(--primary);color:#fff}
+    .btn{background:var(--primary);color:#fff;border:0;border-radius:14px;padding:12px 14px;font-weight:800;cursor:pointer}
+    .btn:hover{background:var(--primary-dark)}
+    .hidden{display:none!important}.muted{color:var(--muted)}.status{margin-top:12px;white-space:pre-wrap}
+    .copy{width:100%;min-height:92px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
+    #pixBox img{max-width:240px;border:1px solid var(--line);border-radius:14px}
+    .safe{margin-top:12px;padding:14px;border-radius:14px;background:#eff6ff;border:1px solid #bfdbfe;font-size:14px;line-height:1.6}
+    @media (max-width:980px){.layout{grid-template-columns:1fr}h1{font-size:32px}}
   </style>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script src="https://www.mercadopago.com/v2/security.js" view="pagamentos"></script>
 </head>
 <body>
-<section class="hero">
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">LINERA-NEST</div>
-      <div class="actions">
-        <a class="btn ghost" id="btnLogin" href="login.html">Entrar</a>
-        <a class="btn ghost" id="btnCadastro" href="cadastro.html">Criar conta</a>
-        <a class="btn ghost hidden" id="btnCliente" href="cliente.html">Área do cliente</a>
-        <button class="btn ghost hidden" id="btnSair">Sair</button>
-        
+<div class="wrap">
+  <div class="layout">
+    <div class="card">
+      <div class="eyebrow">versão paga do otimizador</div>
+      <h1>Finalize sua assinatura e continue usando o LINERA-NEST sem parar sua operação.</h1>
+      <div class="sub">
+        Você já conheceu a versão gratuita. Agora, com a assinatura, você mantém seu processo de corte rodando com mais segurança,
+        mais organização e a tranquilidade de continuar gerando seus planos sempre que precisar.
+      </div>
+
+      <ul class="list">
+        <li><strong>Economize matéria-prima</strong> com melhor aproveitamento no corte linear</li>
+        <li><strong>Importe peças e materiais por Excel</strong> e ganhe velocidade no dia a dia</li>
+        <li><strong>Gere planos de corte em PDF</strong> por material de forma organizada</li>
+        <li><strong>Aproveite sobras úteis</strong> e reduza desperdício na produção</li>
+        <li><strong>Use um software brasileiro, em português</strong>, feito para a realidade da sua operação</li>
+      </ul>
+
+      <div class="safe">
+        <strong>Resumo da cobrança:</strong><br>
+        No <strong>cartão</strong>, a primeira cobrança é imediata e as próximas ficam automáticas.<br>
+        No <strong>PIX</strong>, a primeira cobrança também é imediata e as próximas cobranças mensais são enviadas por e-mail perto do vencimento.
       </div>
     </div>
 
-    <div class="hero-grid">
-      <div>
-        <div class="eyebrow">otimizador de corte 1D totalmente brasileiro</div>
-        <h1>Economize matéria-prima, aproveite melhor as barras e transforme seu corte linear em resultado.</h1>
-        <div class="sub">
-          O LINERA-NEST foi criado para <strong>serralherias, marcenarias e fábricas</strong> que trabalham com cortes lineares e querem
-          reduzir desperdício, organizar materiais e gerar planos de corte de forma prática em <strong>português</strong>.
-          Você já testou a versão gratuita por 30 dias. Agora é hora de manter a operação funcionando com a versão completa.
-        </div>
-        <div class="hero-badges">
-          <div class="badge">100% em português</div>
-          <div class="badge">Software brasileiro</div>
-          <div class="badge">Importação por Excel</div>
-          <div class="badge">Planos em PDF</div>
-          <div class="badge">Controle de licença por PC</div>
-        </div>
+    <div class="card summary">
+      <div class="eyebrow">seu plano</div>
+      <div id="summary">Carregando...</div>
+
+      <div class="tabs">
+        <button class="tab active" id="tabCard">Cartão</button>
+        <button class="tab" id="tabPix">PIX</button>
       </div>
 
-      <div class="hero-card">
-        <h3>O que você leva na versão paga</h3>
-        <ul class="hero-list">
-          <li>Otimização de corte 1D para reduzir sobra e desperdício</li>
-          <li>Cadastro e importação de peças e materiais em Excel</li>
-          <li>Geração de planos de corte em PDF por material</li>
-          <li>Aproveitamento e controle de sobras úteis</li>
-          <li>Licença profissional para sua equipe e seus computadores</li>
-          <li>Área do cliente para gerenciar licença, renovação e downloads</li>
-        </ul>
+      <div id="cardBox">
+        <div id="cardBrick_container"></div>
       </div>
+
+      <div id="pixBox" class="hidden">
+        <button class="btn" id="btnPix">Gerar PIX agora</button>
+        <div id="pixArea" class="status"></div>
+      </div>
+
+      <div id="msg" class="status"></div>
     </div>
   </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <h2>Por que o LINERA-NEST vale a assinatura</h2>
-    <div class="muted">Mais que um programa de corte, ele ajuda sua empresa a trabalhar com mais controle, mais velocidade e menos desperdício.</div>
-
-    <div class="benefits">
-      <div class="benefit"><div class="t">Menos desperdício</div><div>Mais aproveitamento da matéria-prima e redução de sobra desnecessária.</div></div>
-      <div class="benefit"><div class="t">Mais organização</div><div>Peças, materiais, OS, programação e PDFs estruturados de forma prática.</div></div>
-      <div class="benefit"><div class="t">Mais agilidade</div><div>Fluxo simples para importar dados, gerar planos e seguir com a produção.</div></div>
-      <div class="benefit"><div class="t">Mais profissionalismo</div><div>Uma solução feita para uso real no chão de fábrica, serralheria ou marcenaria.</div></div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <h2>Escolha o plano ideal para o seu perfil</h2>
-    
-
-    <div class="plan-grid" id="plans"></div>
-
-    </div>
-</section>
+</div>
 
 <script>
 const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
-const plans = [
-  {
-    pcs:2,
-    key:'2',
-    name:'Plano Oficina',
-    sub:'Para começar a usar',
-    desc:'A forma mais simples de continuar usando o LINERA-NEST na versão paga e manter sua operação rodando.',
-    bullets:['Até 2 computadores','Ideal para uso inicial','Licença paga do sistema']
-  },
-  {
-    pcs:5,
-    key:'5',
-    name:'Plano Equipe',
-    sub:'Melhor custo-benefício',
-    featured:true,
-    ribbon:'Mais vendido',
-    desc:'A melhor escolha para quem já tem equipe, quer ganhar produtividade e continuar usando o software com excelente custo por estação.',
-    bullets:['Até 5 computadores','Perfeito para equipes em crescimento','Melhor equilíbrio entre valor e escala']
-  },
-  {
-    pcs:10,
-    key:'10',
-    name:'Plano Produção',
-    sub:'Mais capacidade',
-    desc:'Pensado para operações que precisam de mais estações ativas e mais gente usando o otimizador no dia a dia.',
-    bullets:['Até 10 computadores','Mais escala para a produção','Ideal para operações mais exigentes']
-  },
-  {
-    pcs:50,
-    key:'50',
-    name:'Plano Fábrica',
-    sub:'Operação ampla',
-    desc:'Para empresas com várias estações, múltiplas equipes e necessidade de manter a versão paga ativa em larga escala.',
-    bullets:['Até 50 computadores','Para múltiplas equipes/estações','Gestão centralizada de licenças']
-  }
-];
+const params=new URLSearchParams(location.search);
+const pcs=Number(params.get('pcs')||0);
+const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
+if(!sess?.token){ location.href=`login.html?next=${encodeURIComponent(location.pathname+location.search)}`; }
+const email=sess?.user?.email||'';
+const name=sess?.user?.name||'';
+let planInfo=null, mp=null, pixPaymentId='', pollTimer=null;
 
-function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
-function setUi(){
-  const s = getSession();
-  document.getElementById('btnCliente').classList.toggle('hidden', !s);
-  document.getElementById('btnSair').classList.toggle('hidden', !s);
-  document.getElementById('btnCadastro').classList.toggle('hidden', !!s);
-  document.getElementById('btnLogin').textContent = s ? 'Trocar conta' : 'Entrar';
+function authHeaders(){ return { Authorization:`Bearer ${sess.token}` } }
+function money(v){ return Number(v).toFixed(2).replace('.',','); }
+function showMsg(t){ document.getElementById('msg').textContent=t||''; }
+function switchTab(tab){
+  document.getElementById('tabCard').classList.toggle('active',tab==='card');
+  document.getElementById('tabPix').classList.toggle('active',tab==='pix');
+  document.getElementById('cardBox').classList.toggle('hidden',tab!=='card');
+  document.getElementById('pixBox').classList.toggle('hidden',tab!=='pix');
 }
-function moneyBRL(v){
-  return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-function choosePlan(pcs){
-  const s=getSession();
-  const next=`pagamentos.html?pcs=${encodeURIComponent(String(pcs))}`;
-  if(s){ location.href=next; return; }
-  location.href=`cadastro.html?next=${encodeURIComponent(next)}&pcs=${encodeURIComponent(String(pcs))}`;
-}
-document.getElementById('btnSair').onclick=()=>{ localStorage.removeItem('linera_session'); location.reload(); };
+document.getElementById('tabCard').onclick=()=>switchTab('card');
+document.getElementById('tabPix').onclick=()=>switchTab('pix');
 
-document.getElementById('plans').innerHTML = plans.map(p => `
-  <div class="plan ${p.featured ? 'popular' : ''}">
-    ${p.ribbon ? `<div class="ribbon">${p.ribbon}</div>` : ``}
-    <div class="plan-name">${p.name}</div>
-    <div class="plan-sub">${p.sub}</div>
-    <div class="price loading">
-      <span class="currency">R$</span>
-      <span class="value" id="price-${p.key}">--</span>
-      <span class="period">/ mês</span>
-    </div>
-    <div class="desc">${p.desc}</div>
-    <ul class="features">${p.bullets.map(b=>`<li><strong>${b}</strong></li>`).join('')}</ul>
-    <div class="cta"><button class="btn" onclick="choosePlan(${p.pcs})">Assinar ${p.name}</button></div>
-  </div>
-`).join('');
+async function loadPlan(){
+  const res=await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(String(pcs))}`);
+  const data=await res.json();
+  if(!res.ok||!data.ok) throw new Error(data.error||'Plano inválido');
+  planInfo=data;
+  const labels = {
+    2:'Plano Oficina • ideal para operações enxutas',
+    5:'Plano Empresa • mais vendido e melhor custo-benefício',
+    10:'Plano Produção • mais escala para a equipe',
+    50:'Plano Fábrica • operação ampla e centralizada'
+  };
+  document.getElementById('summary').innerHTML = `
+    <div style="font-size:14px;color:#64748b;font-weight:800;letter-spacing:.7px;text-transform:uppercase">${data.plan_name}</div>
+    <div class="price">R$ ${money(data.amount)} <span style="font-size:15px;color:#64748b;font-weight:700">/ mês</span></div>
+    <div class="muted" style="margin-top:8px">${labels[pcs] || ''}</div>
+    <div class="muted" style="margin-top:8px">E-mail da conta: ${email}</div>
+    <div class="muted">A primeira cobrança acontece no ato da compra.</div>
+  `;
+  if(!data.public_key) throw new Error('MP_PUBLIC_KEY não encontrada.');
+  mp=new MercadoPago(data.public_key,{locale:'pt-BR'});
+}
+function getDeviceId(){ return window.MP_DEVICE_SESSION_ID || ''; }
 
-async function loadPrice(pcs){
-  const out = document.getElementById(`price-${pcs}`);
+async function mountCard(){
+  const bricks=mp.bricks();
+  await bricks.create("cardPayment", "cardBrick_container", {
+    initialization: { amount: Number(planInfo.amount), payer: { email } },
+    customization: { visual: { hideFormTitle: true } },
+    callbacks: {
+      onReady: ()=>{},
+      onError: (error)=>{ console.error(error); showMsg(typeof error==='string'?error:JSON.stringify(error)); },
+      onSubmit: async (cardFormData) => {
+        showMsg('Processando pagamento no cartão...');
+        try{
+          const payload = {
+            email, name, pcs,
+            card_token_id: cardFormData.token,
+            payment_method_id: cardFormData.payment_method_id,
+            issuer_id: cardFormData.issuer_id,
+            installments: Number(cardFormData.installments||1),
+            identification: {
+              type: cardFormData.payer?.identification?.type || 'CPF',
+              number: cardFormData.payer?.identification?.number || ''
+            },
+            device_id: getDeviceId(),
+          };
+          const res=await fetch(`${WORKER}/api/mp/pagar_primeira_mensalidade_cartao`,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify(payload)});
+          const data=await res.json();
+          if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha no pagamento');
+          location.href=`sucesso.html?origem=cartao&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&payment_id=${encodeURIComponent(data.payment_id||'')}&preapproval_id=${encodeURIComponent(data.preapproval_id||'')}`;
+        }catch(e){ showMsg(e.message||String(e)); throw e; }
+      }
+    }
+  });
+}
+
+async function gerarPix(){
+  const box=document.getElementById('pixArea');
+  box.textContent='Gerando PIX...';
   try{
-    const res = await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(String(pcs))}`);
-    const data = await res.json();
-    if(!res.ok || !data.ok) throw new Error(data.error || 'Falha');
-    out.textContent = moneyBRL(data.amount);
-    out.parentElement.classList.remove('loading');
-  }catch(e){
-    out.textContent = '--';
-    out.parentElement.classList.remove('loading');
-  }
+    const res=await fetch(`${WORKER}/api/mp/criar_pix`,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({email,pcs})});
+    const data=await res.json();
+    if(!res.ok||!data.ok) throw new Error(data.error||'Falha ao gerar PIX');
+    pixPaymentId=data.payment_id;
+    box.innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}
+      ${data.qr_code?`<textarea class="copy" readonly>${data.qr_code}</textarea>`:''}
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="copyPix">Copiar código PIX</button>
+      </div>
+      <div class="safe">
+        Depois do pagamento, sua licença será liberada e as próximas cobranças mensais por PIX serão enviadas por e-mail para continuar sua assinatura.
+      </div>`;
+    if(document.getElementById('copyPix')) document.getElementById('copyPix').onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
+    startPixPolling();
+  }catch(e){ box.textContent=e.message||String(e); }
 }
-(async function init(){
-  setUi();
-  await Promise.all([2,5,10,50].map(loadPrice));
+function startPixPolling(){
+  stopPixPolling();
+  const loop=async()=>{
+    if(!pixPaymentId) return;
+    try{
+      const res=await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}`,{headers:{...authHeaders()}});
+      const data=await res.json();
+      if(data.status==='approved'){
+        stopPixPolling();
+        location.href=`sucesso.html?origem=pix&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&payment_id=${encodeURIComponent(pixPaymentId)}`;
+        return;
+      }
+    }catch(e){}
+    pollTimer=setTimeout(loop,5000);
+  };
+  pollTimer=setTimeout(loop,4000);
+}
+function stopPixPolling(){ if(pollTimer){ clearTimeout(pollTimer); pollTimer=null; } }
+document.getElementById('btnPix').onclick=gerarPix;
+
+(async()=>{
+  try{
+    await loadPlan();
+    await mountCard();
+    const initialTab=(params.get('tab')||'card').toLowerCase()==='pix'?'pix':'card';
+    switchTab(initialTab);
+  }catch(e){ showMsg(e.message||String(e)); }
 })();
 </script>
 </body>
