@@ -21,7 +21,7 @@ body{margin:0;font-family:Segoe UI,Arial;background:var(--bg);color:var(--text)}
 <div class="grid" id="licGrid"></div>
 </div>
 <script>
-const WORKER='';
+const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
 const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
 if(!sess?.token){ location.href='login.html'; }
 function authHeaders(){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json' } }
