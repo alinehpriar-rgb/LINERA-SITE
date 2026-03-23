@@ -1,16 +1,107 @@
 <!doctype html>
-<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Compra concluída</title>
-<style>body{font-family:Segoe UI,Arial;background:#f8fafc;margin:0}.box{max-width:760px;margin:40px auto;background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:24px}.banner{padding:14px;border-radius:14px;background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:14px}.btn{background:#0f3b8c;color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}</style></head>
-<body><div class="box"><div id="banner" class="banner">Estamos finalizando seu acesso.</div><div id="detail"></div><div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="cliente.html">Ir para área do cliente</a><a class="btn" href="comprar.html">Voltar aos planos</a></div></div>
-<script>
-const qp=new URLSearchParams(location.search);
-const origem=qp.get('origem')||'';
-const email=qp.get('email')||'';
-const pcs=qp.get('pcs')||'';
-const paymentId=qp.get('payment_id')||'';
-const preapprovalId=qp.get('preapproval_id')||'';
-document.getElementById('detail').innerHTML=`<strong>E-mail:</strong> ${email}<br><strong>Plano:</strong> ${pcs} PCs<br><strong>Pagamento:</strong> ${paymentId||'-'}<br><strong>Assinatura:</strong> ${preapprovalId||'-'}`;
-document.getElementById('banner').textContent = origem==='cartao'
-  ? 'Pagamento confirmado. Sua licença foi liberada e a renovação mensal no cartão foi preparada.'
-  : 'Pagamento PIX confirmado. Sua licença foi liberada e as próximas cobranças PIX serão enviadas por e-mail.';
-</script></body></html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LINERA-NEST | Compra concluída</title>
+  <style>
+    :root{ --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e8f0; --primary:#0b1f3b; --ok:#15803d; --ok-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2; --info-soft:#eff6ff; --shadow:0 12px 28px rgba(15,23,42,.07); }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
+    .wrap{max-width:840px;margin:28px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:28px}
+    h1{margin:0 0 12px;font-size:34px;line-height:1.05}
+    .banner{border-radius:18px;padding:16px;line-height:1.55;margin:16px 0}
+    .banner.info{background:var(--info-soft);border:1px solid #bfdbfe;color:#1d4ed8}
+    .banner.ok{background:var(--ok-soft);border:1px solid #bbf7d0;color:#166534}
+    .status{margin-top:18px;padding:16px;border-radius:18px;line-height:1.6;white-space:pre-line;font-size:15px}
+    .status.info{background:#f8fafc;border:1px solid #dbe3ef;color:#334155}
+    .status.error{background:var(--danger-soft);border:1px solid #fecaca;color:var(--danger)}
+    .status.ok2{background:var(--ok-soft);border:1px solid #bbf7d0;color:var(--ok)}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:15px 20px;border-radius:16px;text-decoration:none;font-weight:800}
+    .primary{background:var(--primary);color:#fff}
+    .secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .hidden{display:none}
+    ol{padding-left:20px;line-height:1.7;color:#334155}
+    .meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:16px 0 10px}
+    .meta div{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fafcff}
+    .meta .label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+    @media (max-width:700px){ .meta{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Obrigado pela compra 🎉</h1>
+      <div id="banner" class="banner info">Estamos validando seu pagamento e preparando a licença do LINERA-NEST.</div>
+
+      <div class="meta">
+        <div><span class="label">Email</span><span id="emailOut">-</span></div>
+        <div><span class="label">Plano</span><span id="pcsOut">-</span></div>
+      </div>
+
+      <div id="status" class="status info">Consultando sua compra...</div>
+
+      <div class="actions">
+        <a id="downloadBtn" class="btn primary hidden" href="#" download>Baixar licença</a>
+        <a class="btn secondary" href="cliente.html">Ir para área do cliente</a>
+      </div>
+
+      <h3>Como usar o arquivo .lic</h3>
+      <ol>
+        <li>Baixe o arquivo de licença nesta página.</li>
+        <li>Abra o LINERA-NEST no computador que vai usar o programa.</li>
+        <li>Importe ou selecione o arquivo <strong>.lic</strong> quando o sistema solicitar.</li>
+        <li>Se necessário, feche e abra o programa novamente para concluir a ativação.</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const WORKER = 'https://linera-lic.alineh-pri-ar.workers.dev';
+    const qp = new URLSearchParams(location.search);
+    const origem = (qp.get('origem') || '').trim().toLowerCase();
+    const email = (qp.get('email') || localStorage.getItem('linera_email') || '').trim().toLowerCase();
+    const pcs = (qp.get('pcs') || localStorage.getItem('linera_pcs') || '').trim();
+    const paymentId = (qp.get('payment_id') || '').trim();
+
+    const emailOut = document.getElementById('emailOut');
+    const pcsOut = document.getElementById('pcsOut');
+    const banner = document.getElementById('banner');
+    const statusEl = document.getElementById('status');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    emailOut.textContent = email || '(não informado)';
+    pcsOut.textContent = pcs ? `${pcs} PCs` : '-';
+
+    function setBanner(text, cls='info') {
+      banner.className = `banner ${cls}`;
+      banner.innerHTML = text;
+    }
+    function setStatus(text, cls='info') {
+      statusEl.className = `status ${cls}`;
+      statusEl.textContent = text;
+    }
+    function enableDownload() {
+      downloadBtn.href = `${WORKER}/api/licenca?email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(pcs)}`;
+      downloadBtn.classList.remove('hidden');
+    }
+
+    if (email && pcs) {
+      enableDownload();
+    }
+
+    if (origem === 'cartao') {
+      setBanner('Seu pagamento no cartão foi confirmado. A licença já está disponível para download e a próxima renovação ficará programada para a data correta.', 'ok');
+      setStatus(`Pagamento confirmado com sucesso.\nPlano liberado: ${pcs} PCs\nLicença pronta para download.`, 'ok2');
+    } else if (origem === 'pix') {
+      setBanner('Seu pagamento PIX foi confirmado. A licença já está disponível para download e as próximas renovações por PIX poderão ser feitas pelo portal do cliente.', 'ok');
+      setStatus(`Pagamento PIX confirmado.\nPlano liberado: ${pcs} PCs\nLicença pronta para download.`, 'ok2');
+    } else {
+      setBanner('Sua compra foi registrada com sucesso. A licença já pode ser baixada nesta página.', 'ok');
+      setStatus('Licença pronta para download.', 'ok2');
+    }
+  </script>
+</body>
+</html>
