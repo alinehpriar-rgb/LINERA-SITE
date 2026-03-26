@@ -120,7 +120,7 @@ async function renderCardBrick(pcs, amount){
       onError: (error)=>{ console.error(error); showMsg(typeof error==='string' ? error : JSON.stringify(error)); },
       onSubmit: async (cardFormData) => {
         try{
-          showMsg('Atualizando cartão para a próxima renovação...');
+          showMsg('Processando troca do cartão...');
           const data = await api('/api/client/update-card-method',{
             method:'POST',
             headers: authHeaders(),
@@ -131,7 +131,7 @@ async function renderCardBrick(pcs, amount){
               device_id: window.MP_DEVICE_SESSION_ID || ''
             })
           });
-          showMsg('Cartão atualizado com sucesso.');
+          showMsg(data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.');
           await load();
           closePaymentPanel(pcs);
         }catch(e){ showMsg(e.message || String(e)); throw e; }
@@ -158,7 +158,7 @@ function paymentPanelHtml(lic){
 
         <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
           <h4 style="margin:0 0 10px">Usar outro cartão nas próximas cobranças</h4>
-          <div class="muted">Cadastre o cartão que será usado somente na próxima renovação. Nenhuma cobrança será feita agora.</div>
+          <div class="muted">Se a licença estiver ativa, o cartão será usado na próxima renovação. Se a licença estiver inativa, a cobrança pode ser feita imediatamente para reativação.</div>
           <div id="cardBrick_${lic.pcs}" style="margin-top:12px"></div>
         </div>
       </div>
