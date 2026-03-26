@@ -95,6 +95,24 @@ function cardExpiryLabel(lic){
   if(!month || !year) return '';
   return `${pad2(month)}/${String(year).slice(-2)}`;
 }
+function isLicenseActiveForRenewal(lic){
+  if(String(lic.status || '').toLowerCase() !== 'active') return false;
+  const d = new Date(lic.valid_until || '');
+  return !isNaN(d) && d.getTime() > Date.now();
+}
+function allowCardChangeNow(lic){
+  if(lic.renewal_method === 'manual_pix_email' && isLicenseActiveForRenewal(lic)) return false;
+  return true;
+}
+function cardPanelInfoText(lic){
+  if(lic.renewal_method === 'manual_pix_email' && isLicenseActiveForRenewal(lic)){
+    return 'Sua licença ainda está ativa com renovação por PIX. Para evitar que o Mercado Pago passe a usar o dia de hoje como referência da assinatura, a troca para cartão ficará disponível quando a licença estiver inativa.';
+  }
+  if(isLicenseActiveForRenewal(lic)){
+    return 'Se a licença estiver ativa, o cartão será usado na próxima renovação.';
+  }
+  return 'Como a licença está inativa, a cobrança pode ser feita imediatamente para reativação.';
+}
 async function api(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
 
 async function loadPublicKey(pcs=2){
@@ -158,8 +176,10 @@ function paymentPanelHtml(lic){
 
         <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
           <h4 style="margin:0 0 10px">Usar outro cartão nas próximas cobranças</h4>
-          <div class="muted">Se a licença estiver ativa, o cartão da assinatura atual será atualizado e a próxima cobrança seguirá a renovação exibida acima. Se a licença estiver inativa, a cobrança pode ser feita imediatamente para reativação.</div>
-          <div id="cardBrick_${lic.pcs}" style="margin-top:12px"></div>
+          <div class="muted">${cardPanelInfoText(lic)}</div>
+          ${allowCardChangeNow(lic)
+            ? `<div id="cardBrick_${lic.pcs}" style="margin-top:12px"></div>`
+            : `<div style="margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#f8fafc;color:var(--muted)">Quando a licença ficar inativa, você poderá cadastrar o cartão aqui para reativar e passar a renovar automaticamente no cartão.</div>`}
         </div>
       </div>
     </div>
@@ -222,7 +242,9 @@ async function togglePaymentPanel(pcs, amount){
   if(!lic) return;
   panel.innerHTML = paymentPanelHtml(lic);
   panel.style.display = 'block';
-  await renderCardBrick(pcs, amount || lic.amount || 1);
+  if(allowCardChangeNow(lic)){
+    await renderCardBrick(pcs, amount || lic.amount || 1);
+  }
 }
 
 function closePaymentPanel(pcs){
