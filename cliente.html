@@ -73,9 +73,35 @@ const cardBricks = {};
 function authHeaders(extra={}){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json', ...extra } }
 function showMsg(t){ document.getElementById('msg').textContent=t||''; }
 function formatDateBr(v){ if(!v) return '-'; const d=new Date(v); return isNaN(d)?String(v).slice(0,10):d.toLocaleDateString('pt-BR'); }
+function cleanCardBrand(v){
+  return String(v||'').replace(/^cart[aã]o\s+/i,'').trim();
+}
 function methodLabel(lic){
   if(lic.renewal_method==='manual_pix_email') return 'PIX';
-  if(lic.renewal_method==='card_auto') return lic.billing_label || 'Cartão';
+  if(lic.renewal_method==='card_auto') return 'Cartão de crédito';
+  return lic.billing_label || '-';
+}
+function cardBrandLabel(lic){
+  return cleanCardBrand(lic.card_brand_display || lic.card_brand || lic.billing_label || 'Cartão');
+}
+function cardMaskedLabel(lic){
+  const brand = cardBrandLabel(lic);
+  const last4 = String(lic.card_last4 || '').replace(/\D/g,'').slice(-4);
+  return last4 ? `${brand} •••• ${last4}` : brand;
+}
+function cardExpiryLabel(lic){
+  const month = String(lic.card_exp_month || '').replace(/\D/g,'');
+  const year = String(lic.card_exp_year || '').replace(/\D/g,'');
+  if(!month || !year) return '-';
+  return `${month.padStart(2,'0')}/${year}`;
+}
+function paymentSummaryHtml(lic){
+  if(lic.renewal_method==='manual_pix_email') return 'PIX';
+  if(lic.renewal_method==='card_auto'){
+    const masked = cardMaskedLabel(lic);
+    const expiry = cardExpiryLabel(lic);
+    return expiry !== '-' ? `${masked}<br><span class="subtle">Validade do cartão: ${expiry}</span>` : masked;
+  }
   return lic.billing_label || '-';
 }
 function nextChargeLabel(lic){
@@ -107,6 +133,27 @@ async function renderCardBrick(pcs, amount){
       onSubmit: async (cardFormData) => {
         try{
           showMsg('Atualizando cartão para a próxima renovação...');
+          const possibleLast4 =
+            cardFormData.last_four_digits ||
+            cardFormData.last4 ||
+            cardFormData.card_last4 ||
+            cardFormData?.card?.last_four_digits ||
+            cardFormData?.card?.last4 ||
+            '';
+          const possibleExpMonth =
+            cardFormData.expiration_month ||
+            cardFormData.exp_month ||
+            cardFormData.card_exp_month ||
+            cardFormData?.card?.expiration_month ||
+            cardFormData?.card?.exp_month ||
+            '';
+          const possibleExpYear =
+            cardFormData.expiration_year ||
+            cardFormData.exp_year ||
+            cardFormData.card_exp_year ||
+            cardFormData?.card?.expiration_year ||
+            cardFormData?.card?.exp_year ||
+            '';
           const data = await api('/api/client/update-card-method',{
             method:'POST',
             headers: authHeaders(),
@@ -114,6 +161,9 @@ async function renderCardBrick(pcs, amount){
               pcs,
               card_token_id: cardFormData.token,
               payment_method_id: cardFormData.payment_method_id,
+              card_last4: possibleLast4,
+              card_exp_month: possibleExpMonth,
+              card_exp_year: possibleExpYear,
               device_id: window.MP_DEVICE_SESSION_ID || ''
             })
           });
@@ -130,8 +180,9 @@ function paymentPanelHtml(lic){
   return `
     <div class="panel" id="panelInner_${lic.pcs}">
       <h4>Alterar meio de pagamento</h4>
-      <div class="muted">Meio atual: <strong>${methodLabel(lic)}</strong>${lic.renewal_method==='card_auto' && lic.billing_label ? ` • cartão em uso: <strong>${lic.billing_label}</strong>` : ''}</div>
-      <div class="muted" style="margin-top:6px">Próxima renovação prevista: <strong>${nextChargeLabel(lic)}</strong></div>
+      <div class="muted">Meio atual: <strong>${methodLabel(lic)}</strong></div>
+      ${lic.renewal_method==='card_auto' ? `<div class="muted" style="margin-top:6px">Cartão em uso: <strong>${cardMaskedLabel(lic)}</strong></div>` : ''}
+      ${lic.renewal_method==='card_auto' && cardExpiryLabel(lic) !== '-' ? `<div class="muted" style="margin-top:6px">Validade do cartão: <strong>${cardExpiryLabel(lic)}</strong></div>` : ''}
 
       <div class="two" style="margin-top:14px">
         <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
@@ -169,7 +220,7 @@ async function load(){
         <div class="box"><strong>Status</strong><br>${lic.status}</div>
         <div class="box"><strong>Validade</strong><br>${formatDateBr(lic.valid_until)}</div>
         <div class="box"><strong>Slots em uso</strong><br>${lic.devices_active||0}</div>
-        <div class="box"><strong>Meio de pagamento</strong><br>${methodLabel(lic)}</div>
+        <div class="box"><strong>Meio de pagamento</strong><br>${paymentSummaryHtml(lic)}</div>
         <div class="box"><strong>Valor</strong><br>R$ ${Number(lic.amount||0).toFixed(2).replace('.',',')}</div>
         <div class="box"><strong>Próxima renovação</strong><br>${nextChargeLabel(lic)}</div>
       </div>
