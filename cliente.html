@@ -101,12 +101,25 @@ function isLicenseActiveForRenewal(lic){
   return !isNaN(d) && d.getTime() > Date.now();
 }
 function allowCardChangeNow(lic){
-  if(lic.renewal_method === 'manual_pix_email' && isLicenseActiveForRenewal(lic)) return false;
   return true;
+}
+function pendingCardDisplayLabel(lic){
+  const brand = lic.pending_card_brand || 'Cartão';
+  const last4 = String(lic.pending_card_last4 || '').trim();
+  return last4 ? `${brand} •••• ${last4}` : brand;
+}
+function pendingCardExpiryLabel(lic){
+  const month = String(lic.pending_card_exp_month || '').trim();
+  const year = String(lic.pending_card_exp_year || '').trim();
+  if(!month || !year) return '';
+  return `${pad2(month)}/${String(year).slice(-2)}`;
+}
+function hasPendingPixToCardChange(lic){
+  return lic.pending_change_type === 'pix_to_card' && lic.pending_change_status === 'scheduled';
 }
 function cardPanelInfoText(lic){
   if(lic.renewal_method === 'manual_pix_email' && isLicenseActiveForRenewal(lic)){
-    return 'Sua licença ainda está ativa com renovação por PIX. Para evitar que o Mercado Pago passe a usar o dia de hoje como referência da assinatura, a troca para cartão ficará disponível quando a licença estiver inativa.';
+    return 'Sua licença ainda está ativa com renovação por PIX. Se você cadastrar um cartão agora, a mudança ficará agendada e a assinatura no cartão não será criada neste momento.';
   }
   if(isLicenseActiveForRenewal(lic)){
     return 'Se a licença estiver ativa, o cartão será usado na próxima renovação.';
@@ -149,7 +162,7 @@ async function renderCardBrick(pcs, amount){
               device_id: window.MP_DEVICE_SESSION_ID || ''
             })
           });
-          showMsg(data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.');
+          showMsg(data.scheduled_only ? 'Mudança para cartão agendada com sucesso.' : (data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.'));
           await load();
           closePaymentPanel(pcs);
         }catch(e){ showMsg(e.message || String(e)); throw e; }
@@ -165,6 +178,7 @@ function paymentPanelHtml(lic){
       <div class="muted">Meio atual: <strong>${methodLabel(lic)}</strong></div>
       ${lic.renewal_method==='card_auto' ? `<div class="muted" style="margin-top:6px">Cartão em uso: <strong>${cardDisplayLabel(lic)}</strong></div>` : ''}
       ${lic.renewal_method==='card_auto' && cardExpiryLabel(lic) ? `<div class="muted" style="margin-top:6px">Validade do cartão: <strong>${cardExpiryLabel(lic)}</strong></div>` : ''}
+      ${hasPendingPixToCardChange(lic) ? `<div class="card" style="margin-top:12px;padding:14px 16px;border-radius:16px;box-shadow:none;background:#f8fafc"><div style="font-weight:700;margin-bottom:6px">Mudança agendada</div><div class="muted">Novo meio: <strong>Cartão de crédito</strong></div><div class="muted" style="margin-top:6px">Cartão selecionado: <strong>${pendingCardDisplayLabel(lic)}</strong></div>${pendingCardExpiryLabel(lic) ? `<div class="muted" style="margin-top:6px">Validade do cartão: <strong>${pendingCardExpiryLabel(lic)}</strong></div>` : ''}<div class="muted" style="margin-top:6px">A alteração será aplicada na próxima renovação.</div></div>` : ''}
 
       <div class="two" style="margin-top:14px">
         <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
@@ -177,9 +191,7 @@ function paymentPanelHtml(lic){
         <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
           <h4 style="margin:0 0 10px">Usar outro cartão nas próximas cobranças</h4>
           <div class="muted">${cardPanelInfoText(lic)}</div>
-          ${allowCardChangeNow(lic)
-            ? `<div id="cardBrick_${lic.pcs}" style="margin-top:12px"></div>`
-            : `<div style="margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#f8fafc;color:var(--muted)">Quando a licença ficar inativa, você poderá cadastrar o cartão aqui para reativar e passar a renovar automaticamente no cartão.</div>`}
+          <div id="cardBrick_${lic.pcs}" style="margin-top:12px"></div>
         </div>
       </div>
     </div>
