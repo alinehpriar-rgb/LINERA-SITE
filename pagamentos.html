@@ -54,7 +54,7 @@
 
       <div class="safe">
         <strong>Resumo da cobrança:</strong><br>
-        No <strong>cartão</strong>, a primeira cobrança é imediata e as próximas ficam automáticas.<br>
+        No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>
         No <strong>PIX</strong>, a primeira cobrança também é imediata e as próximas cobranças mensais são enviadas por e-mail perto do vencimento.
       </div>
     </div>
@@ -120,7 +120,7 @@ async function loadPlan(){
     <div class="price">R$ ${money(data.amount)} <span style="font-size:15px;color:#64748b;font-weight:700">/ mês</span></div>
     <div class="muted" style="margin-top:8px">${labels[pcs] || ''}</div>
     <div class="muted" style="margin-top:8px">E-mail da conta: ${email}</div>
-    <div class="muted">A primeira cobrança acontece no ato da compra.</div>
+    <div class="muted">No cartão, sua assinatura é iniciada no ato da compra.</div>
   `;
   if(!data.public_key) throw new Error('MP_PUBLIC_KEY não encontrada.');
   mp=new MercadoPago(data.public_key,{locale:'pt-BR'});
@@ -136,7 +136,7 @@ async function mountCard(){
       onReady: ()=>{},
       onError: (error)=>{ console.error(error); showMsg(typeof error==='string'?error:JSON.stringify(error)); },
       onSubmit: async (cardFormData) => {
-        showMsg('Processando pagamento no cartão...');
+        showMsg('Iniciando assinatura no cartão...');
         try{
           const payload = {
             email, name, pcs,
