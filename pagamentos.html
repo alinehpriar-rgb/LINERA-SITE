@@ -122,8 +122,14 @@ async function loadPlan(){
     <div class="muted" style="margin-top:8px">E-mail da conta: ${email}</div>
     <div class="muted">No cartão, sua assinatura é iniciada no ato da compra.</div>
   `;
-  if(!data.public_key) throw new Error('MP_PUBLIC_KEY não encontrada.');
-  mp=new MercadoPago(data.public_key,{locale:'pt-BR'});
+  let publicKey = data.public_key || '';
+  if(!publicKey){
+    const cfgRes=await fetch(`${WORKER}/api/public-config`);
+    const cfg=await cfgRes.json().catch(()=>({}));
+    if(cfgRes.ok && cfg && cfg.ok && cfg.public_key) publicKey=cfg.public_key;
+  }
+  if(!publicKey) throw new Error('MP_PUBLIC_KEY não encontrada.');
+  mp=new MercadoPago(publicKey,{locale:'pt-BR'});
 }
 function getDeviceId(){ return window.MP_DEVICE_SESSION_ID || ''; }
 
