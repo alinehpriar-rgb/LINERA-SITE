@@ -3,26 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Pagamento</title>
+  <title>Pagamento | LINERA-NEST</title>
   <style>
-    :root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#d8e0ea;--primary:#173f93;--primary-dark:#13357a}
+    :root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0f3b8c;--primary-dark:#0b2c69;--accent:#f59e0b}
     *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:"Segoe UI",Arial,sans-serif;color:var(--text)}
-    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px}.layout{display:grid;grid-template-columns:1.2fr .95fr;gap:22px}
-    .card{background:#fff;border:1px solid #e2e8f0;border-radius:26px;padding:24px;box-shadow:0 18px 40px rgba(15,23,42,.05)}
-    .summary{position:sticky;top:20px}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;color:var(--primary)}
-    h1{font-size:38px;line-height:1.08;margin:10px 0 14px}.sub{font-size:16px;line-height:1.7;color:#334155}.muted{color:var(--muted)}
-    .list{margin:18px 0 0;padding-left:18px;line-height:1.9}.price{font-size:42px;font-weight:900;margin:8px 0 0}
-    .tabs{display:flex;gap:10px;margin:16px 0}.tab{padding:10px 14px;border:1px solid #dbe3ef;border-radius:12px;background:#fff;cursor:pointer;font-weight:800}.tab.active{background:var(--primary);color:#fff}
-    .hidden{display:none!important}.status{margin-top:12px;white-space:pre-wrap}.safe{margin-top:12px;padding:14px;border-radius:14px;background:#eff6ff;border:1px solid #bfdbfe;font-size:14px;line-height:1.6}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.full{grid-column:1/-1}
-    input{width:100%;padding:14px 16px;border:1px solid #cbd5e1;border-radius:14px;font-size:15px;outline:none;transition:.15s}
-    input:focus{border-color:#7aa2ec;box-shadow:0 0 0 3px rgba(23,63,147,.10)}
-    .btn{background:var(--primary);color:#fff;border:0;border-radius:14px;padding:14px 16px;font-weight:800;cursor:pointer;width:100%;font-size:15px}.btn:hover{background:var(--primary-dark)}
-    .copy{width:100%;min-height:92px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
-    #pixArea img{max-width:240px;border:1px solid #e2e8f0;border-radius:14px}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#173f93;font-weight:800;font-size:13px}
-    @media (max-width:980px){.layout{grid-template-columns:1fr}h1{font-size:32px}.summary{position:static}}
-    @media (max-width:640px){.grid{grid-template-columns:1fr}}
+    .wrap{max-width:1140px;margin:0 auto;padding:24px 18px}.layout{display:grid;grid-template-columns:1.02fr .98fr;gap:20px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 14px 28px rgba(15,23,42,.05)}
+    .eyebrow{font-size:12px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;color:var(--primary)} h1{font-size:38px;line-height:1.08;margin:10px 0 14px}
+    .sub{font-size:16px;line-height:1.7;color:#334155}.list{margin:16px 0 0;padding-left:18px;line-height:1.85}.list li strong{color:var(--primary)}
+    .summary{border:2px solid rgba(245,158,11,.35);background:linear-gradient(180deg,#fffef8,#fff);position:sticky;top:20px}.price{font-size:42px;font-weight:900;margin:8px 0 0}
+    .tabs{display:flex;gap:10px;margin:16px 0}.tab{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:800}.tab.active{background:var(--primary);color:#fff}
+    .btn{background:var(--primary);color:#fff;border:0;border-radius:14px;padding:13px 14px;font-weight:800;cursor:pointer}.btn:hover{background:var(--primary-dark)}
+    .hidden{display:none!important}.muted{color:var(--muted)}.status{margin-top:12px;white-space:pre-wrap}.copy{width:100%;min-height:92px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
+    #pixBox img{max-width:240px;border:1px solid var(--line);border-radius:14px}.safe{margin-top:12px;padding:14px;border-radius:14px;background:#eff6ff;border:1px solid #bfdbfe;font-size:14px;line-height:1.6}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid .full{grid-column:1/-1} label{display:block;font-size:13px;font-weight:800;color:#475569;margin-bottom:6px}
+    input{width:100%;padding:14px 16px;border:1px solid #cbd5e1;border-radius:16px;font-size:16px;outline:none} input:focus{border-color:#8fb0ee;box-shadow:0 0 0 4px rgba(15,59,140,.08)}
+    .profileBox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#fafcff}.profileBox strong{display:block;margin-bottom:6px}
+    @media (max-width:980px){.layout{grid-template-columns:1fr}h1{font-size:32px}} @media (max-width:640px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -31,35 +28,34 @@
     <div class="card">
       <div class="eyebrow">versão paga do otimizador</div>
       <h1>Finalize sua assinatura e continue usando o LINERA-NEST sem parar sua operação.</h1>
-      <div class="sub">Seu cadastro já guarda telefone, CPF/CNPJ e endereço. Aqui você só informa os dados do cartão e do titular que será usado na cobrança ou gera o PIX da primeira mensalidade.</div>
+      <div class="sub">Seu cadastro já guarda os dados do titular. Aqui você só escolhe a forma de pagamento e, no cartão, informa apenas os dados do cartão.</div>
       <ul class="list">
         <li><strong>Economize matéria-prima</strong> com melhor aproveitamento no corte linear</li>
         <li><strong>Importe peças e materiais por Excel</strong> e ganhe velocidade no dia a dia</li>
         <li><strong>Gere planos de corte em PDF</strong> por material de forma organizada</li>
         <li><strong>Aproveite sobras úteis</strong> e reduza desperdício na produção</li>
-        <li><strong>Mantenha sua assinatura ativa</strong> com cobrança simples e previsível</li>
+        <li><strong>Use um software brasileiro, em português</strong>, feito para a realidade da sua operação</li>
       </ul>
-      <div class="safe"><strong>Como funciona:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada agora e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança é imediata e as próximas mensalidades continuam no fluxo atual do sistema.</div>
+      <div class="safe"><strong>Resumo da cobrança:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança é imediata e as próximas cobranças mensais são enviadas por e-mail perto do vencimento.</div>
     </div>
 
     <div class="card summary">
       <div class="eyebrow">seu plano</div>
       <div id="summary">Carregando...</div>
+      <div class="profileBox" id="profileSummary"></div>
       <div class="tabs">
         <button class="tab active" id="tabCard">Cartão</button>
         <button class="tab" id="tabPix">PIX</button>
       </div>
 
       <div id="cardBox">
-        <div class="pill" id="profileBadge">Buscando seus dados cadastrais...</div>
         <div class="grid">
-          <div class="full"><input id="holder_name" placeholder="Nome do titular do cartão"></div>
-          <div class="full"><input id="holder_cpf_cnpj" placeholder="CPF ou CNPJ do titular"></div>
-          <div class="full"><input id="card_number" placeholder="Número do cartão"></div>
-          <div><input id="card_expiry" placeholder="Validade MM/AA"></div>
-          <div><input id="card_cvv" placeholder="CVV"></div>
+          <div class="full"><label for="holder_name">Nome do titular</label><input id="holder_name" placeholder="Como está no cartão"></div>
+          <div class="full"><label for="card_number">Número do cartão</label><input id="card_number" inputmode="numeric" placeholder="0000 0000 0000 0000"></div>
+          <div><label for="card_expiry">Validade</label><input id="card_expiry" inputmode="numeric" placeholder="MM/AA"></div>
+          <div><label for="card_cvv">CVV</label><input id="card_cvv" inputmode="numeric" placeholder="123"></div>
         </div>
-        <button class="btn" id="btnCard" style="margin-top:14px">Assinar com cartão</button>
+        <button class="btn" id="btnCard" style="width:100%;margin-top:14px">Assinar com cartão</button>
       </div>
 
       <div id="pixBox" class="hidden">
@@ -71,87 +67,66 @@
     </div>
   </div>
 </div>
-
 <script>
 const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
-const params=new URLSearchParams(location.search);
-const pcs=Number(params.get('pcs')||0);
-const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
-if(!sess?.token){ location.href=`login.html?next=${encodeURIComponent(location.pathname+location.search)}`; }
-const email=sess?.user?.email||'';
-let planInfo=null, profile=null, pixPaymentId='', pollTimer=null;
-const $=id=>document.getElementById(id);
-function authHeaders(extra={}){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json',...extra }; }
+const params=new URLSearchParams(location.search); const pcs=Number(params.get('pcs')||0);
+const sess=JSON.parse(localStorage.getItem('linera_session')||'null'); if(!sess?.token){ location.href=`login.html?next=${encodeURIComponent(location.pathname+location.search)}`; }
+let planInfo=null, me=null, pixPaymentId='', pollTimer=null;
+const byId=(id)=>document.getElementById(id);
+const msg=byId('msg');
+function authHeaders(){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json' } }
 function money(v){ return Number(v).toFixed(2).replace('.',','); }
-function showMsg(t){ $('msg').textContent=t||''; }
+function showMsg(t){ msg.textContent=t||''; }
+function switchTab(tab){ byId('tabCard').classList.toggle('active',tab==='card'); byId('tabPix').classList.toggle('active',tab==='pix'); byId('cardBox').classList.toggle('hidden',tab!=='card'); byId('pixBox').classList.toggle('hidden',tab!=='pix'); }
+byId('tabCard').onclick=()=>switchTab('card'); byId('tabPix').onclick=()=>switchTab('pix');
 function onlyDigits(v){ return String(v||'').replace(/\D+/g,''); }
-function switchTab(tab){ $('tabCard').classList.toggle('active',tab==='card'); $('tabPix').classList.toggle('active',tab==='pix'); $('cardBox').classList.toggle('hidden',tab!=='card'); $('pixBox').classList.toggle('hidden',tab!=='pix'); }
-$('tabCard').onclick=()=>switchTab('card'); $('tabPix').onclick=()=>switchTab('pix');
-function maskCard(v){ return onlyDigits(v).slice(0,16).replace(/(.{4})/g,'$1 ').trim(); }
-function maskExpiry(v){ const d=onlyDigits(v).slice(0,4); return d.length<3?d:d.slice(0,2)+'/'+d.slice(2); }
-function maskCpfCnpj(v){ const d=onlyDigits(v).slice(0,14); if(d.length<=11) return d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2'); return d.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2'); }
-$('holder_cpf_cnpj').addEventListener('input',e=>e.target.value=maskCpfCnpj(e.target.value));
-$('card_number').addEventListener('input',e=>e.target.value=maskCard(e.target.value));
-$('card_expiry').addEventListener('input',e=>e.target.value=maskExpiry(e.target.value));
-$('card_cvv').addEventListener('input',e=>e.target.value=onlyDigits(e.target.value).slice(0,4));
-async function fetchJson(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
+function maskCard(v){ return onlyDigits(v).slice(0,16).replace(/(\d{4})(?=\d)/g,'$1 ').trim(); }
+function maskExpiry(v){ const d=onlyDigits(v).slice(0,4); return d.replace(/(\d{2})(\d)/,'$1/$2'); }
+function maskCvv(v){ return onlyDigits(v).slice(0,4); }
+byId('card_number').addEventListener('input',e=>e.target.value=maskCard(e.target.value));
+byId('card_expiry').addEventListener('input',e=>e.target.value=maskExpiry(e.target.value));
+byId('card_cvv').addEventListener('input',e=>e.target.value=maskCvv(e.target.value));
+
 async function loadPlan(){
-  planInfo=await fetchJson(`/api/plan_info?pcs=${encodeURIComponent(String(pcs))}`);
+  const res=await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(String(pcs))}`); const data=await res.json();
+  if(!res.ok||!data.ok) throw new Error(data.error||'Plano inválido'); planInfo=data;
   const labels={2:'Plano Oficina • ideal para operações enxutas',5:'Plano Empresa • mais vendido e melhor custo-benefício',10:'Plano Produção • mais escala para a equipe',50:'Plano Fábrica • operação ampla e centralizada'};
-  $('summary').innerHTML=`<div style="font-size:14px;color:#64748b;font-weight:800;letter-spacing:.7px;text-transform:uppercase">${planInfo.plan_name}</div><div class="price">R$ ${money(planInfo.amount)} <span style="font-size:15px;color:#64748b;font-weight:700">/ mês</span></div><div class="muted" style="margin-top:8px">${labels[pcs]||''}</div><div class="muted" style="margin-top:8px">E-mail da conta: ${email}</div>`;
+  byId('summary').innerHTML=`<div style="font-size:14px;color:#64748b;font-weight:800;letter-spacing:.7px;text-transform:uppercase">${data.plan_name}</div><div class="price">R$ ${money(data.amount)} <span style="font-size:15px;color:#64748b;font-weight:700">/ mês</span></div><div class="muted" style="margin-top:8px">${labels[pcs]||''}</div>`;
 }
-async function loadProfile(){
-  const data=await fetchJson('/api/me',{headers:authHeaders({'Content-Type':'application/json'})});
-  profile=data.user;
-  $('profileBadge').textContent=`Cadastro pronto: ${profile.name} • ${profile.city}/${profile.state} • CEP ${profile.cep}`;
-  $('holder_name').value=profile.name||'';
-  $('holder_cpf_cnpj').value=maskCpfCnpj(profile.cpf_cnpj||'');
+async function loadMe(){
+  const res=await fetch(`${WORKER}/api/me`,{headers:{Authorization:`Bearer ${sess.token}`}}); const data=await res.json();
+  if(!res.ok||!data.ok) throw new Error(data.error||'Sessão inválida'); me=data.user; sess.user=data.user; localStorage.setItem('linera_session',JSON.stringify(sess));
+  byId('profileSummary').innerHTML=`<strong>Dados que serão enviados ao Asaas</strong><div class="muted">${me.name}<br>${me.email}<br>${me.cpf_cnpj}<br>${me.phone}<br>${me.address}, ${me.address_number} - ${me.city}/${me.state}<br>CEP ${me.cep}</div><div class="muted" style="margin-top:8px">Se precisar corrigir esses dados, altere primeiro na área do cliente.</div>`;
+  byId('holder_name').value=me.name||'';
 }
-async function payCard(){
+
+async function pagarCartao(){
   showMsg('Iniciando assinatura no cartão...');
   try{
-    if(!profile?.cpf_cnpj || !profile?.cep || !profile?.city || !profile?.state || !profile?.street || !profile?.address_number){
-      throw new Error('Seu cadastro está incompleto. Atualize seus dados antes de pagar.');
-    }
-    const payload={
-      email,
-      pcs,
-      holder_name:$('holder_name').value.trim(),
-      cpf_cnpj:$('holder_cpf_cnpj').value.trim(),
-      card_number:$('card_number').value.trim(),
-      card_expiry:$('card_expiry').value.trim(),
-      card_cvv:$('card_cvv').value.trim()
-    };
-    const data=await fetchJson('/api/mp/pagar_primeira_mensalidade_cartao',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
-    location.href=`sucesso.html?origem=cartao&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&payment_id=${encodeURIComponent(data.payment_id||'')}&preapproval_id=${encodeURIComponent(data.preapproval_id||'')}`;
+    const payload={ pcs, holder_name:byId('holder_name').value.trim(), card_number:byId('card_number').value, card_expiry:byId('card_expiry').value, card_cvv:byId('card_cvv').value };
+    const res=await fetch(`${WORKER}/api/mp/pagar_primeira_mensalidade_cartao`,{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+    const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha no pagamento');
+    location.href=`sucesso.html?email=${encodeURIComponent(me.email)}&pcs=${encodeURIComponent(String(pcs))}`;
   }catch(e){ showMsg(e.message||String(e)); }
 }
 async function gerarPix(){
-  const box=$('pixArea'); box.textContent='Gerando PIX...';
+  showMsg('Gerando PIX...'); byId('pixArea').innerHTML='';
   try{
-    const data=await fetchJson('/api/mp/criar_pix',{method:'POST',headers:authHeaders(),body:JSON.stringify({email,pcs})});
-    pixPaymentId=data.payment_id;
-    box.innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}${data.qr_code?`<textarea class="copy" readonly>${data.qr_code}</textarea>`:''}<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="copyPix">Copiar código PIX</button></div><div class="safe">Depois do pagamento, sua licença será liberada e as próximas cobranças mensais em PIX seguirão o fluxo atual do sistema.</div>`;
-    const cp=$('copyPix'); if(cp) cp.onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
-    startPixPolling();
-  }catch(e){ box.textContent=e.message||String(e); }
+    const res=await fetch(`${WORKER}/api/mp/criar_pix`,{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})});
+    const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha ao gerar PIX'); pixPaymentId=data.payment_id;
+    byId('pixArea').innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}${data.qr_code?`<textarea class="copy" readonly>${data.qr_code}</textarea>`:''}<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="copyPix" type="button">Copiar código PIX</button></div>`;
+    const cp=byId('copyPix'); if(cp) cp.onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
+    showMsg('PIX gerado. Aguarde a confirmação automática do pagamento.'); startPoll();
+  }catch(e){ showMsg(e.message||String(e)); }
 }
-function startPixPolling(){
-  stopPixPolling();
-  const loop=async()=>{
-    if(!pixPaymentId) return;
-    try{
-      const res=await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}`,{headers:{Authorization:`Bearer ${sess.token}`}});
-      const data=await res.json();
-      if(data.status==='approved'){ stopPixPolling(); location.href=`sucesso.html?origem=pix&email=${encodeURIComponent(email)}&pcs=${encodeURIComponent(String(pcs))}&payment_id=${encodeURIComponent(pixPaymentId)}`; return; }
-    }catch(e){}
-    pollTimer=setTimeout(loop,5000);
-  };
-  pollTimer=setTimeout(loop,4000);
+async function checkPix(){
+  const res=await fetch(`${WORKER}/api/mp/status_pix?payment_id=${encodeURIComponent(pixPaymentId)}`,{headers:{Authorization:`Bearer ${sess.token}`}}); const data=await res.json();
+  if(data?.status==='approved'){ location.href=`sucesso.html?email=${encodeURIComponent(me.email)}&pcs=${encodeURIComponent(String(pcs))}`; return true; }
+  return false;
 }
-function stopPixPolling(){ if(pollTimer){ clearTimeout(pollTimer); pollTimer=null; } }
-$('btnCard').onclick=payCard; $('btnPix').onclick=gerarPix;
-(async()=>{ try{ await loadPlan(); await loadProfile(); switchTab((params.get('tab')||'card').toLowerCase()==='pix'?'pix':'card'); }catch(e){ showMsg(e.message||String(e)); } })();
+function startPoll(){ if(pollTimer) clearTimeout(pollTimer); const loop=async()=>{ try{ const ok=await checkPix(); if(ok) return; }catch(e){} pollTimer=setTimeout(loop,5000); }; pollTimer=setTimeout(loop,4500); }
+byId('btnCard').onclick=pagarCartao; byId('btnPix').onclick=gerarPix;
+Promise.all([loadPlan(),loadMe()]).catch(e=>showMsg(e.message||String(e)));
 </script>
 </body>
 </html>
