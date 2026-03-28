@@ -19,6 +19,8 @@
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid .full{grid-column:1/-1} label{display:block;font-size:13px;font-weight:800;color:#475569;margin-bottom:6px}
     input{width:100%;padding:14px 16px;border:1px solid #cbd5e1;border-radius:16px;font-size:16px;outline:none} input:focus{border-color:#8fb0ee;box-shadow:0 0 0 4px rgba(15,59,140,.08)}
     .profileBox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#fafcff}.profileBox strong{display:block;margin-bottom:6px}
+    .cardFields{margin-top:12px;padding:14px;border:1px solid #dbe4ee;border-radius:20px;background:#fcfdff}
+    .fieldHint{font-size:12px;color:#64748b;margin-top:8px;line-height:1.5}
     @media (max-width:980px){.layout{grid-template-columns:1fr}h1{font-size:32px}} @media (max-width:640px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -49,12 +51,12 @@
       </div>
 
       <div id="cardBox">
-        <div class="grid">
+        <div class="cardFields"><div class="grid">
           <div class="full"><label for="holder_name">Nome do titular</label><input id="holder_name" placeholder="Como está no cartão"></div>
           <div class="full"><label for="card_number">Número do cartão</label><input id="card_number" inputmode="numeric" placeholder="0000 0000 0000 0000"></div>
           <div><label for="card_expiry">Validade</label><input id="card_expiry" inputmode="numeric" placeholder="MM/AA"></div>
           <div><label for="card_cvv">CVV</label><input id="card_cvv" inputmode="numeric" placeholder="123"></div>
-        </div>
+        </div><div class="fieldHint">Digite apenas os dados do cartão. Os demais dados do titular virão do seu cadastro.</div></div>
         <button class="btn" id="btnCard" style="width:100%;margin-top:14px">Assinar com cartão</button>
       </div>
 
