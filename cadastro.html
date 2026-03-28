@@ -32,6 +32,7 @@
         <div><label for="email">E-mail</label><input id="email" type="email" placeholder="voce@empresa.com"></div>
         <div><label for="password">Senha</label><input id="password" type="password" placeholder="Mínimo de 4 caracteres"></div>
         <div><label for="cpf_cnpj">CPF ou CNPJ</label><input id="cpf_cnpj" placeholder="000.000.000-00"></div>
+        <div><label for="phone">Celular com DDD</label><input id="phone" placeholder="(00) 00000-0000"></div>
         <div><label for="cep">CEP</label><input id="cep" placeholder="00000-000"></div>
         <div><label for="city">Cidade</label><input id="city" placeholder="Cidade"></div>
         <div><label for="state">Estado</label><input id="state" maxlength="2" placeholder="UF"></div>
@@ -58,7 +59,9 @@ function maskCpfCnpj(v){
   return d.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2');
 }
 function maskCep(v){ const d=onlyDigits(v).slice(0,8); return d.replace(/(\d{5})(\d)/,'$1-$2'); }
+function maskPhone(v){ const d=onlyDigits(v).slice(0,11); if(d.length<=10) return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2'); return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2'); }
 $('cpf_cnpj').addEventListener('input',e=>e.target.value=maskCpfCnpj(e.target.value));
+$('phone').addEventListener('input',e=>e.target.value=maskPhone(e.target.value));
 $('cep').addEventListener('input',e=>e.target.value=maskCep(e.target.value));
 $('state').addEventListener('input',e=>e.target.value=String(e.target.value||'').replace(/[^a-z]/gi,'').toUpperCase().slice(0,2));
 $('btn').onclick=async()=>{
@@ -67,6 +70,7 @@ $('btn').onclick=async()=>{
     email:$('email').value.trim(),
     password:$('password').value,
     cpf_cnpj:$('cpf_cnpj').value.trim(),
+    phone:$('phone').value.trim(),
     cep:$('cep').value.trim(),
     city:$('city').value.trim(),
     state:$('state').value.trim(),

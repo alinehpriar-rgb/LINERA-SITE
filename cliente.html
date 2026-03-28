@@ -88,6 +88,7 @@ function maskCard(v){ return onlyDigits(v).slice(0,16).replace(/(.{4})/g,'$1 ').
 function maskExpiry(v){ const d=onlyDigits(v).slice(0,4); return d.length<3?d:d.slice(0,2)+'/'+d.slice(2); }
 function maskPhone(v){ const d=onlyDigits(v).slice(0,11); if(d.length<=10) return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2'); return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2'); }
 $('cpf_cnpj').addEventListener('input',e=>e.target.value=maskCpfCnpj(e.target.value));
+$('phone').addEventListener('input',e=>e.target.value=maskPhone(e.target.value));
 $('cep').addEventListener('input',e=>e.target.value=maskCep(e.target.value));
 $('state').addEventListener('input',e=>e.target.value=String(e.target.value||'').replace(/[^a-z]/gi,'').toUpperCase().slice(0,2));
 async function api(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
@@ -96,22 +97,20 @@ function cardDisplayLabel(lic){ const brand=lic.card_brand || lic.billing_label 
 function pendingCardLabel(lic){ const brand=lic.pending_card_brand || 'Cartão'; const last4=String(lic.pending_card_last4||'').trim(); return last4?`${brand} •••• ${last4}`:brand; }
 function renderProfile(user){
   $('userLine').textContent=`${user.name} • ${user.email}`;
-  $('name').value=user.name||''; $('email').value=user.email||''; $('cpf_cnpj').value=maskCpfCnpj(user.cpf_cnpj||''); $('cep').value=maskCep(user.cep||'');
+  $('name').value=user.name||''; $('email').value=user.email||''; $('cpf_cnpj').value=maskCpfCnpj(user.cpf_cnpj||''); $('phone').value=maskPhone(user.phone||''); $('cep').value=maskCep(user.cep||'');
   $('city').value=user.city||''; $('state').value=user.state||''; $('street').value=user.street||''; $('address_number').value=user.address_number||'';
 }
 function paymentPanel(lic){
-  const canScheduleText = lic.renewal_method === 'manual_pix_email' && String(lic.status||'').toLowerCase()==='active'
-    ? 'Ao cadastrar um cartão agora, a cobrança futura ficará preparada para a próxima renovação.'
-    : 'Informe apenas os dados do novo cartão. O restante será usado a partir do seu cadastro.';
   return `
     <div class="panel" id="panel-card-${lic.pcs}" style="display:none">
       <h4>Atualizar cartão</h4>
-      <div class="muted" style="margin-bottom:10px">${canScheduleText}</div>
+      <div class="muted" style="margin-bottom:10px">Informe os dados do novo cartão</div>
       <div class="grid">
+        <div class="full"><input id="holder_name_${lic.pcs}" placeholder="Nome do titular do cartão"></div>
+        <div class="full"><input id="holder_cpf_cnpj_${lic.pcs}" placeholder="CPF ou CNPJ do titular"></div>
         <div class="full"><input id="card_number_${lic.pcs}" placeholder="Número do cartão"></div>
         <div><input id="card_expiry_${lic.pcs}" placeholder="Validade MM/AA"></div>
         <div><input id="card_cvv_${lic.pcs}" placeholder="CVV"></div>
-        <div class="full"><input id="phone_${lic.pcs}" placeholder="Celular com DDD (opcional)"></div>
       </div>
       <div class="row-actions" style="margin-top:12px"><button class="btn" onclick="saveCard(${lic.pcs})">Salvar cartão</button><button class="btn secondary" onclick="togglePanel('panel-card-${lic.pcs}')">Fechar</button></div>
     </div>
@@ -151,11 +150,13 @@ function renderLicenses(licenses){
       ${paymentPanel(lic)}
     </div>`).join('');
   licenses.forEach(lic=>{
-    const cn=$("card_number_"+lic.pcs), ce=$("card_expiry_"+lic.pcs), cv=$("card_cvv_"+lic.pcs), ph=$("phone_"+lic.pcs);
+    const hn=$("holder_name_"+lic.pcs), hc=$("holder_cpf_cnpj_"+lic.pcs), cn=$("card_number_"+lic.pcs), ce=$("card_expiry_"+lic.pcs), cv=$("card_cvv_"+lic.pcs);
+    if(hn && !hn.value) hn.value=$('name').value||'';
+    if(hc && !hc.value) hc.value=$('cpf_cnpj').value||'';
+    if(hc) hc.addEventListener('input',e=>e.target.value=maskCpfCnpj(e.target.value));
     if(cn) cn.addEventListener('input',e=>e.target.value=maskCard(e.target.value));
     if(ce) ce.addEventListener('input',e=>e.target.value=maskExpiry(e.target.value));
     if(cv) cv.addEventListener('input',e=>e.target.value=onlyDigits(e.target.value).slice(0,4));
-    if(ph) ph.addEventListener('input',e=>e.target.value=maskPhone(e.target.value));
   });
 }
 function togglePanel(id){ const el=$(id); if(el) el.style.display=el.style.display==='none'?'block':'none'; }
@@ -166,7 +167,7 @@ async function load(){
 $('btnSaveProfile').onclick=async()=>{
   try{
     const data=await api('/api/client/update-profile',{method:'POST',headers:authHeaders(),body:JSON.stringify({
-      name:$('name').value.trim(), cpf_cnpj:$('cpf_cnpj').value.trim(), cep:$('cep').value.trim(), city:$('city').value.trim(), state:$('state').value.trim(), street:$('street').value.trim(), address_number:$('address_number').value.trim()
+      name:$('name').value.trim(), cpf_cnpj:$('cpf_cnpj').value.trim(), phone:$('phone').value.trim(), cep:$('cep').value.trim(), city:$('city').value.trim(), state:$('state').value.trim(), street:$('street').value.trim(), address_number:$('address_number').value.trim()
     })});
     sess.user=data.user; localStorage.setItem('linera_session',JSON.stringify(sess)); showMsg('Cadastro atualizado com sucesso.'); renderProfile(data.user);
   }catch(e){ showMsg(e.message||String(e)); }
@@ -175,7 +176,7 @@ $('btnPass').onclick=async()=>{ try{ await api('/api/client/change-password',{me
 $('btnSair').onclick=()=>{ localStorage.removeItem('linera_session'); location.href='login.html'; };
 window.clearSlots=async pcs=>{ if(!confirm('Liberar todos os slots em uso desta licença?')) return; try{ await api('/api/client/clear-slots',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showMsg('Slots liberados com sucesso.'); await load(); }catch(e){ showMsg(e.message||String(e)); } };
 window.setPix=async pcs=>{ if(!confirm('Deseja trocar a renovação desta licença para PIX?')) return; try{ await api('/api/client/set-payment-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs,method:'manual_pix_email'})}); showMsg('Forma de pagamento alterada para PIX.'); await load(); }catch(e){ showMsg(e.message||String(e)); } };
-window.saveCard=async pcs=>{ try{ const data=await api('/api/client/update-card-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({ pcs, phone:($('phone_'+pcs)?.value||'').trim(), card_number:($('card_number_'+pcs)?.value||'').trim(), card_expiry:($('card_expiry_'+pcs)?.value||'').trim(), card_cvv:($('card_cvv_'+pcs)?.value||'').trim() })}); showMsg(data.scheduled_only ? 'Mudança para cartão agendada com sucesso.' : (data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.')); await load(); }catch(e){ showMsg(e.message||String(e)); } };
+window.saveCard=async pcs=>{ try{ const data=await api('/api/client/update-card-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({ pcs, holder_name:($('holder_name_'+pcs)?.value||'').trim(), cpf_cnpj:($('holder_cpf_cnpj_'+pcs)?.value||'').trim(), card_number:($('card_number_'+pcs)?.value||'').trim(), card_expiry:($('card_expiry_'+pcs)?.value||'').trim(), card_cvv:($('card_cvv_'+pcs)?.value||'').trim() })}); showMsg(data.scheduled_only ? 'Mudança para cartão agendada com sucesso.' : (data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.')); await load(); }catch(e){ showMsg(e.message||String(e)); } };
 window.cancelSub=async pcs=>{ if(!confirm('Deseja realmente cancelar a assinatura desta licença?')) return; try{ await api('/api/client/cancel-subscription',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showMsg('Assinatura cancelada.'); await load(); }catch(e){ showMsg(e.message||String(e)); } };
 $('btnDeleteAccount').onclick=async(e)=>{ e.preventDefault(); if(!confirm('Excluir a conta inteira? Isso cancela todas as assinaturas e remove o acesso.')) return; try{ await api('/api/client/cancel-account',{method:'POST',headers:authHeaders(),body:JSON.stringify({delete_account:true})}); localStorage.removeItem('linera_session'); location.href='login.html'; }catch(err){ showMsg(err.message||String(err)); } };
 (async()=>{ try{ await load(); }catch(e){ showMsg(e.message||String(e)); } })();

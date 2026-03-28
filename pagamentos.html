@@ -31,7 +31,7 @@
     <div class="card">
       <div class="eyebrow">versão paga do otimizador</div>
       <h1>Finalize sua assinatura e continue usando o LINERA-NEST sem parar sua operação.</h1>
-      <div class="sub">Seu cadastro já guarda CPF/CNPJ e endereço. Aqui você só informa o cartão que será usado na cobrança ou gera o PIX da primeira mensalidade.</div>
+      <div class="sub">Seu cadastro já guarda telefone, CPF/CNPJ e endereço. Aqui você só informa os dados do cartão e do titular que será usado na cobrança ou gera o PIX da primeira mensalidade.</div>
       <ul class="list">
         <li><strong>Economize matéria-prima</strong> com melhor aproveitamento no corte linear</li>
         <li><strong>Importe peças e materiais por Excel</strong> e ganhe velocidade no dia a dia</li>
@@ -53,10 +53,11 @@
       <div id="cardBox">
         <div class="pill" id="profileBadge">Buscando seus dados cadastrais...</div>
         <div class="grid">
+          <div class="full"><input id="holder_name" placeholder="Nome do titular do cartão"></div>
+          <div class="full"><input id="holder_cpf_cnpj" placeholder="CPF ou CNPJ do titular"></div>
           <div class="full"><input id="card_number" placeholder="Número do cartão"></div>
           <div><input id="card_expiry" placeholder="Validade MM/AA"></div>
           <div><input id="card_cvv" placeholder="CVV"></div>
-          <div class="full"><input id="phone" placeholder="Celular com DDD (opcional para cobrança)"></div>
         </div>
         <button class="btn" id="btnCard" style="margin-top:14px">Assinar com cartão</button>
       </div>
@@ -88,11 +89,11 @@ function switchTab(tab){ $('tabCard').classList.toggle('active',tab==='card'); $
 $('tabCard').onclick=()=>switchTab('card'); $('tabPix').onclick=()=>switchTab('pix');
 function maskCard(v){ return onlyDigits(v).slice(0,16).replace(/(.{4})/g,'$1 ').trim(); }
 function maskExpiry(v){ const d=onlyDigits(v).slice(0,4); return d.length<3?d:d.slice(0,2)+'/'+d.slice(2); }
-function maskPhone(v){ const d=onlyDigits(v).slice(0,11); if(d.length<=10) return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2'); return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2'); }
+function maskCpfCnpj(v){ const d=onlyDigits(v).slice(0,14); if(d.length<=11) return d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2'); return d.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2'); }
+$('holder_cpf_cnpj').addEventListener('input',e=>e.target.value=maskCpfCnpj(e.target.value));
 $('card_number').addEventListener('input',e=>e.target.value=maskCard(e.target.value));
 $('card_expiry').addEventListener('input',e=>e.target.value=maskExpiry(e.target.value));
 $('card_cvv').addEventListener('input',e=>e.target.value=onlyDigits(e.target.value).slice(0,4));
-$('phone').addEventListener('input',e=>e.target.value=maskPhone(e.target.value));
 async function fetchJson(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
 async function loadPlan(){
   planInfo=await fetchJson(`/api/plan_info?pcs=${encodeURIComponent(String(pcs))}`);
@@ -103,6 +104,8 @@ async function loadProfile(){
   const data=await fetchJson('/api/me',{headers:authHeaders({'Content-Type':'application/json'})});
   profile=data.user;
   $('profileBadge').textContent=`Cadastro pronto: ${profile.name} • ${profile.city}/${profile.state} • CEP ${profile.cep}`;
+  $('holder_name').value=profile.name||'';
+  $('holder_cpf_cnpj').value=maskCpfCnpj(profile.cpf_cnpj||'');
 }
 async function payCard(){
   showMsg('Iniciando assinatura no cartão...');
@@ -113,7 +116,8 @@ async function payCard(){
     const payload={
       email,
       pcs,
-      phone:$('phone').value.trim(),
+      holder_name:$('holder_name').value.trim(),
+      cpf_cnpj:$('holder_cpf_cnpj').value.trim(),
       card_number:$('card_number').value.trim(),
       card_expiry:$('card_expiry').value.trim(),
       card_cvv:$('card_cvv').value.trim()
