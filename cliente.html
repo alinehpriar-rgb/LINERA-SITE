@@ -29,10 +29,11 @@
     .pix-area img{max-width:220px;border:1px solid var(--line);border-radius:12px}
     .pix-area textarea{width:100%;min-height:92px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
     .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    @media (max-width:860px){.password-row,.kv,.two{grid-template-columns:1fr}}
+    .card-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .card-form .full{grid-column:1/-1}
+    .card-form input{padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px;font:inherit}
+    @media (max-width:860px){.password-row,.kv,.two,.card-form{grid-template-columns:1fr}}
   </style>
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
-  <script src="https://www.mercadopago.com/v2/security.js" view="cliente"></script>
 </head>
 <body>
 <div class="wrap">
@@ -66,13 +67,10 @@ const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
 const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
 if(!sess?.token){ location.href='login.html'; }
 
-let mpPublicKey = '';
-let mpInstance = null;
-const cardBricks = {};
-
 function authHeaders(extra={}){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json', ...extra } }
 function showMsg(t){ document.getElementById('msg').textContent=t||''; }
 function formatDateBr(v){ if(!v) return '-'; const d=new Date(v); return isNaN(d)?String(v).slice(0,10):d.toLocaleDateString('pt-BR'); }
+function digits(v){ return String(v||'').replace(/\D+/g,''); }
 function methodLabel(lic){
   if(lic.renewal_method==='manual_pix_email') return 'PIX';
   if(lic.renewal_method==='card_auto') return 'Cartão de crédito';
@@ -100,9 +98,6 @@ function isLicenseActiveForRenewal(lic){
   const d = new Date(lic.valid_until || '');
   return !isNaN(d) && d.getTime() > Date.now();
 }
-function allowCardChangeNow(lic){
-  return true;
-}
 function pendingCardDisplayLabel(lic){
   const brand = lic.pending_card_brand || 'Cartão';
   const last4 = String(lic.pending_card_last4 || '').trim();
@@ -128,49 +123,6 @@ function cardPanelInfoText(lic){
 }
 async function api(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
 
-async function loadPublicKey(pcs=2){
-  if(mpPublicKey && mpInstance) return;
-  const res = await fetch(`${WORKER}/api/plan_info?pcs=${encodeURIComponent(String(pcs))}`);
-  const data = await res.json();
-  if(!res.ok || !data.ok || !data.public_key) throw new Error('MP_PUBLIC_KEY não encontrada.');
-  mpPublicKey = data.public_key;
-  mpInstance = new MercadoPago(mpPublicKey,{locale:'pt-BR'});
-}
-
-async function renderCardBrick(pcs, amount){
-  await loadPublicKey(pcs);
-  const containerId = `cardBrick_${pcs}`;
-  const el = document.getElementById(containerId);
-  if(!el || el.dataset.loaded === '1') return;
-  const bricks = mpInstance.bricks();
-  await bricks.create("cardPayment", containerId, {
-    initialization: { amount: Number(amount || 1), payer: { email: sess.user.email } },
-    customization: { visual: { hideFormTitle: true } },
-    callbacks: {
-      onReady: ()=>{ el.dataset.loaded = '1'; },
-      onError: (error)=>{ console.error(error); showMsg(typeof error==='string' ? error : JSON.stringify(error)); },
-      onSubmit: async (cardFormData) => {
-        try{
-          showMsg('Processando troca do cartão...');
-          const data = await api('/api/client/update-card-method',{
-            method:'POST',
-            headers: authHeaders(),
-            body: JSON.stringify({
-              pcs,
-              card_token_id: cardFormData.token,
-              payment_method_id: cardFormData.payment_method_id,
-              device_id: window.MP_DEVICE_SESSION_ID || ''
-            })
-          });
-          showMsg(data.scheduled_only ? 'Mudança para cartão agendada com sucesso.' : (data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.'));
-          await load();
-          closePaymentPanel(pcs);
-        }catch(e){ showMsg(e.message || String(e)); throw e; }
-      }
-    }
-  });
-}
-
 function paymentPanelHtml(lic){
   return `
     <div class="panel" id="panelInner_${lic.pcs}">
@@ -191,7 +143,17 @@ function paymentPanelHtml(lic){
         <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
           <h4 style="margin:0 0 10px">Usar outro cartão nas próximas cobranças</h4>
           <div class="muted">${cardPanelInfoText(lic)}</div>
-          <div id="cardBrick_${lic.pcs}" style="margin-top:12px"></div>
+          <form class="card-form" onsubmit="submitCardUpdate(event, ${lic.pcs})">
+            <input class="full" id="holder_name_${lic.pcs}" placeholder="Nome do titular" value="${(sess.user.name||'').replace(/"/g,'&quot;')}">
+            <input id="cpf_cnpj_${lic.pcs}" placeholder="CPF do titular">
+            <input id="phone_${lic.pcs}" placeholder="Celular com DDD">
+            <input id="postal_code_${lic.pcs}" placeholder="CEP">
+            <input id="address_number_${lic.pcs}" placeholder="Número">
+            <input class="full" id="card_number_${lic.pcs}" placeholder="Número do cartão">
+            <input id="card_expiry_${lic.pcs}" placeholder="Validade MM/AA">
+            <input id="card_cvv_${lic.pcs}" placeholder="CVV">
+            <button class="btn full" type="submit">Salvar cartão</button>
+          </form>
         </div>
       </div>
     </div>
@@ -226,7 +188,7 @@ async function load(){
       <div class="row-actions" style="margin-top:16px">
         <a class="btn" href="${WORKER}/api/licenca?email=${encodeURIComponent(lic.email)}&pcs=${encodeURIComponent(String(lic.pcs))}" target="_blank">Baixar licença</a>
         <button class="btn secondary" onclick="clearSlots(${lic.pcs})">Esvaziar slots</button>
-        <button class="btn secondary" onclick="togglePaymentPanel(${lic.pcs}, ${Number(lic.amount||0)})">Alterar meio de pagamento</button>
+        <button class="btn secondary" onclick="togglePaymentPanel(${lic.pcs})">Alterar meio de pagamento</button>
         <button class="btn danger" onclick="cancelSignatureFlow(${lic.pcs})">Cancelar assinatura</button>
       </div>
 
@@ -243,7 +205,7 @@ async function clearSlots(pcs){
   }catch(e){ showMsg(e.message); }
 }
 
-async function togglePaymentPanel(pcs, amount){
+async function togglePaymentPanel(pcs){
   const panel = document.getElementById(`paymentPanel_${pcs}`);
   if(panel.style.display === 'block'){
     closePaymentPanel(pcs);
@@ -254,9 +216,6 @@ async function togglePaymentPanel(pcs, amount){
   if(!lic) return;
   panel.innerHTML = paymentPanelHtml(lic);
   panel.style.display = 'block';
-  if(allowCardChangeNow(lic)){
-    await renderCardBrick(pcs, amount || lic.amount || 1);
-  }
 }
 
 function closePaymentPanel(pcs){
@@ -267,6 +226,31 @@ function closePaymentPanel(pcs){
   }
 }
 
+async function submitCardUpdate(ev, pcs){
+  ev.preventDefault();
+  try{
+    showMsg('Processando troca do cartão...');
+    const data = await api('/api/client/update-card-method',{
+      method:'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        pcs,
+        holder_name: document.getElementById(`holder_name_${pcs}`).value.trim(),
+        cpf_cnpj: digits(document.getElementById(`cpf_cnpj_${pcs}`).value),
+        phone: digits(document.getElementById(`phone_${pcs}`).value),
+        postal_code: digits(document.getElementById(`postal_code_${pcs}`).value),
+        address_number: document.getElementById(`address_number_${pcs}`).value.trim(),
+        card_number: digits(document.getElementById(`card_number_${pcs}`).value),
+        card_expiry: document.getElementById(`card_expiry_${pcs}`).value.trim(),
+        card_cvv: digits(document.getElementById(`card_cvv_${pcs}`).value),
+      })
+    });
+    showMsg(data.scheduled_only ? 'Mudança para cartão agendada com sucesso.' : (data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.'));
+    await load();
+    closePaymentPanel(pcs);
+  }catch(e){ showMsg(e.message || String(e)); }
+}
+
 async function generatePixNow(pcs){
   const box = document.getElementById(`pixArea_${pcs}`);
   box.innerHTML = 'Gerando PIX...';
@@ -274,7 +258,7 @@ async function generatePixNow(pcs){
     const data = await api('/api/mp/criar_pix',{
       method:'POST',
       headers:authHeaders(),
-      body:JSON.stringify({email:sess.user.email,pcs})
+      body:JSON.stringify({email:sess.user.email,pcs,name:sess.user.name})
     });
     box.innerHTML = `${data.qr_code_base64 ? `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">` : ''}${data.qr_code ? `<textarea readonly>${data.qr_code}</textarea>` : ''}<div class="row-actions" style="margin-top:10px"><button class="btn secondary" id="copy_${pcs}">Copiar código PIX</button></div>`;
     const copyBtn = document.getElementById(`copy_${pcs}`);
