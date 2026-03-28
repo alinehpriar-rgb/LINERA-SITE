@@ -1,1 +1,88 @@
-<!doctype html><html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Criar conta</title><style>body{font-family:Segoe UI,Arial;background:#f8fafc;margin:0}.box{max-width:480px;margin:50px auto;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:24px}input{width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px;margin:8px 0 14px}.btn{background:#0f3b8c;color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:800;width:100%}.muted{color:#64748b}.status{margin-top:12px;white-space:pre-wrap}</style></head><body><div class="box"><h2>Criar conta</h2><div class="muted">Crie sua conta para seguir no pagamento ou acessar sua área do cliente.</div><input id="name" placeholder="Nome"><input id="email" type="email" placeholder="E-mail"><input id="password" type="password" placeholder="Senha"><button class="btn" id="btn">Criar conta</button><p class="muted">Já tem conta? <a href="login.html">Entrar</a></p><div id="msg" class="status"></div></div><script>const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';const qp=new URLSearchParams(location.search);document.getElementById('btn').onclick=async()=>{const name=document.getElementById('name').value.trim();const email=document.getElementById('email').value.trim();const password=document.getElementById('password').value;const msg=document.getElementById('msg');msg.textContent='Cadastrando...';try{const res=await fetch(`${WORKER}/api/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});const data=await res.json();if(!res.ok||!data.ok)throw new Error(data.error||'Falha no cadastro');localStorage.setItem('linera_session',JSON.stringify({token:data.token,user:data.user}));location.href=qp.get('next')||'cliente.html';}catch(e){msg.textContent=e.message||String(e);}};</script></body></html>
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Criar conta</title>
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#cbd5e1;--primary:#0f3b8c;--primary-dark:#0b3277}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:"Segoe UI",Arial,sans-serif;color:var(--text)}
+    .wrap{max-width:760px;margin:34px auto;padding:18px}
+    .box{background:var(--card);border:1px solid #e2e8f0;border-radius:26px;padding:28px;box-shadow:0 18px 40px rgba(15,23,42,.06)}
+    h1{margin:0 0 8px;font-size:30px}.muted{color:var(--muted);line-height:1.6}.status{margin-top:14px;white-space:pre-wrap}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.full{grid-column:1/-1}
+    label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:6px}
+    input{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:14px;font-size:15px;outline:none;transition:.15s}
+    input:focus{border-color:#7aa2ec;box-shadow:0 0 0 3px rgba(15,59,140,.10)}
+    .btn{margin-top:18px;background:var(--primary);color:#fff;border:0;border-radius:14px;padding:14px 16px;font-weight:800;width:100%;cursor:pointer;font-size:15px}
+    .btn:hover{background:var(--primary-dark)}
+    .foot{margin-top:14px;color:var(--muted)}
+    .row3{display:grid;grid-template-columns:1.2fr .8fr 1fr;gap:14px}
+    @media (max-width:720px){.grid,.row3{grid-template-columns:1fr}.wrap{padding:12px}.box{padding:20px}h1{font-size:26px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="box">
+      <h1>Criar conta</h1>
+      <div class="muted">Cadastre seus dados uma vez. Depois, no pagamento, você só informa os dados do cartão.</div>
+
+      <div class="grid">
+        <div class="full"><label for="name">Nome completo</label><input id="name" placeholder="Seu nome ou nome da empresa"></div>
+        <div><label for="email">E-mail</label><input id="email" type="email" placeholder="voce@empresa.com"></div>
+        <div><label for="password">Senha</label><input id="password" type="password" placeholder="Mínimo de 4 caracteres"></div>
+        <div><label for="cpf_cnpj">CPF ou CNPJ</label><input id="cpf_cnpj" placeholder="000.000.000-00"></div>
+        <div><label for="cep">CEP</label><input id="cep" placeholder="00000-000"></div>
+        <div><label for="city">Cidade</label><input id="city" placeholder="Cidade"></div>
+        <div><label for="state">Estado</label><input id="state" maxlength="2" placeholder="UF"></div>
+        <div class="full"><label for="street">Logradouro</label><input id="street" placeholder="Rua, avenida, sítio..."></div>
+        <div><label for="address_number">Número</label><input id="address_number" placeholder="Número"></div>
+      </div>
+
+      <button class="btn" id="btn">Criar conta</button>
+      <div class="foot">Já tem conta? <a href="login.html">Entrar</a></div>
+      <div id="msg" class="status"></div>
+    </div>
+  </div>
+
+<script>
+const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
+const qp=new URLSearchParams(location.search);
+const $=id=>document.getElementById(id);
+function onlyDigits(v){ return String(v||'').replace(/\D+/g,''); }
+function maskCpfCnpj(v){
+  const d=onlyDigits(v).slice(0,14);
+  if(d.length<=11){
+    return d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  }
+  return d.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2');
+}
+function maskCep(v){ const d=onlyDigits(v).slice(0,8); return d.replace(/(\d{5})(\d)/,'$1-$2'); }
+$('cpf_cnpj').addEventListener('input',e=>e.target.value=maskCpfCnpj(e.target.value));
+$('cep').addEventListener('input',e=>e.target.value=maskCep(e.target.value));
+$('state').addEventListener('input',e=>e.target.value=String(e.target.value||'').replace(/[^a-z]/gi,'').toUpperCase().slice(0,2));
+$('btn').onclick=async()=>{
+  const payload={
+    name:$('name').value.trim(),
+    email:$('email').value.trim(),
+    password:$('password').value,
+    cpf_cnpj:$('cpf_cnpj').value.trim(),
+    cep:$('cep').value.trim(),
+    city:$('city').value.trim(),
+    state:$('state').value.trim(),
+    street:$('street').value.trim(),
+    address_number:$('address_number').value.trim()
+  };
+  const msg=$('msg');
+  msg.textContent='Cadastrando...';
+  try{
+    const res=await fetch(`${WORKER}/api/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json();
+    if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha no cadastro');
+    localStorage.setItem('linera_session',JSON.stringify({token:data.token,user:data.user}));
+    location.href=qp.get('next')||'cliente.html';
+  }catch(e){ msg.textContent=e.message||String(e); }
+};
+</script>
+</body>
+</html>

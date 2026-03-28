@@ -5,45 +5,22 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Área do cliente</title>
   <style>
-    :root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#0f3b8c;--danger:#b91c1c;--focus:#1d4ed8;--ok:#15803d}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .wrap{max-width:1040px;margin:0 auto;padding:26px 18px}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    :root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--primary:#173f93;--primary-dark:#13357a;--danger:#b91c1c}
+    *{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:26px 18px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
     .btn{background:var(--primary);color:#fff;border:0;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-    .btn.secondary{background:#fff;color:#111;border:1px solid var(--line)}
-    .btn.danger{background:var(--danger)}
+    .btn:hover{background:var(--primary-dark)} .btn.secondary{background:#fff;color:#111;border:1px solid var(--line)} .btn.danger{background:var(--danger)}
     .card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 12px 28px rgba(15,23,42,.05)}
-    .status{margin:12px 0;white-space:pre-wrap}
-    .password-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
-    .password-row input{padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px}
-    .licenses{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
-    .license-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
-    .subtle{color:var(--muted)}
-    .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
-    .kv .box{padding:14px;border:1px solid var(--line);border-radius:16px;background:#fafcff}
-    .row-actions{display:flex;gap:10px;flex-wrap:wrap}
-    .panel{margin-top:14px;padding:16px;border:1px dashed #cbd5e1;border-radius:18px;background:#fff}
-    .panel h4{margin:0 0 10px}
-    .muted{color:var(--muted)}
-    .pix-area img{max-width:220px;border:1px solid var(--line);border-radius:12px}
-    .pix-area textarea{width:100%;min-height:92px;margin-top:10px;padding:10px;border:1px solid #cbd5e1;border-radius:12px}
-    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .card-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-    .card-form .full{grid-column:1/-1}
-    .field{display:flex;flex-direction:column;gap:6px}
-    .field label{font-size:12px;font-weight:700;color:#475569;padding-left:2px}
-    .input-wrap{position:relative}
-    .card-form input{padding:13px 14px;border:1px solid #cbd5e1;border-radius:14px;font:inherit;background:#fff;transition:border-color .18s, box-shadow .18s}
-    .card-form input::placeholder{color:#94a3b8}
-    .card-form input:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 4px rgba(29,78,216,.10)}
-    .card-form input[readonly]{background:#f8fafc}
-    .hint{font-size:12px;color:#64748b;min-height:16px}
-    .hint.ok{color:var(--ok)}
-    .hint.error{color:var(--danger)}
-    .brand-pill{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:800;color:var(--primary);background:#eef4ff;border:1px solid #c7d7ff;border-radius:999px;padding:4px 9px;display:none}
-    .brand-pill.show{display:inline-flex}
-    @media (max-width:860px){.password-row,.kv,.two,.card-form{grid-template-columns:1fr}}
+    .status{margin:12px 0;white-space:pre-wrap}.muted,.subtle{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}
+    label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:6px}
+    input{width:100%;padding:14px 16px;border:1px solid #cbd5e1;border-radius:14px;font-size:15px;outline:none;transition:.15s}
+    input:focus{border-color:#7aa2ec;box-shadow:0 0 0 3px rgba(23,63,147,.10)}
+    .licenses{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}.license-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+    .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}.kv .box{padding:14px;border:1px solid var(--line);border-radius:16px;background:#fafcff}
+    .row-actions{display:flex;gap:10px;flex-wrap:wrap}.panel{margin-top:14px;padding:16px;border:1px dashed #cbd5e1;border-radius:18px;background:#fff}.panel h4{margin:0 0 10px}
+    .delete-zone{display:flex;justify-content:flex-end;margin-top:18px}.link-danger{font-size:12px;color:#991b1b;text-decoration:none;opacity:.8}.link-danger:hover{opacity:1;text-decoration:underline}
+    @media (max-width:860px){.grid,.kv{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -62,538 +39,146 @@
   <div id="msg" class="status"></div>
 
   <div class="card" style="margin-top:14px">
+    <h3 style="margin-top:0">Meu cadastro</h3>
+    <div class="grid">
+      <div class="full"><label for="name">Nome</label><input id="name"></div>
+      <div><label for="email">E-mail</label><input id="email" disabled></div>
+      <div><label for="cpf_cnpj">CPF ou CNPJ</label><input id="cpf_cnpj"></div>
+      <div><label for="cep">CEP</label><input id="cep"></div>
+      <div><label for="city">Cidade</label><input id="city"></div>
+      <div><label for="state">Estado</label><input id="state" maxlength="2"></div>
+      <div class="full"><label for="street">Logradouro</label><input id="street"></div>
+      <div><label for="address_number">Número</label><input id="address_number"></div>
+    </div>
+    <div class="row-actions" style="margin-top:14px">
+      <button class="btn" id="btnSaveProfile">Salvar cadastro</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
     <h3 style="margin-top:0">Trocar senha</h3>
-    <div class="password-row">
-      <input id="old_password" type="password" placeholder="Senha atual">
-      <input id="new_password" type="password" placeholder="Nova senha">
+    <div class="grid">
+      <div><label for="old_password">Senha atual</label><input id="old_password" type="password"></div>
+      <div><label for="new_password">Nova senha</label><input id="new_password" type="password"></div>
+    </div>
+    <div class="row-actions" style="margin-top:14px">
       <button class="btn" id="btnPass">Salvar senha</button>
     </div>
   </div>
 
   <div class="licenses" id="licGrid"></div>
+
+  <div class="delete-zone">
+    <a href="#" class="link-danger" id="btnDeleteAccount">Excluir conta</a>
+  </div>
 </div>
 
 <script>
 const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
 const sess=JSON.parse(localStorage.getItem('linera_session')||'null');
 if(!sess?.token){ location.href='login.html'; }
-
+const $=id=>document.getElementById(id);
 function authHeaders(extra={}){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json', ...extra } }
-function showMsg(t){ document.getElementById('msg').textContent=t||''; }
+function showMsg(t){ $('msg').textContent=t||''; }
 function formatDateBr(v){ if(!v) return '-'; const d=new Date(v); return isNaN(d)?String(v).slice(0,10):d.toLocaleDateString('pt-BR'); }
-function digits(v){ return String(v||'').replace(/\D+/g,''); }
-function methodLabel(lic){
-  if(lic.renewal_method==='manual_pix_email') return 'PIX';
-  if(lic.renewal_method==='card_auto') return 'Cartão de crédito';
-  return lic.billing_label || '-';
-}
-function nextChargeLabel(lic){
-  return lic.next_charge_date ? formatDateBr(lic.next_charge_date) : formatDateBr(lic.valid_until);
-}
-function pad2(v){ return String(v || '').padStart(2,'0'); }
-function cardDisplayLabel(lic){
-  if(lic.renewal_method !== 'card_auto') return '';
-  const brand = lic.card_brand || lic.billing_label || 'Cartão';
-  const last4 = String(lic.card_last4 || '').trim();
-  return last4 ? `${brand} •••• ${last4}` : brand;
-}
-function cardExpiryLabel(lic){
-  if(lic.renewal_method !== 'card_auto') return '';
-  const month = String(lic.card_exp_month || '').trim();
-  const year = String(lic.card_exp_year || '').trim();
-  if(!month || !year) return '';
-  return `${pad2(month)}/${String(year).slice(-2)}`;
-}
-function isLicenseActiveForRenewal(lic){
-  if(String(lic.status || '').toLowerCase() !== 'active') return false;
-  const d = new Date(lic.valid_until || '');
-  return !isNaN(d) && d.getTime() > Date.now();
-}
-function pendingCardDisplayLabel(lic){
-  const brand = lic.pending_card_brand || 'Cartão';
-  const last4 = String(lic.pending_card_last4 || '').trim();
-  return last4 ? `${brand} •••• ${last4}` : brand;
-}
-function pendingCardExpiryLabel(lic){
-  const month = String(lic.pending_card_exp_month || '').trim();
-  const year = String(lic.pending_card_exp_year || '').trim();
-  if(!month || !year) return '';
-  return `${pad2(month)}/${String(year).slice(-2)}`;
-}
-function hasPendingPixToCardChange(lic){
-  return lic.pending_change_type === 'pix_to_card' && lic.pending_change_status === 'scheduled';
-}
-function cardPanelInfoText(lic){
-  if(lic.renewal_method === 'manual_pix_email' && isLicenseActiveForRenewal(lic)){
-    return 'Sua licença ainda está ativa com renovação por PIX. Se você cadastrar um cartão agora, a mudança ficará agendada e a assinatura no cartão não será criada neste momento.';
-  }
-  if(isLicenseActiveForRenewal(lic)){
-    return 'Se a licença estiver ativa, o cartão será usado na próxima renovação.';
-  }
-  return 'Como a licença está inativa, a cobrança pode ser feita imediatamente para reativação.';
-}
+function onlyDigits(v){ return String(v||'').replace(/\D+/g,''); }
+function maskCpfCnpj(v){ const d=onlyDigits(v).slice(0,14); if(d.length<=11) return d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2'); return d.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2'); }
+function maskCep(v){ const d=onlyDigits(v).slice(0,8); return d.replace(/(\d{5})(\d)/,'$1-$2'); }
+function maskCard(v){ return onlyDigits(v).slice(0,16).replace(/(.{4})/g,'$1 ').trim(); }
+function maskExpiry(v){ const d=onlyDigits(v).slice(0,4); return d.length<3?d:d.slice(0,2)+'/'+d.slice(2); }
+function maskPhone(v){ const d=onlyDigits(v).slice(0,11); if(d.length<=10) return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2'); return d.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2'); }
+$('cpf_cnpj').addEventListener('input',e=>e.target.value=maskCpfCnpj(e.target.value));
+$('cep').addEventListener('input',e=>e.target.value=maskCep(e.target.value));
+$('state').addEventListener('input',e=>e.target.value=String(e.target.value||'').replace(/[^a-z]/gi,'').toUpperCase().slice(0,2));
 async function api(path, opts={}){ const res=await fetch(`${WORKER}${path}`,opts); const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha'); return data; }
-
-function detectCardBrand(number){
-  const n = digits(number);
-  if(/^4/.test(n)) return 'Visa';
-  if(/^(5[1-5]|2[2-7])/.test(n)) return 'Mastercard';
-  if(/^3[47]/.test(n)) return 'Amex';
-  if(/^(4011|4312|4389|4514|4576|5041|5066|5067|509|6277|6362|6363|650|6516|6550)/.test(n)) return 'Elo';
-  if(/^(606282|3841)/.test(n)) return 'Hipercard';
-  if(/^6(?:011|5)/.test(n)) return 'Discover';
-  if(/^35/.test(n)) return 'JCB';
-  if(/^30[0-5]|^36|^38/.test(n)) return 'Diners';
-  return '';
+function methodLabel(lic){ if(lic.renewal_method==='manual_pix_email') return 'PIX'; if(lic.renewal_method==='card_auto') return 'Cartão de crédito'; return lic.billing_label || '-'; }
+function cardDisplayLabel(lic){ const brand=lic.card_brand || lic.billing_label || 'Cartão'; const last4=String(lic.card_last4||'').trim(); return last4?`${brand} •••• ${last4}`:brand; }
+function pendingCardLabel(lic){ const brand=lic.pending_card_brand || 'Cartão'; const last4=String(lic.pending_card_last4||'').trim(); return last4?`${brand} •••• ${last4}`:brand; }
+function renderProfile(user){
+  $('userLine').textContent=`${user.name} • ${user.email}`;
+  $('name').value=user.name||''; $('email').value=user.email||''; $('cpf_cnpj').value=maskCpfCnpj(user.cpf_cnpj||''); $('cep').value=maskCep(user.cep||'');
+  $('city').value=user.city||''; $('state').value=user.state||''; $('street').value=user.street||''; $('address_number').value=user.address_number||'';
 }
-function luhnIsValid(number){
-  const d = digits(number);
-  if(d.length < 13) return false;
-  let sum = 0, shouldDouble = false;
-  for(let i = d.length - 1; i >= 0; i--){
-    let digit = Number(d[i]);
-    if(shouldDouble){
-      digit *= 2;
-      if(digit > 9) digit -= 9;
-    }
-    sum += digit;
-    shouldDouble = !shouldDouble;
-  }
-  return sum % 10 === 0;
-}
-function validateCPF(value){
-  const cpf = digits(value);
-  if(cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-  let sum = 0;
-  for(let i = 0; i < 9; i++) sum += Number(cpf[i]) * (10 - i);
-  let check = (sum * 10) % 11;
-  if(check === 10) check = 0;
-  if(check !== Number(cpf[9])) return false;
-  sum = 0;
-  for(let i = 0; i < 10; i++) sum += Number(cpf[i]) * (11 - i);
-  check = (sum * 10) % 11;
-  if(check === 10) check = 0;
-  return check === Number(cpf[10]);
-}
-function maskCpf(v){
-  const d = digits(v).slice(0,11);
-  if(d.length <= 3) return d;
-  if(d.length <= 6) return `${d.slice(0,3)}.${d.slice(3)}`;
-  if(d.length <= 9) return `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6)}`;
-  return `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6,9)}-${d.slice(9,11)}`;
-}
-function maskPhone(v){
-  const d = digits(v).slice(0,11);
-  if(d.length <= 2) return d ? `(${d}` : '';
-  if(d.length <= 7) return `(${d.slice(0,2)}) ${d.slice(2)}`;
-  if(d.length <= 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
-  return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
-}
-function maskCep(v){
-  const d = digits(v).slice(0,8);
-  return d.length > 5 ? `${d.slice(0,5)}-${d.slice(5)}` : d;
-}
-function maskCardNumber(v){
-  return digits(v).slice(0,19).replace(/(\d{4})(?=\d)/g, '$1 ').trim();
-}
-function maskExpiry(v){
-  const d = digits(v).slice(0,4);
-  if(d.length <= 2) return d;
-  return `${d.slice(0,2)}/${d.slice(2)}`;
-}
-function maskCvv(v){ return digits(v).slice(0,4); }
-function setHint(id, text='', type=''){
-  const node = document.getElementById(id);
-  if(!node) return;
-  node.textContent = text || '';
-  node.className = `hint${type ? ` ${type}` : ''}`;
-}
-function bindPaymentMasks(pcs){
-  const cpf = document.getElementById(`cpf_cnpj_${pcs}`);
-  const phone = document.getElementById(`phone_${pcs}`);
-  const cep = document.getElementById(`postal_code_${pcs}`);
-  const state = document.getElementById(`state_${pcs}`);
-  const card = document.getElementById(`card_number_${pcs}`);
-  const expiry = document.getElementById(`card_expiry_${pcs}`);
-  const cvv = document.getElementById(`card_cvv_${pcs}`);
-  const brandPill = document.getElementById(`brandPill_${pcs}`);
-  let cepTimer = null;
-
-  if(cpf) cpf.addEventListener('input', () => {
-    cpf.value = maskCpf(cpf.value);
-    const d = digits(cpf.value);
-    if(d.length >= 11){
-      const ok = validateCPF(cpf.value);
-      setHint(`cpfHint_${pcs}`, ok ? 'CPF válido.' : 'CPF inválido.', ok ? 'ok' : 'error');
-    }else{
-      setHint(`cpfHint_${pcs}`, '');
-    }
-  });
-  if(phone) phone.addEventListener('input', () => {
-    phone.value = maskPhone(phone.value);
-    const len = digits(phone.value).length;
-    if(!len) setHint(`phoneHint_${pcs}`, '');
-    else setHint(`phoneHint_${pcs}`, len === 11 ? 'Celular válido.' : 'Digite o celular com DDD.', len === 11 ? 'ok' : 'error');
-  });
-  if(cep) cep.addEventListener('input', () => {
-    cep.value = maskCep(cep.value);
-    const code = digits(cep.value);
-    if(code.length === 8){
-      setHint(`cepHint_${pcs}`, 'Buscando endereço...');
-      clearTimeout(cepTimer);
-      cepTimer = setTimeout(() => fetchAddressByCep(pcs, code), 220);
-    }else{
-      setHint(`cepHint_${pcs}`, '');
-    }
-  });
-  if(state) state.addEventListener('input', () => {
-    state.value = String(state.value || '').replace(/[^a-z]/gi, '').slice(0,2).toUpperCase();
-  });
-  if(card) card.addEventListener('input', () => {
-    card.value = maskCardNumber(card.value);
-    const brand = detectCardBrand(card.value);
-    if(brand){
-      brandPill.textContent = brand;
-      brandPill.classList.add('show');
-    }else{
-      brandPill.textContent = '';
-      brandPill.classList.remove('show');
-    }
-    const num = digits(card.value);
-    if(!num) setHint(`cardHint_${pcs}`, '');
-    else if(num.length < 13) setHint(`cardHint_${pcs}`, 'Digite todos os números do cartão.', 'error');
-    else setHint(`cardHint_${pcs}`, luhnIsValid(num) ? 'Número de cartão válido.' : 'Número de cartão inválido.', luhnIsValid(num) ? 'ok' : 'error');
-  });
-  if(expiry) expiry.addEventListener('input', () => { expiry.value = maskExpiry(expiry.value); });
-  if(cvv) cvv.addEventListener('input', () => { cvv.value = maskCvv(cvv.value); });
-}
-async function fetchAddressByCep(pcs, cep){
-  try{
-    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const data = await res.json();
-    if(!res.ok || data.erro) throw new Error('CEP não encontrado');
-    const street = document.getElementById(`street_${pcs}`);
-    const district = document.getElementById(`district_${pcs}`);
-    const city = document.getElementById(`city_${pcs}`);
-    const state = document.getElementById(`state_${pcs}`);
-    if(street) street.value = data.logradouro || street.value || '';
-    if(district) district.value = data.bairro || district.value || '';
-    if(city) city.value = data.localidade || city.value || '';
-    if(state) state.value = (data.uf || state.value || '').toUpperCase();
-    setHint(`cepHint_${pcs}`, 'Endereço encontrado automaticamente.', 'ok');
-  }catch(e){
-    setHint(`cepHint_${pcs}`, 'Não foi possível localizar o CEP. Preencha o endereço manualmente.', 'error');
-  }
-}
-function validateCardPanel(pcs){
-  const errors = [];
-  const cpf = document.getElementById(`cpf_cnpj_${pcs}`);
-  const phone = document.getElementById(`phone_${pcs}`);
-  const cep = document.getElementById(`postal_code_${pcs}`);
-  const number = document.getElementById(`address_number_${pcs}`);
-  const street = document.getElementById(`street_${pcs}`);
-  const city = document.getElementById(`city_${pcs}`);
-  const state = document.getElementById(`state_${pcs}`);
-  const card = document.getElementById(`card_number_${pcs}`);
-  const expiry = document.getElementById(`card_expiry_${pcs}`);
-  const cvv = document.getElementById(`card_cvv_${pcs}`);
-  const holder = document.getElementById(`holder_name_${pcs}`);
-
-  const cpfValid = validateCPF(cpf.value);
-  setHint(`cpfHint_${pcs}`, digits(cpf.value).length ? (cpfValid ? 'CPF válido.' : 'CPF inválido.') : '', cpfValid ? 'ok' : (digits(cpf.value).length ? 'error' : ''));
-  if(!cpfValid) errors.push('CPF inválido.');
-
-  const phoneLen = digits(phone.value).length;
-  setHint(`phoneHint_${pcs}`, phoneLen ? (phoneLen === 11 ? 'Celular válido.' : 'Digite o celular com DDD.') : '', phoneLen === 11 ? 'ok' : (phoneLen ? 'error' : ''));
-  if(phoneLen !== 11) errors.push('Celular inválido.');
-
-  if(digits(cep.value).length !== 8) errors.push('CEP inválido.');
-  if(!holder.value.trim()) errors.push('Informe o nome do titular.');
-  if(!number.value.trim()) errors.push('Informe o número do endereço.');
-  if(!street.value.trim()) errors.push('Informe a rua.');
-  if(!city.value.trim()) errors.push('Informe a cidade.');
-  if(!state.value.trim()) errors.push('Informe a UF.');
-
-  const cardNumber = digits(card.value);
-  if(!luhnIsValid(cardNumber)) errors.push('Número do cartão inválido.');
-
-  const expiryDigits = digits(expiry.value);
-  const mm = Number(expiryDigits.slice(0,2));
-  const yy = Number(`20${expiryDigits.slice(2,4)}`);
-  if(expiryDigits.length !== 4 || mm < 1 || mm > 12) errors.push('Validade do cartão inválida.');
-  else{
-    const now = new Date();
-    const exp = new Date(yy, mm, 0, 23, 59, 59, 999);
-    if(exp.getTime() < now.getTime()) errors.push('O cartão está vencido.');
-  }
-
-  const cvvLen = digits(cvv.value).length;
-  if(cvvLen < 3 || cvvLen > 4) errors.push('CVV inválido.');
-  return errors;
-}
-
-function paymentPanelHtml(lic){
+function paymentPanel(lic){
+  const canScheduleText = lic.renewal_method === 'manual_pix_email' && String(lic.status||'').toLowerCase()==='active'
+    ? 'Ao cadastrar um cartão agora, a cobrança futura ficará preparada para a próxima renovação.'
+    : 'Informe apenas os dados do novo cartão. O restante será usado a partir do seu cadastro.';
   return `
-    <div class="panel" id="panelInner_${lic.pcs}">
-      <h4>Alterar meio de pagamento</h4>
-      <div class="muted">Meio atual: <strong>${methodLabel(lic)}</strong></div>
-      ${lic.renewal_method==='card_auto' ? `<div class="muted" style="margin-top:6px">Cartão em uso: <strong>${cardDisplayLabel(lic)}</strong></div>` : ''}
-      ${lic.renewal_method==='card_auto' && cardExpiryLabel(lic) ? `<div class="muted" style="margin-top:6px">Validade do cartão: <strong>${cardExpiryLabel(lic)}</strong></div>` : ''}
-      ${hasPendingPixToCardChange(lic) ? `<div class="card" style="margin-top:12px;padding:14px 16px;border-radius:16px;box-shadow:none;background:#f8fafc"><div style="font-weight:700;margin-bottom:6px">Mudança agendada</div><div class="muted">Novo meio: <strong>Cartão de crédito</strong></div><div class="muted" style="margin-top:6px">Cartão selecionado: <strong>${pendingCardDisplayLabel(lic)}</strong></div>${pendingCardExpiryLabel(lic) ? `<div class="muted" style="margin-top:6px">Validade do cartão: <strong>${pendingCardExpiryLabel(lic)}</strong></div>` : ''}<div class="muted" style="margin-top:6px">A alteração será aplicada na próxima renovação.</div></div>` : ''}
-
-      <div class="two" style="margin-top:14px">
-        <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
-          <h4 style="margin:0 0 10px">Renovar por PIX agora</h4>
-          <div class="muted">Gere um PIX no site. Se a licença estiver ativa, o sistema soma mais 30 dias à validade atual. Se estiver inativa, renova a partir da data do pagamento.</div>
-          <div style="margin-top:12px"><button class="btn secondary" onclick="generatePixNow(${lic.pcs})">Gerar PIX</button></div>
-          <div class="pix-area" id="pixArea_${lic.pcs}" style="margin-top:12px"></div>
-        </div>
-
-        <div class="card" style="padding:16px;border-radius:18px;box-shadow:none">
-          <h4 style="margin:0 0 10px">Usar outro cartão nas próximas cobranças</h4>
-          <div class="muted">${cardPanelInfoText(lic)}</div>
-          <form class="card-form" onsubmit="submitCardUpdate(event, ${lic.pcs})" novalidate>
-            <div class="field full">
-              <label for="holder_name_${lic.pcs}">Nome do titular</label>
-              <input id="holder_name_${lic.pcs}" placeholder="Como está escrito no cartão" value="${(sess.user.name||'').replace(/"/g,'&quot;')}">
-            </div>
-
-            <div class="field">
-              <label for="cpf_cnpj_${lic.pcs}">CPF do titular</label>
-              <input id="cpf_cnpj_${lic.pcs}" placeholder="000.000.000-00" inputmode="numeric">
-              <div class="hint" id="cpfHint_${lic.pcs}"></div>
-            </div>
-
-            <div class="field">
-              <label for="phone_${lic.pcs}">Celular com DDD</label>
-              <input id="phone_${lic.pcs}" placeholder="(00) 00000-0000" inputmode="tel">
-              <div class="hint" id="phoneHint_${lic.pcs}"></div>
-            </div>
-
-            <div class="field">
-              <label for="postal_code_${lic.pcs}">CEP</label>
-              <input id="postal_code_${lic.pcs}" placeholder="00000-000" inputmode="numeric">
-              <div class="hint" id="cepHint_${lic.pcs}"></div>
-            </div>
-
-            <div class="field">
-              <label for="address_number_${lic.pcs}">Número</label>
-              <input id="address_number_${lic.pcs}" placeholder="Número" inputmode="numeric">
-            </div>
-
-            <div class="field full">
-              <label for="street_${lic.pcs}">Rua / Logradouro</label>
-              <input id="street_${lic.pcs}" placeholder="Rua / Logradouro">
-            </div>
-
-            <div class="field">
-              <label for="district_${lic.pcs}">Bairro</label>
-              <input id="district_${lic.pcs}" placeholder="Bairro">
-            </div>
-
-            <div class="field">
-              <label for="city_${lic.pcs}">Cidade</label>
-              <input id="city_${lic.pcs}" placeholder="Cidade">
-            </div>
-
-            <div class="field">
-              <label for="state_${lic.pcs}">UF</label>
-              <input id="state_${lic.pcs}" placeholder="UF" maxlength="2">
-            </div>
-
-            <div class="field full">
-              <label for="card_number_${lic.pcs}">Número do cartão</label>
-              <div class="input-wrap">
-                <input id="card_number_${lic.pcs}" placeholder="0000 0000 0000 0000" inputmode="numeric">
-                <span class="brand-pill" id="brandPill_${lic.pcs}"></span>
-              </div>
-              <div class="hint" id="cardHint_${lic.pcs}"></div>
-            </div>
-
-            <div class="field">
-              <label for="card_expiry_${lic.pcs}">Validade</label>
-              <input id="card_expiry_${lic.pcs}" placeholder="MM/AA" inputmode="numeric">
-            </div>
-
-            <div class="field">
-              <label for="card_cvv_${lic.pcs}">CVV</label>
-              <input id="card_cvv_${lic.pcs}" placeholder="CVV" inputmode="numeric">
-            </div>
-
-            <button class="btn full" type="submit">Salvar cartão</button>
-          </form>
-        </div>
+    <div class="panel" id="panel-card-${lic.pcs}" style="display:none">
+      <h4>Atualizar cartão</h4>
+      <div class="muted" style="margin-bottom:10px">${canScheduleText}</div>
+      <div class="grid">
+        <div class="full"><input id="card_number_${lic.pcs}" placeholder="Número do cartão"></div>
+        <div><input id="card_expiry_${lic.pcs}" placeholder="Validade MM/AA"></div>
+        <div><input id="card_cvv_${lic.pcs}" placeholder="CVV"></div>
+        <div class="full"><input id="phone_${lic.pcs}" placeholder="Celular com DDD (opcional)"></div>
       </div>
+      <div class="row-actions" style="margin-top:12px"><button class="btn" onclick="saveCard(${lic.pcs})">Salvar cartão</button><button class="btn secondary" onclick="togglePanel('panel-card-${lic.pcs}')">Fechar</button></div>
     </div>
-  `;
+    <div class="panel" id="panel-pix-${lic.pcs}" style="display:none">
+      <h4>Trocar para PIX</h4>
+      <div class="muted" style="margin-bottom:10px">Mantendo a lógica atual do sistema, o próximo ciclo seguirá para o fluxo de PIX.</div>
+      <div class="row-actions"><button class="btn" onclick="setPix(${lic.pcs})">Usar PIX</button><button class="btn secondary" onclick="togglePanel('panel-pix-${lic.pcs}')">Fechar</button></div>
+    </div>`;
 }
-
-async function load(){
-  const data=await api('/api/client/overview',{headers:authHeaders()});
-  document.getElementById('userLine').textContent=`${data.user.name} • ${data.user.email}`;
-  const grid=document.getElementById('licGrid');
-  if(!data.licenses.length){ grid.innerHTML='<div class="card">Você ainda não possui licenças ativas.</div>'; return; }
-  grid.innerHTML=data.licenses.map(lic=>`
+function renderLicenses(licenses){
+  const grid=$('licGrid');
+  if(!licenses.length){ grid.innerHTML='<div class="card">Nenhuma licença encontrada para esta conta.</div>'; return; }
+  grid.innerHTML=licenses.map(lic=>`
     <div class="card">
       <div class="license-head">
         <div>
-          <div class="subtle">${lic.pcs} PCs</div>
-          <h3 style="margin:8px 0 0">${lic.plan_name}</h3>
+          <h3 style="margin:0">${lic.plan_name || ('Plano '+lic.pcs+' PCs')}</h3>
+          <div class="subtle">${lic.email}</div>
         </div>
+        <div class="subtle">Status: <strong>${String(lic.status||'-').toUpperCase()}</strong></div>
       </div>
-
       <div class="kv">
-        <div class="box"><strong>Status</strong><br>${lic.status}</div>
-        <div class="box"><strong>Validade</strong><br>${formatDateBr(lic.valid_until)}</div>
-        <div class="box"><strong>Slots em uso</strong><br>${lic.devices_active||0}</div>
-        <div class="box"><strong>Meio de pagamento</strong><br>${methodLabel(lic)}</div>
-        <div class="box"><strong>Valor</strong><br>R$ ${Number(lic.amount||0).toFixed(2).replace('.',',')}</div>
-        <div class="box"><strong>Próxima renovação</strong><br>${nextChargeLabel(lic)}</div>
+        <div class="box"><div class="subtle">Plano</div><div><strong>${lic.pcs} PCs</strong></div></div>
+        <div class="box"><div class="subtle">Validade</div><div><strong>${formatDateBr(lic.valid_until)}</strong></div></div>
+        <div class="box"><div class="subtle">Slots em uso</div><div><strong>${lic.devices_active || 0}/${lic.pcs}</strong></div></div>
+        <div class="box"><div class="subtle">Cobrança</div><div><strong>${methodLabel(lic)}</strong></div></div>
+        <div class="box"><div class="subtle">Cartão atual</div><div><strong>${lic.renewal_method==='card_auto'?cardDisplayLabel(lic):'-'}</strong></div></div>
+        <div class="box"><div class="subtle">Próxima referência</div><div><strong>${formatDateBr(lic.next_charge_date || lic.valid_until)}</strong></div></div>
       </div>
-
-      <div class="muted">${lic.renewal_note||''}</div>
-
-      <div class="row-actions" style="margin-top:16px">
-        <a class="btn" href="${WORKER}/api/licenca?email=${encodeURIComponent(lic.email)}&pcs=${encodeURIComponent(String(lic.pcs))}" target="_blank">Baixar licença</a>
-        <button class="btn secondary" onclick="clearSlots(${lic.pcs})">Esvaziar slots</button>
-        <button class="btn secondary" onclick="togglePaymentPanel(${lic.pcs})">Alterar meio de pagamento</button>
-        <button class="btn danger" onclick="cancelSignatureFlow(${lic.pcs})">Cancelar assinatura</button>
+      ${lic.pending_change_type==='pix_to_card' ? `<div class="muted" style="margin-bottom:10px">Mudança agendada: ${pendingCardLabel(lic)} será usado na próxima renovação.</div>` : ''}
+      <div class="row-actions">
+        <button class="btn secondary" onclick="clearSlots(${lic.pcs})">Liberar slots</button>
+        <button class="btn secondary" onclick="togglePanel('panel-card-${lic.pcs}')">Alterar cartão</button>
+        <button class="btn secondary" onclick="togglePanel('panel-pix-${lic.pcs}')">Mudar para PIX</button>
+        <button class="btn danger" onclick="cancelSub(${lic.pcs})">Cancelar assinatura</button>
       </div>
-
-      <div id="paymentPanel_${lic.pcs}" style="display:none;margin-top:14px"></div>
-    </div>
-  `).join('');
+      ${paymentPanel(lic)}
+    </div>`).join('');
+  licenses.forEach(lic=>{
+    const cn=$("card_number_"+lic.pcs), ce=$("card_expiry_"+lic.pcs), cv=$("card_cvv_"+lic.pcs), ph=$("phone_"+lic.pcs);
+    if(cn) cn.addEventListener('input',e=>e.target.value=maskCard(e.target.value));
+    if(ce) ce.addEventListener('input',e=>e.target.value=maskExpiry(e.target.value));
+    if(cv) cv.addEventListener('input',e=>e.target.value=onlyDigits(e.target.value).slice(0,4));
+    if(ph) ph.addEventListener('input',e=>e.target.value=maskPhone(e.target.value));
+  });
 }
-
-async function clearSlots(pcs){
+function togglePanel(id){ const el=$(id); if(el) el.style.display=el.style.display==='none'?'block':'none'; }
+async function load(){
+  const data=await api('/api/client/overview',{headers:authHeaders()});
+  renderProfile(data.user); renderLicenses(data.licenses || []);
+}
+$('btnSaveProfile').onclick=async()=>{
   try{
-    await api('/api/client/clear-slots',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})});
-    showMsg('Slots limpos.');
-    load();
-  }catch(e){ showMsg(e.message); }
-}
-
-async function togglePaymentPanel(pcs){
-  const panel = document.getElementById(`paymentPanel_${pcs}`);
-  if(panel.style.display === 'block'){
-    closePaymentPanel(pcs);
-    return;
-  }
-  const data = await api('/api/client/overview',{headers:authHeaders()});
-  const lic = (data.licenses||[]).find(x => Number(x.pcs) === Number(pcs));
-  if(!lic) return;
-  panel.innerHTML = paymentPanelHtml(lic);
-  panel.style.display = 'block';
-  bindPaymentMasks(pcs);
-}
-
-function closePaymentPanel(pcs){
-  const panel = document.getElementById(`paymentPanel_${pcs}`);
-  if(panel){
-    panel.style.display = 'none';
-    panel.innerHTML = '';
-  }
-}
-
-async function submitCardUpdate(ev, pcs){
-  ev.preventDefault();
-  const errors = validateCardPanel(pcs);
-  if(errors.length){
-    showMsg(errors.join('\n'));
-    return;
-  }
-  try{
-    showMsg('Processando troca do cartão...');
-    const data = await api('/api/client/update-card-method',{
-      method:'POST',
-      headers: authHeaders(),
-      body: JSON.stringify({
-        pcs,
-        holder_name: document.getElementById(`holder_name_${pcs}`).value.trim(),
-        cpf_cnpj: digits(document.getElementById(`cpf_cnpj_${pcs}`).value),
-        phone: digits(document.getElementById(`phone_${pcs}`).value),
-        postal_code: digits(document.getElementById(`postal_code_${pcs}`).value),
-        address_number: document.getElementById(`address_number_${pcs}`).value.trim(),
-        address_street: document.getElementById(`street_${pcs}`).value.trim(),
-        address_district: document.getElementById(`district_${pcs}`).value.trim(),
-        address_city: document.getElementById(`city_${pcs}`).value.trim(),
-        address_state: document.getElementById(`state_${pcs}`).value.trim().toUpperCase(),
-        card_number: digits(document.getElementById(`card_number_${pcs}`).value),
-        card_expiry: document.getElementById(`card_expiry_${pcs}`).value.trim(),
-        card_cvv: digits(document.getElementById(`card_cvv_${pcs}`).value),
-        card_brand: detectCardBrand(document.getElementById(`card_number_${pcs}`).value),
-      })
-    });
-    showMsg(data.scheduled_only ? 'Mudança para cartão agendada com sucesso.' : (data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.'));
-    await load();
-    closePaymentPanel(pcs);
-  }catch(e){ showMsg(e.message || String(e)); }
-}
-
-async function generatePixNow(pcs){
-  const box = document.getElementById(`pixArea_${pcs}`);
-  box.innerHTML = 'Gerando PIX...';
-  try{
-    const data = await api('/api/mp/criar_pix',{
-      method:'POST',
-      headers:authHeaders(),
-      body:JSON.stringify({email:sess.user.email,pcs,name:sess.user.name})
-    });
-    box.innerHTML = `${data.qr_code_base64 ? `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">` : ''}${data.qr_code ? `<textarea readonly>${data.qr_code}</textarea>` : ''}<div class="row-actions" style="margin-top:10px"><button class="btn secondary" id="copy_${pcs}">Copiar código PIX</button></div>`;
-    const copyBtn = document.getElementById(`copy_${pcs}`);
-    if(copyBtn) copyBtn.onclick = ()=>navigator.clipboard.writeText(data.qr_code||'');
-    startPixPolling(pcs, data.payment_id);
-  }catch(e){ box.innerHTML = e.message || String(e); }
-}
-
-let pixTimers = {};
-function startPixPolling(pcs, paymentId){
-  if(pixTimers[pcs]) clearTimeout(pixTimers[pcs]);
-  const loop = async()=>{
-    try{
-      const data = await api(`/api/mp/status_pix?payment_id=${encodeURIComponent(paymentId)}`, { headers: authHeaders({}) });
-      if(data.status === 'approved'){
-        showMsg('Pagamento PIX confirmado. Sua licença foi renovada.');
-        await load();
-        return;
-      }
-    }catch(e){}
-    pixTimers[pcs] = setTimeout(loop, 5000);
-  };
-  pixTimers[pcs] = setTimeout(loop, 4000);
-}
-
-async function cancelSignatureFlow(pcs){
-  const confirmCancel = confirm('Deseja realmente cancelar a assinatura? Isso interrompe cobranças futuras e desativa sua licença.');
-  if(!confirmCancel) return;
-  const deleteAccount = confirm('Além de cancelar a assinatura, você gostaria de excluir sua conta?');
-  try{
-    await api('/api/client/cancel-account',{
-      method:'POST',
-      headers:authHeaders(),
-      body:JSON.stringify({pcs, delete_account: deleteAccount})
-    });
-    if(deleteAccount){
-      localStorage.removeItem('linera_session');
-      alert('Sua conta foi excluída com sucesso.');
-      location.href = 'comprar.html';
-      return;
-    }
-    showMsg('Assinatura cancelada com sucesso.');
-    await load();
-  }catch(e){ showMsg(e.message || String(e)); }
-}
-
-document.getElementById('btnPass').onclick=async()=>{
-  try{
-    await api('/api/client/change-password',{method:'POST',headers:authHeaders(),body:JSON.stringify({old_password:old_password.value,new_password:new_password.value})});
-    showMsg('Senha alterada.');
-    old_password.value=''; new_password.value='';
-  }catch(e){ showMsg(e.message); }
+    const data=await api('/api/client/update-profile',{method:'POST',headers:authHeaders(),body:JSON.stringify({
+      name:$('name').value.trim(), cpf_cnpj:$('cpf_cnpj').value.trim(), cep:$('cep').value.trim(), city:$('city').value.trim(), state:$('state').value.trim(), street:$('street').value.trim(), address_number:$('address_number').value.trim()
+    })});
+    sess.user=data.user; localStorage.setItem('linera_session',JSON.stringify(sess)); showMsg('Cadastro atualizado com sucesso.'); renderProfile(data.user);
+  }catch(e){ showMsg(e.message||String(e)); }
 };
-document.getElementById('btnSair').onclick=()=>{ localStorage.removeItem('linera_session'); location.href='comprar.html'; };
-
-load().catch(e=>showMsg(e.message||String(e)));
+$('btnPass').onclick=async()=>{ try{ await api('/api/client/change-password',{method:'POST',headers:authHeaders(),body:JSON.stringify({old_password:$('old_password').value,new_password:$('new_password').value})}); showMsg('Senha atualizada com sucesso.'); $('old_password').value=''; $('new_password').value=''; }catch(e){ showMsg(e.message||String(e)); } };
+$('btnSair').onclick=()=>{ localStorage.removeItem('linera_session'); location.href='login.html'; };
+window.clearSlots=async pcs=>{ if(!confirm('Liberar todos os slots em uso desta licença?')) return; try{ await api('/api/client/clear-slots',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showMsg('Slots liberados com sucesso.'); await load(); }catch(e){ showMsg(e.message||String(e)); } };
+window.setPix=async pcs=>{ if(!confirm('Deseja trocar a renovação desta licença para PIX?')) return; try{ await api('/api/client/set-payment-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs,method:'manual_pix_email'})}); showMsg('Forma de pagamento alterada para PIX.'); await load(); }catch(e){ showMsg(e.message||String(e)); } };
+window.saveCard=async pcs=>{ try{ const data=await api('/api/client/update-card-method',{method:'POST',headers:authHeaders(),body:JSON.stringify({ pcs, phone:($('phone_'+pcs)?.value||'').trim(), card_number:($('card_number_'+pcs)?.value||'').trim(), card_expiry:($('card_expiry_'+pcs)?.value||'').trim(), card_cvv:($('card_cvv_'+pcs)?.value||'').trim() })}); showMsg(data.scheduled_only ? 'Mudança para cartão agendada com sucesso.' : (data.license_reactivated ? 'Cartão salvo e licença reativada com sucesso.' : 'Cartão atualizado com sucesso.')); await load(); }catch(e){ showMsg(e.message||String(e)); } };
+window.cancelSub=async pcs=>{ if(!confirm('Deseja realmente cancelar a assinatura desta licença?')) return; try{ await api('/api/client/cancel-subscription',{method:'POST',headers:authHeaders(),body:JSON.stringify({pcs})}); showMsg('Assinatura cancelada.'); await load(); }catch(e){ showMsg(e.message||String(e)); } };
+$('btnDeleteAccount').onclick=async(e)=>{ e.preventDefault(); if(!confirm('Excluir a conta inteira? Isso cancela todas as assinaturas e remove o acesso.')) return; try{ await api('/api/client/cancel-account',{method:'POST',headers:authHeaders(),body:JSON.stringify({delete_account:true})}); localStorage.removeItem('linera_session'); location.href='login.html'; }catch(err){ showMsg(err.message||String(err)); } };
+(async()=>{ try{ await load(); }catch(e){ showMsg(e.message||String(e)); } })();
 </script>
 </body>
 </html>
