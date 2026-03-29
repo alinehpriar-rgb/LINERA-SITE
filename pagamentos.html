@@ -38,7 +38,7 @@
         <li><strong>Aproveite sobras úteis</strong> e reduza desperdício na produção</li>
         <li><strong>Use um software brasileiro, em português</strong>, feito para a realidade da sua operação</li>
       </ul>
-      <div class="safe"><strong>Resumo da cobrança:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança é imediata e as próximas cobranças mensais são enviadas por e-mail perto do vencimento.</div>
+      <div class="safe"><strong>Resumo da cobrança:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança já nasce como <strong>assinatura recorrente via PIX</strong> no Asaas. Você recebe o QR Code inicial agora e as próximas cobranças continuam vinculadas à mesma assinatura.</div>
     </div>
 
     <div class="card summary">
@@ -118,7 +118,7 @@ async function gerarPix(){
     const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha ao gerar PIX'); pixPaymentId=data.payment_id;
     byId('pixArea').innerHTML=`${data.qr_code_base64?`<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR PIX">`:''}${data.qr_code?`<textarea class="copy" readonly>${data.qr_code}</textarea>`:''}<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="copyPix" type="button">Copiar código PIX</button></div>`;
     const cp=byId('copyPix'); if(cp) cp.onclick=()=>navigator.clipboard.writeText(data.qr_code||'');
-    showMsg('PIX gerado. Aguarde a confirmação automática do pagamento.'); startPoll();
+    showMsg('PIX recorrente gerado. Assim que o pagamento for confirmado, sua assinatura e licença serão ativadas automaticamente.'); startPoll();
   }catch(e){ showMsg(e.message||String(e)); }
 }
 async function checkPix(){
