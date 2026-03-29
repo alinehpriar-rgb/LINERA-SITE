@@ -25,7 +25,7 @@
     .eyebrow{font-size:12px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;opacity:.9}
     h1{font-size:50px;line-height:1.04;margin:10px 0 16px;font-weight:900;max-width:760px}
     .sub{font-size:18px;line-height:1.7;max-width:760px;color:rgba(255,255,255,.93)}
-    .hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.hero strong{color:#fff}
     .badge{padding:10px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:800}
     .hero-card{background:rgba(255,255,255,.09);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.16);border-radius:26px;padding:22px}
     .hero-card h3{margin:0 0 10px;font-size:20px}
@@ -75,31 +75,31 @@
 
     <div class="hero-grid">
       <div>
-        <div class="eyebrow">otimizador de corte 1D totalmente brasileiro</div>
-        <h1>Economize matéria-prima, aproveite melhor as barras e transforme seu corte linear em resultado.</h1>
+        <div class="eyebrow">otimizador de corte 1D para quem quer parar de desperdiçar material</div>
+        <h1><span style="display:block;font-size:18px;letter-spacing:1.2px;text-transform:uppercase;font-weight:800;opacity:.92;margin-bottom:10px">LINERA-NEST</span> Pare de perder material no corte e ganhe mais controle na produção.</h1>
         <div class="sub">
-          O LINERA-NEST foi criado para <strong>serralherias, marcenarias e fábricas</strong> que trabalham com cortes lineares e querem
-          reduzir desperdício, organizar materiais e gerar planos de corte de forma prática em <strong>português</strong>.
-          Você já testou a versão gratuita por 30 dias. Agora é hora de manter a operação funcionando com a versão completa.
+          Ative o <strong>LINERA-NEST</strong> e continue usando um sistema feito para <strong>serralherias, marcenarias e fábricas</strong> que precisam
+          cortar melhor, reduzir sobra, organizar materiais e acelerar a operação sem complicação.
+          <strong>Seu acesso de teste já mostrou o caminho.</strong> Agora é a hora de manter a produção rodando com a versão completa.
         </div>
         <div class="hero-badges">
+          <div class="badge">Reduza desperdício</div>
+          <div class="badge">Gere planos em segundos</div>
+          <div class="badge">Importe por Excel</div>
+          <div class="badge">Controle por computador</div>
           <div class="badge">100% em português</div>
-          <div class="badge">Software brasileiro</div>
-          <div class="badge">Importação por Excel</div>
-          <div class="badge">Planos em PDF</div>
-          <div class="badge">Controle de licença por PC</div>
         </div>
       </div>
 
       <div class="hero-card">
-        <h3>O que você leva na versão paga</h3>
+        <h3>O que muda quando você ativa o LINERA-NEST</h3>
         <ul class="hero-list">
-          <li>Otimização de corte 1D para reduzir sobra e desperdício</li>
-          <li>Cadastro e importação de peças e materiais em Excel</li>
-          <li>Geração de planos de corte em PDF por material</li>
-          <li>Aproveitamento e controle de sobras úteis</li>
-          <li>Licença profissional para sua equipe e seus computadores</li>
-          <li>Área do cliente para gerenciar licença, renovação e downloads</li>
+          <li>Você reduz sobra desnecessária e aproveita melhor cada barra</li>
+          <li>Gera planos de corte em PDF de forma rápida e organizada</li>
+          <li>Importa peças e materiais por Excel para ganhar velocidade</li>
+          <li>Controla sobras úteis em vez de deixar dinheiro parado</li>
+          <li>Mantém sua equipe trabalhando com mais padrão e menos erro</li>
+          <li>Gerencia licença, renovação e downloads em uma área do cliente simples</li>
         </ul>
       </div>
     </div>
@@ -108,14 +108,14 @@
 
 <section class="section">
   <div class="wrap">
-    <h2>Por que o LINERA-NEST vale a assinatura</h2>
-    <div class="muted">Mais que um programa de corte, ele ajuda sua empresa a trabalhar com mais controle, mais velocidade e menos desperdício.</div>
+    <h2>Por que tanta gente decide continuar depois do teste</h2>
+    <div class="muted">Porque o impacto aparece onde mais importa: no material, no tempo da equipe e no ritmo da produção.</div>
 
     <div class="benefits">
-      <div class="benefit"><div class="t">Menos desperdício</div><div>Mais aproveitamento da matéria-prima e redução de sobra desnecessária.</div></div>
-      <div class="benefit"><div class="t">Mais organização</div><div>Peças, materiais, OS, programação e PDFs estruturados de forma prática.</div></div>
-      <div class="benefit"><div class="t">Mais agilidade</div><div>Fluxo simples para importar dados, gerar planos e seguir com a produção.</div></div>
-      <div class="benefit"><div class="t">Mais profissionalismo</div><div>Uma solução feita para uso real no chão de fábrica, serralheria ou marcenaria.</div></div>
+      <div class="benefit"><div class="t">Menos perda de material</div><div>O corte fica mais inteligente, a sobra diminui e o desperdício deixa de corroer sua margem.</div></div>
+      <div class="benefit"><div class="t">Mais velocidade no dia a dia</div><div>Você importa, organiza e gera planos de corte com rapidez para não travar a operação.</div></div>
+      <div class="benefit"><div class="t">Mais controle na produção</div><div>Peças, materiais, sobras e PDFs ficam organizados para sua equipe trabalhar com segurança.</div></div>
+      <div class="benefit"><div class="t">Mais confiança para crescer</div><div>Um software profissional, em português, pensado para uso real em oficina, marcenaria e fábrica.</div></div>
     </div>
   </div>
 </section>
@@ -137,35 +137,35 @@ const plans = [
     pcs:2,
     key:'2',
     name:'Plano Oficina',
-    sub:'Para começar a usar',
-    desc:'A forma mais simples de continuar usando o LINERA-NEST na versão paga e manter sua operação rodando.',
-    bullets:['Até 2 computadores','Ideal para uso inicial','Licença paga do sistema']
+    sub:'Entrada rápida e profissional',
+    desc:'Ideal para quem quer continuar usando o LINERA-NEST agora, sem perder tempo e sem parar a produção.',
+    bullets:['Até 2 computadores','Entrada mais acessível','Ativação imediata do sistema']
   },
   {
     pcs:5,
     key:'5',
     name:'Plano Equipe',
-    sub:'Melhor custo-benefício',
+    sub:'Melhor escolha para crescer',
     featured:true,
     ribbon:'Mais vendido',
-    desc:'A melhor escolha para quem já tem equipe, quer ganhar produtividade e continuar usando o software com excelente custo por estação.',
-    bullets:['Até 5 computadores','Perfeito para equipes em crescimento','Melhor equilíbrio entre valor e escala']
+    desc:'A opção mais equilibrada para equipes que querem produtividade, escala e excelente custo por estação ativa.',
+    bullets:['Até 5 computadores','Ideal para equipes em crescimento','Melhor custo-benefício da página']
   },
   {
     pcs:10,
     key:'10',
     name:'Plano Produção',
-    sub:'Mais capacidade',
-    desc:'Pensado para operações que precisam de mais estações ativas e mais gente usando o otimizador no dia a dia.',
-    bullets:['Até 10 computadores','Mais escala para a produção','Ideal para operações mais exigentes']
+    sub:'Mais ritmo de produção',
+    desc:'Perfeito para operações que precisam de mais gente trabalhando ao mesmo tempo com o sistema.',
+    bullets:['Até 10 computadores','Mais estações ativas','Feito para operação mais intensa']
   },
   {
     pcs:50,
     key:'50',
     name:'Plano Fábrica',
-    sub:'Operação ampla',
-    desc:'Para empresas com várias estações, múltiplas equipes e necessidade de manter a versão paga ativa em larga escala.',
-    bullets:['Até 50 computadores','Para múltiplas equipes/estações','Gestão centralizada de licenças']
+    sub:'Escala máxima',
+    desc:'Para empresas que precisam padronizar o uso do sistema em várias equipes, setores ou estações.',
+    bullets:['Até 50 computadores','Escala para operação ampla','Gestão centralizada de licenças']
   }
 ];
 
@@ -200,7 +200,7 @@ document.getElementById('plans').innerHTML = plans.map(p => `
     </div>
     <div class="desc">${p.desc}</div>
     <ul class="features">${p.bullets.map(b=>`<li><strong>${b}</strong></li>`).join('')}</ul>
-    <div class="cta"><button class="btn" onclick="choosePlan(${p.pcs})">Assinar ${p.name}</button></div>
+    <div class="cta"><button class="btn" onclick="choosePlan(${p.pcs})">Ativar agora</button></div>
   </div>
 `).join('');
 
