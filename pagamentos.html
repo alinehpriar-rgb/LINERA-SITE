@@ -38,7 +38,7 @@
         <li><strong>Aproveite sobras úteis</strong> e reduza desperdício na produção</li>
         <li><strong>Use um software brasileiro, em português</strong>, feito para a realidade da sua operação</li>
       </ul>
-      <div class="safe"><strong>Resumo da cobrança:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança já nasce como <strong>assinatura recorrente via PIX</strong> no Asaas. Você recebe o QR Code inicial agora e as próximas cobranças continuam vinculadas à mesma assinatura.</div>
+      <div class="safe"><strong>Resumo da cobrança:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança já nasce como <strong>assinatura recorrente via PIX</strong>. Você recebe o QR Code inicial agora e as próximas cobranças continuam vinculadas à mesma assinatura.</div>
     </div>
 
     <div class="card summary">
@@ -98,7 +98,7 @@ async function loadPlan(){
 async function loadMe(){
   const res=await fetch(`${WORKER}/api/me`,{headers:{Authorization:`Bearer ${sess.token}`}}); const data=await res.json();
   if(!res.ok||!data.ok) throw new Error(data.error||'Sessão inválida'); me=data.user; sess.user=data.user; localStorage.setItem('linera_session',JSON.stringify(sess));
-  byId('profileSummary').innerHTML=`<strong>Dados que serão enviados ao Asaas</strong><div class="muted">${me.name}<br>${me.email}<br>${me.cpf_cnpj}<br>${me.phone}<br>${me.address}, ${me.address_number} - ${me.city}/${me.state}<br>CEP ${me.cep}</div><div class="muted" style="margin-top:8px">Se precisar corrigir esses dados, altere primeiro na área do cliente.</div>`;
+  byId('profileSummary').innerHTML=`<strong>Dados usados na cobrança</strong><div class="muted">${me.name}<br>${me.email}<br>${me.cpf_cnpj}<br>${me.phone}<br>${me.address}, ${me.address_number} - ${me.city}/${me.state}<br>CEP ${me.cep}</div><div class="muted" style="margin-top:8px">Se precisar corrigir esses dados, altere primeiro na área do cliente.</div>`;
   byId('holder_name').value=me.name||'';
 }
 
