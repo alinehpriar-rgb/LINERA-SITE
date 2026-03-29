@@ -3,58 +3,230 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LINERA-NEST | Compra concluída</title>
+  <title>LINERA-NEST | Licença liberada</title>
   <style>
-    :root{ --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e8f0; --primary:#0b1f3b; --ok:#15803d; --ok-soft:#ecfdf5; --danger:#b91c1c; --danger-soft:#fef2f2; --info-soft:#eff6ff; --shadow:0 12px 28px rgba(15,23,42,.07); }
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
+      --primary:#0f3b8c; --primary-dark:#0b2c69; --accent:#f59e0b; --accent-soft:#fff7e8;
+      --hero1:#081226; --hero2:#0f3b8c; --hero3:#1d4ed8; --ok:#15803d; --ok-soft:#ecfdf5;
+      --ok-line:#bbf7d0; --shadow:0 18px 40px rgba(15,23,42,.08);
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
-    .wrap{max-width:840px;margin:28px auto;padding:0 16px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:28px}
-    h1{margin:0 0 12px;font-size:34px;line-height:1.05}
-    .banner{border-radius:18px;padding:16px;line-height:1.55;margin:16px 0}
-    .banner.info{background:var(--info-soft);border:1px solid #bfdbfe;color:#1d4ed8}
-    .banner.ok{background:var(--ok-soft);border:1px solid #bbf7d0;color:#166534}
-    .status{margin-top:18px;padding:16px;border-radius:18px;line-height:1.6;white-space:pre-line;font-size:15px}
-    .status.info{background:#f8fafc;border:1px solid #dbe3ef;color:#334155}
-    .status.error{background:var(--danger-soft);border:1px solid #fecaca;color:var(--danger)}
-    .status.ok2{background:var(--ok-soft);border:1px solid #bbf7d0;color:var(--ok)}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#f4f8ff 0%,#f8fafc 20%,#f8fafc 100%);
+      color:var(--text);
+      font-family:"Segoe UI",Arial,sans-serif;
+    }
+    .wrap{max-width:1040px;margin:26px auto;padding:0 16px}
+    .hero{
+      background:linear-gradient(135deg,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);
+      color:#fff;border-radius:30px;padding:26px 26px 24px;box-shadow:0 22px 48px rgba(15,59,140,.24);
+      position:relative;overflow:hidden;
+    }
+    .hero::after{
+      content:"";position:absolute;right:-50px;top:-50px;width:210px;height:210px;border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 68%);
+      pointer-events:none;
+    }
+    .hero-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .brand{font-size:28px;font-weight:900;letter-spacing:.3px}
+    .eyebrow{
+      display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);
+      font-size:12px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;
+    }
+    .hero h1{
+      margin:16px 0 12px;font-size:46px;line-height:1.02;font-weight:900;letter-spacing:-.9px;max-width:760px;
+    }
+    .hero p{
+      margin:0;max-width:780px;font-size:18px;line-height:1.72;color:rgba(255,255,255,.93);
+    }
+    .hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .badge{
+      padding:10px 12px;border-radius:999px;background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:800;
+    }
+
+    .layout{display:grid;grid-template-columns:1.03fr .97fr;gap:22px;margin-top:22px}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:26px;padding:24px;box-shadow:var(--shadow);
+    }
+    .success-card{
+      border:2px solid rgba(21,128,61,.18);
+      background:linear-gradient(180deg,#ffffff 0%,#fafffc 100%);
+    }
+    .summary-head{
+      padding:16px 18px;border-radius:18px;background:linear-gradient(180deg,var(--accent-soft),#fff);
+      border:1px solid rgba(245,158,11,.28);margin-bottom:16px;
+    }
+    .mini{font-size:12px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;color:#9a6700}
+    h2{margin:0 0 10px;font-size:32px;line-height:1.05}
+    h3{margin:0 0 12px;font-size:22px}
+    .sub{color:#334155;line-height:1.7;font-size:16px}
+    .strong-brand{color:var(--primary);font-weight:900}
+    .confirm-box{
+      margin:18px 0 0;padding:18px;border-radius:22px;background:var(--ok-soft);border:1px solid var(--ok-line);color:#166534;
+    }
+    .confirm-box strong{display:block;font-size:18px;margin-bottom:6px}
+    .status{
+      margin-top:18px;padding:16px;border-radius:18px;line-height:1.65;white-space:pre-line;font-size:15px;
+      background:#f8fafc;border:1px solid #dbe3ef;color:#334155
+    }
+    .status.ok2{background:var(--ok-soft);border:1px solid var(--ok-line);color:var(--ok)}
+    .meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 10px}
+    .meta div{
+      padding:14px 14px;border:1px solid var(--line);border-radius:16px;background:#fafcff;
+      box-shadow:0 8px 18px rgba(15,23,42,.03)
+    }
+    .label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;font-weight:800;margin-bottom:6px}
+    .value{font-weight:800}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:15px 20px;border-radius:16px;text-decoration:none;font-weight:800}
-    .primary{background:var(--primary);color:#fff}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;padding:15px 20px;border-radius:16px;
+      text-decoration:none;font-weight:900;border:none;cursor:pointer;transition:.18s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .primary{
+      background:linear-gradient(180deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;
+      box-shadow:0 12px 24px rgba(15,59,140,.18)
+    }
     .secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
     .hidden{display:none}
-    ol{padding-left:20px;line-height:1.7;color:#334155}
-    .meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:16px 0 10px}
-    .meta div{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fafcff}
-    .meta .label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;font-weight:700;margin-bottom:6px}
-    @media (max-width:700px){ .meta{grid-template-columns:1fr} }
+    .steps{
+      display:grid;gap:12px;margin-top:16px
+    }
+    .step{
+      display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:20px;background:#fff;
+    }
+    .step-num{
+      min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(180deg,var(--accent) 0%, #d97706 100%);color:#111827;font-weight:900;font-size:14px;
+      box-shadow:0 8px 18px rgba(245,158,11,.22)
+    }
+    .step strong{display:block;margin-bottom:4px}
+    .support{
+      margin-top:18px;padding:16px;border-radius:20px;background:linear-gradient(180deg,#fcfdff,#f8fbff);
+      border:1px solid #dbe4ee;color:#334155;line-height:1.65
+    }
+    .trust{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px
+    }
+    .trust-item{
+      background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;font-size:12px;font-weight:800;color:#334155
+    }
+    .trust-item span{display:block;font-size:18px;margin-bottom:5px}
+    @media (max-width:920px){
+      .layout{grid-template-columns:1fr}
+      .hero h1{font-size:38px}
+    }
+    @media (max-width:680px){
+      .hero h1{font-size:32px}
+      .meta,.trust{grid-template-columns:1fr}
+      .actions{flex-direction:column}
+      .btn{width:100%}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
-      <h1>Obrigado pela compra 🎉</h1>
-      <div id="banner" class="banner info">Estamos validando seu pagamento e preparando a licença do LINERA-NEST.</div>
+    <section class="hero">
+      <div class="hero-top">
+        <div class="brand">LINERA-NEST</div>
+        <div class="eyebrow">licença liberada</div>
+      </div>
+      <h1>Excelente decisão. <span style="color:#fde68a">Seu acesso já está pronto.</span></h1>
+      <p>
+        Você acaba de garantir o <strong>LINERA-NEST</strong> para continuar produzindo com mais controle,
+        menos desperdício e mais velocidade. Agora é só baixar sua licença e começar a usar.
+      </p>
+      <div class="hero-badges">
+        <div class="badge">Compra concluída</div>
+        <div class="badge">Licença pronta</div>
+        <div class="badge">Ativação rápida</div>
+        <div class="badge">Produção sem parar</div>
+      </div>
+    </section>
 
-      <div class="meta">
-        <div><span class="label">Email</span><span id="emailOut">-</span></div>
-        <div><span class="label">Plano</span><span id="pcsOut">-</span></div>
+    <div class="layout">
+      <div class="card success-card">
+        <div class="summary-head">
+          <div class="mini">compra confirmada</div>
+          <h2>Seu investimento já pode virar resultado.</h2>
+          <div class="sub">Baixe sua licença agora e continue usando o sistema sem interrupções.</div>
+        </div>
+
+        <div id="banner" class="confirm-box">
+          <strong>Tudo certo por aqui.</strong>
+          Estamos preparando as informações da sua licença do LINERA-NEST.
+        </div>
+
+        <div class="meta">
+          <div><span class="label">Email</span><span class="value" id="emailOut">-</span></div>
+          <div><span class="label">Plano</span><span class="value" id="pcsOut">-</span></div>
+        </div>
+
+        <div id="status" class="status">Consultando sua compra...</div>
+
+        <div class="trust">
+          <div class="trust-item"><span>🎯</span>Mais controle</div>
+          <div class="trust-item"><span>⚡</span>Mais agilidade</div>
+          <div class="trust-item"><span>📉</span>Menos desperdício</div>
+        </div>
+
+        <div class="actions">
+          <a id="downloadBtn" class="btn primary hidden" href="#" download>Baixar minha licença</a>
+          <a class="btn secondary" href="cliente.html">Ir para área do cliente</a>
+        </div>
+
+        <div class="support">
+          <strong class="strong-brand">O que você acabou de garantir</strong><br>
+          Um software em português, pensado para a realidade da sua operação e pronto para ajudar sua equipe a
+          cortar melhor, aproveitar mais material e trabalhar com mais organização.
+        </div>
       </div>
 
-      <div id="status" class="status info">Consultando sua compra...</div>
+      <div class="card">
+        <div class="mini" style="color:var(--primary);margin-bottom:10px">próximo passo</div>
+        <h3>Ative sua licença em poucos minutos</h3>
+        <div class="sub">Siga este processo simples para começar a usar o <span class="strong-brand">LINERA-NEST</span> agora mesmo.</div>
 
-      <div class="actions">
-        <a id="downloadBtn" class="btn primary hidden" href="#" download>Baixar licença</a>
-        <a class="btn secondary" href="cliente.html">Ir para área do cliente</a>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Baixe o arquivo de licença</strong>
+              Use o botão desta página para baixar seu arquivo <strong>.lic</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <strong>Abra o LINERA-NEST</strong>
+              Entre no computador em que você vai utilizar o programa.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Selecione o arquivo .lic</strong>
+              Importe a licença quando o sistema solicitar para concluir a ativação.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <strong>Comece a usar normalmente</strong>
+              Se necessário, feche e abra o programa novamente para finalizar tudo.
+            </div>
+          </div>
+        </div>
+
+        <div class="support">
+          <strong>Boa escolha.</strong><br>
+          Você não comprou apenas uma licença. Você decidiu trabalhar com mais precisão, mais controle e menos desperdício.
+        </div>
       </div>
-
-      <h3>Como usar o arquivo .lic</h3>
-      <ol>
-        <li>Baixe o arquivo de licença nesta página.</li>
-        <li>Abra o LINERA-NEST no computador que vai usar o programa.</li>
-        <li>Importe ou selecione o arquivo <strong>.lic</strong> quando o sistema solicitar.</li>
-        <li>Se necessário, feche e abra o programa novamente para concluir a ativação.</li>
-      </ol>
     </div>
   </div>
 
@@ -76,8 +248,8 @@
     pcsOut.textContent = pcs ? `${pcs} PCs` : '-';
 
     function setBanner(text, cls='info') {
-      banner.className = `banner ${cls}`;
-      banner.innerHTML = text;
+      banner.className = `confirm-box`;
+      banner.innerHTML = `<strong>${cls === 'ok' ? 'Perfeito.' : 'Tudo certo por aqui.'}</strong>${text}`;
     }
     function setStatus(text, cls='info') {
       statusEl.className = `status ${cls}`;
@@ -93,13 +265,17 @@
     }
 
     if (origem === 'cartao') {
-      setBanner('Seu pagamento no cartão foi confirmado. A licença já está disponível para download e a próxima renovação ficará programada para a data correta.', 'ok');
-      setStatus(`Pagamento confirmado com sucesso.\nPlano liberado: ${pcs} PCs\nLicença pronta para download.`, 'ok2');
+      setBanner('Seu pagamento no cartão foi confirmado e sua licença já está pronta para download.', 'ok');
+      setStatus(`Pagamento confirmado com sucesso.
+Plano liberado: ${pcs} PCs
+Sua licença já está disponível para ativação.`, 'ok2');
     } else if (origem === 'pix') {
-      setBanner('Seu pagamento PIX foi confirmado. A licença já está disponível para download e as próximas renovações por PIX poderão ser feitas pelo portal do cliente.', 'ok');
-      setStatus(`Pagamento PIX confirmado.\nPlano liberado: ${pcs} PCs\nLicença pronta para download.`, 'ok2');
+      setBanner('Seu pagamento PIX foi confirmado e sua licença já está pronta para download.', 'ok');
+      setStatus(`Pagamento PIX confirmado.
+Plano liberado: ${pcs} PCs
+Sua licença já está disponível para ativação.`, 'ok2');
     } else {
-      setBanner('Sua compra foi registrada com sucesso. A licença já pode ser baixada nesta página.', 'ok');
+      setBanner('Sua compra foi registrada com sucesso e sua licença já pode ser baixada nesta página.', 'ok');
       setStatus('Licença pronta para download.', 'ok2');
     }
   </script>
