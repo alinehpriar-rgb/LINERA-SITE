@@ -51,7 +51,7 @@ function render(data){
   document.getElementById('p50').value=data.prices["50"]||'';
   document.getElementById('totals').innerHTML = [
     ['Clientes',data.totals.users],['Licenças ativas',data.totals.active_licenses],['Licenças inativas',data.totals.inactive_licenses],['Receita ativa',m(data.totals.revenue_active)],
-    ['Cartão automático',data.totals.card_auto],['PIX recorrente',(lastData?.licenses||[]).filter(x=>x.renewal_method==='pix_subscription').length],['Licenças totais',data.totals.licenses]
+    ['Cartão automático',data.totals.card_auto],['PIX por e-mail',data.totals.pix_email],['Licenças totais',data.totals.licenses],['E-mails na fila',data.totals.queued_emails]
   ].map(([a,b])=>`<div class="card"><div class="muted">${a}</div><div class="big">${b}</div></div>`).join('');
   applyFilter();
 }
