@@ -38,7 +38,7 @@
         <li><strong>Aproveite sobras úteis</strong> e reduza desperdício na produção</li>
         <li><strong>Use um software brasileiro, em português</strong>, feito para a realidade da sua operação</li>
       </ul>
-      <div class="safe"><strong>Resumo da cobrança:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança já nasce como <strong>assinatura recorrente via PIX</strong> no Asaas. Você recebe o QR Code inicial agora e as próximas cobranças continuam vinculadas à mesma assinatura.</div>
+      <div class="safe"><strong>Resumo da cobrança:</strong><br>No <strong>cartão</strong>, a assinatura é iniciada no ato da compra e as próximas cobranças ficam automáticas.<br>No <strong>PIX</strong>, a primeira cobrança já nasce como <strong>assinatura recorrente via PIX</strong>. Você recebe o QR Code inicial agora e as próximas cobranças continuam vinculadas à mesma assinatura.</div>
     </div>
 
     <div class="card summary">
@@ -73,7 +73,7 @@
 const WORKER='https://linera-lic.alineh-pri-ar.workers.dev';
 const params=new URLSearchParams(location.search); const pcs=Number(params.get('pcs')||0);
 const sess=JSON.parse(localStorage.getItem('linera_session')||'null'); if(!sess?.token){ location.href=`login.html?next=${encodeURIComponent(location.pathname+location.search)}`; }
-let planInfo=null, me=null, pixPaymentId='', pollTimer=null;
+let planInfo=null, me=null, pixPaymentId='', pollTimer=null, cardPaymentId='', cardPollTimer=null;
 const byId=(id)=>document.getElementById(id);
 const msg=byId('msg');
 function authHeaders(){ return { Authorization:`Bearer ${sess.token}`,'Content-Type':'application/json' } }
@@ -98,7 +98,7 @@ async function loadPlan(){
 async function loadMe(){
   const res=await fetch(`${WORKER}/api/me`,{headers:{Authorization:`Bearer ${sess.token}`}}); const data=await res.json();
   if(!res.ok||!data.ok) throw new Error(data.error||'Sessão inválida'); me=data.user; sess.user=data.user; localStorage.setItem('linera_session',JSON.stringify(sess));
-  byId('profileSummary').innerHTML=`<strong>Dados que serão enviados ao Asaas</strong><div class="muted">${me.name}<br>${me.email}<br>${me.cpf_cnpj}<br>${me.phone}<br>${me.address}, ${me.address_number} - ${me.city}/${me.state}<br>CEP ${me.cep}</div><div class="muted" style="margin-top:8px">Se precisar corrigir esses dados, altere primeiro na área do cliente.</div>`;
+  byId('profileSummary').innerHTML=`<strong>Dados usados na cobrança</strong><div class="muted">${me.name}<br>${me.email}<br>${me.cpf_cnpj}<br>${me.phone}<br>${me.address}, ${me.address_number} - ${me.city}/${me.state}<br>CEP ${me.cep}</div><div class="muted" style="margin-top:8px">Se precisar corrigir esses dados, altere primeiro na área do cliente.</div>`;
   byId('holder_name').value=me.name||'';
 }
 
@@ -107,7 +107,16 @@ async function pagarCartao(){
   try{
     const payload={ pcs, holder_name:byId('holder_name').value.trim(), card_number:byId('card_number').value, card_expiry:byId('card_expiry').value, card_cvv:byId('card_cvv').value };
     const res=await fetch(`${WORKER}/api/mp/pagar_primeira_mensalidade_cartao`,{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
-    const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.detail||data.error||'Falha no pagamento');
+    const data=await res.json();
+    if(!res.ok || !data.ok){
+      if((data?.error==='subscription_payment_not_confirmed' || data?.detail==='PENDING') && data?.payment_id){
+        cardPaymentId=data.payment_id;
+        showMsg('Pagamento em processamento. Assim que a confirmação chegar, você será redirecionada automaticamente.');
+        startCardPoll();
+        return;
+      }
+      throw new Error(data.detail||data.error||'Falha no pagamento');
+    }
     location.href=`sucesso.html?email=${encodeURIComponent(me.email)}&pcs=${encodeURIComponent(String(pcs))}`;
   }catch(e){ showMsg(e.message||String(e)); }
 }
@@ -126,7 +135,17 @@ async function checkPix(){
   if(data?.status==='approved'){ location.href=`sucesso.html?email=${encodeURIComponent(me.email)}&pcs=${encodeURIComponent(String(pcs))}`; return true; }
   return false;
 }
+async function checkCard(){
+  const res=await fetch(`${WORKER}/api/mp/status_cartao?payment_id=${encodeURIComponent(cardPaymentId)}`,{headers:{Authorization:`Bearer ${sess.token}`}});
+  const data=await res.json();
+  if(data?.status==='approved'){
+    location.href=`sucesso.html?email=${encodeURIComponent(me.email)}&pcs=${encodeURIComponent(String(pcs))}`;
+    return true;
+  }
+  return false;
+}
 function startPoll(){ if(pollTimer) clearTimeout(pollTimer); const loop=async()=>{ try{ const ok=await checkPix(); if(ok) return; }catch(e){} pollTimer=setTimeout(loop,5000); }; pollTimer=setTimeout(loop,4500); }
+function startCardPoll(){ if(cardPollTimer) clearTimeout(cardPollTimer); const loop=async()=>{ try{ const ok=await checkCard(); if(ok) return; }catch(e){} cardPollTimer=setTimeout(loop,5000); }; cardPollTimer=setTimeout(loop,4500); }
 byId('btnCard').onclick=pagarCartao; byId('btnPix').onclick=gerarPix;
 Promise.all([loadPlan(),loadMe()]).catch(e=>showMsg(e.message||String(e)));
 </script>
