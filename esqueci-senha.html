@@ -12,7 +12,7 @@
     input{width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px;margin:8px 0 14px;box-sizing:border-box;font-size:15px}
     .btn{background:#0f3b8c;color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:800;width:100%;cursor:pointer;font-size:15px}
     .btn:disabled{opacity:.65;cursor:not-allowed}
-    .status{margin-top:14px;font-size:14px;min-height:20px}
+    .status{margin-top:14px;font-size:14px;min-height:20px}.actions{display:flex;gap:10px;margin-top:16px}.btn-secondary{display:flex;align-items:center;justify-content:center;background:#fff;color:#0f3b8c;border:1px solid #cbd5e1;border-radius:12px;padding:12px 14px;font-weight:800;width:100%;cursor:pointer;font-size:15px;text-decoration:none;box-sizing:border-box}.btn-secondary:hover{background:#f8fafc}
   </style>
 </head>
 <body>
@@ -21,6 +21,9 @@
     <p>Informe seu e-mail para receber o link de redefinição.</p>
     <input id="email" type="email" placeholder="Seu e-mail" autocomplete="email">
     <button class="btn" id="btn">Enviar link</button>
+    <div class="actions">
+      <a class="btn-secondary" href="login.html">Entrar</a>
+    </div>
     <div id="msg" class="status"></div>
   </div>
 
