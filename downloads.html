@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Downloads | LINERA-NEST</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#5b6b82;
+      --line:#dbe5f0;
+      --primary:#0f3b8c;
+      --primary-dark:#0b2c69;
+      --primary-soft:#eaf2ff;
+      --accent:#f59e0b;
+      --accent-dark:#d97706;
+      --hero1:#081226;
+      --hero2:#0f3b8c;
+      --hero3:#2563eb;
+      --success:#15803d;
+      --shadow:0 16px 34px rgba(15,23,42,.08);
+      --shadow-strong:0 22px 48px rgba(15,23,42,.14);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:linear-gradient(180deg,#f7f9fc 0%,#edf3fa 100%);color:var(--text);font-family:"Segoe UI",Arial,sans-serif}
+    .wrap{max-width:1200px;margin:0 auto;padding:0 18px}
+    .hidden{display:none!important}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:16px;font-weight:900;text-decoration:none;border:none;cursor:pointer;transition:.2s transform,.2s box-shadow,.2s background,.2s color}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.light{background:#fff;color:var(--primary);box-shadow:0 12px 26px rgba(255,255,255,.12)}
+    .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.26)}
+    .btn.ghost:hover{background:rgba(255,255,255,.08)}
+    .btn.primary{background:linear-gradient(135deg,var(--accent) 0%,#ffbf47 100%);color:#111827;box-shadow:0 16px 36px rgba(245,158,11,.32)}
+    .btn.primary:hover{background:linear-gradient(135deg,#ffbf47 0%,var(--accent) 100%);box-shadow:0 18px 40px rgba(245,158,11,.38)}
+    .btn.download{padding:18px 26px;border-radius:18px;font-size:18px}
+    .btn.dark{background:linear-gradient(135deg,var(--primary) 0%,#2563eb 100%);color:#fff;box-shadow:0 16px 30px rgba(37,99,235,.18)}
+    .btn.dark:hover{background:linear-gradient(135deg,#2563eb 0%,var(--primary-dark) 100%);box-shadow:0 18px 34px rgba(37,99,235,.24)}
+
+    .hero{position:relative;overflow:hidden;background:
+      radial-gradient(circle at top right, rgba(255,255,255,.12), transparent 26%),
+      radial-gradient(circle at left center, rgba(255,255,255,.08), transparent 18%),
+      linear-gradient(135deg,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 100%);
+      color:#fff;padding:26px 0 84px}
+    .hero:before{content:"";position:absolute;inset:auto -10% -120px auto;width:360px;height:360px;border-radius:50%;background:rgba(245,158,11,.14);filter:blur(10px)}
+    .hero:after{content:"";position:absolute;inset:140px auto auto -90px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.06);filter:blur(8px)}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+    .brand{font-size:30px;font-weight:1000;letter-spacing:.3px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:28px;align-items:center;padding-top:34px;position:relative;z-index:1}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:1000;letter-spacing:1px;text-transform:uppercase;color:#dbeafe;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);padding:10px 14px;border-radius:999px}
+    h1{font-size:56px;line-height:.98;margin:18px 0 16px;font-weight:1000;max-width:820px;letter-spacing:-1.6px}
+    .brand-kicker{display:block;font-size:20px;letter-spacing:2.2px;text-transform:uppercase;font-weight:1000;color:#ffdb7a;margin-bottom:12px}
+    .sub{font-size:19px;line-height:1.75;max-width:760px;color:rgba(255,255,255,.94)}
+    .hero strong{color:#fff}
+    .hero-badges{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+    .badge{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:900;backdrop-filter:blur(10px)}
+    .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+    .trust-line{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;color:rgba(255,255,255,.84);font-size:14px;font-weight:700}
+    .hero-card{background:rgba(255,255,255,.10);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16);border-radius:28px;padding:24px;box-shadow:var(--shadow-strong)}
+    .hero-card h3{margin:0 0 10px;font-size:24px;line-height:1.15}
+    .hero-card .mini{margin:0 0 18px;color:rgba(255,255,255,.82);line-height:1.6}
+    .hero-list{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+    .hero-list li{display:flex;gap:10px;align-items:flex-start;line-height:1.55;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10)}
+    .hero-list li:before{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex:0 0 22px;border-radius:999px;background:rgba(255,255,255,.18);font-weight:1000}
+
+    .section{padding:42px 0}
+    .section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
+    .section h2{font-size:40px;line-height:1.02;margin:0 0 8px;letter-spacing:-1px}
+    .muted{color:var(--muted)}
+
+    .strip{margin-top:-34px;position:relative;z-index:2}
+    .strip-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:18px;box-shadow:var(--shadow-strong);display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .item{padding:16px;border-radius:20px;background:linear-gradient(180deg,#fff,#f9fbff);border:1px solid #e7eef7}
+    .item .t{font-size:15px;font-weight:1000;margin-bottom:6px;color:#0f172a}
+    .item .d{font-size:14px;line-height:1.55;color:#526176}
+
+    .download-panel{margin-top:22px;background:linear-gradient(135deg,#fff8e8 0%,#fff 100%);border:1px solid #fde4a5;border-radius:28px;padding:26px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:center}
+    .download-box{background:#fff;border:1px solid #f0dfb5;border-radius:24px;padding:22px;box-shadow:0 12px 28px rgba(15,23,42,.06)}
+    .download-box .label{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ecfdf5;color:var(--success);font-size:12px;font-weight:1000;text-transform:uppercase;letter-spacing:.8px}
+    .download-box h3{margin:14px 0 8px;font-size:32px;line-height:1.05}
+    .download-box p{margin:0 0 18px;line-height:1.75;color:#475569}
+    .small-note{font-size:13px;color:#64748b;line-height:1.6;margin-top:12px}
+    .steps{display:grid;gap:14px}
+    .step{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:18px;background:#fff;border:1px solid var(--line)}
+    .step .n{width:34px;height:34px;border-radius:12px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:1000;flex:0 0 34px}
+    .step .tx strong{display:block;margin-bottom:4px}
+
+    .benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+    .benefit{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);transition:.2s transform,.2s box-shadow,.2s border-color;position:relative;overflow:hidden}
+    .benefit:before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:4px;background:linear-gradient(90deg,var(--accent),#ffd978)}
+    .benefit:hover{transform:translateY(-3px);box-shadow:var(--shadow-strong);border-color:#c7d8ea}
+    .benefit .icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--primary-soft);color:var(--primary);font-size:22px;font-weight:1000;margin-bottom:14px}
+    .benefit .t{font-size:20px;font-weight:1000;margin-bottom:8px;line-height:1.12}
+    .benefit .d{line-height:1.65;color:#526176}
+
+    .confidence{margin-top:22px;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+    .card h3{margin:0 0 10px;font-size:26px}
+    .card p{margin:0;color:#526176;line-height:1.72}
+    .checklist{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+    .checklist li{display:flex;gap:10px;align-items:flex-start;color:#0f172a;line-height:1.6}
+    .checklist li:before{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex:0 0 22px;border-radius:999px;background:#ecfdf5;color:var(--success);font-weight:1000}
+
+    .cta-final{margin-top:24px;background:linear-gradient(135deg,var(--hero1) 0%,var(--primary) 62%,var(--hero3) 100%);border-radius:30px;padding:28px;color:#fff;box-shadow:var(--shadow-strong);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+    .cta-final h3{margin:0 0 10px;font-size:30px;line-height:1.05}
+    .cta-final p{margin:0;color:rgba(255,255,255,.9);line-height:1.7;max-width:760px}
+
+    @media (max-width:1080px){
+      .hero-grid,.download-panel,.confidence{grid-template-columns:1fr}
+      .benefits,.strip-card{grid-template-columns:repeat(2,1fr)}
+      h1{font-size:46px}
+    }
+    @media (max-width:680px){
+      .benefits,.strip-card,.confidence{grid-template-columns:1fr}
+      h1{font-size:36px;letter-spacing:-1px}
+      .hero{padding-bottom:68px}
+      .section h2{font-size:32px}
+      .hero-cta{flex-direction:column;align-items:stretch}
+      .hero-cta .btn,.cta-final .btn{width:100%}
+      .download-box h3{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+<section class="hero">
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">LINERA-NEST</div>
+      <div class="actions">
+        <a class="btn ghost" href="comprar.html">Planos</a>
+        <a class="btn ghost" id="btnLogin" href="login.html">Entrar</a>
+        <a class="btn ghost" id="btnCadastro" href="cadastro.html">Criar conta</a>
+        <a class="btn ghost hidden" id="btnCliente" href="cliente.html">Área do cliente</a>
+        <button class="btn ghost hidden" id="btnSair">Sair</button>
+      </div>
+    </div>
+
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">download grátis + teste grátis para começar hoje mesmo</div>
+        <h1>
+          <span class="brand-kicker">LINERA-NEST</span>
+          Baixe agora e veja na prática como reduzir desperdício e ganhar velocidade.
+        </h1>
+        <div class="sub">
+          O <strong>LINERA-NEST</strong> é um otimizador de corte linear feito para <strong>serralherias, marcenarias e fábricas</strong> que querem transformar barras, perfis e matéria-prima em resultado real.<br><br>
+          Aqui você baixa o programa <strong>grátis</strong>, testa sem compromisso e comprova no seu próprio processo o quanto ele pode economizar material, tempo e retrabalho.
+        </div>
+        <div class="hero-badges">
+          <div class="badge">Download grátis</div>
+          <div class="badge">Teste grátis</div>
+          <div class="badge">Instalação simples</div>
+          <div class="badge">Interface em português</div>
+          <div class="badge">Feito para produção real</div>
+        </div>
+        <div class="hero-cta">
+          <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe">Baixar LINERA-NEST grátis</a>
+          <a class="btn light" href="#como-funciona">Ver como funciona</a>
+        </div>
+        <div class="trust-line">
+          <span>✔ Download imediato</span>
+          <span>✔ Teste sem compromisso</span>
+          <span>✔ Próximo passo natural para quem quer produzir melhor</span>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <h3>Por que vale a pena baixar agora</h3>
+        <p class="mini">Porque em poucos minutos você já consegue enxergar onde está perdendo material e como o software pode te ajudar a produzir com mais inteligência.</p>
+        <ul class="hero-list">
+          <li>Você testa no seu cenário real, com suas peças e seus materiais</li>
+          <li>Descobre rapidamente se está deixando dinheiro na sobra</li>
+          <li>Ganha velocidade para montar planos de corte sem conta manual</li>
+          <li>Visualiza uma rotina mais organizada e mais profissional</li>
+          <li>Reduz a insegurança na hora de planejar a produção</li>
+          <li>Baixa agora e decide com confiança depois de ver funcionando</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="strip">
+  <div class="wrap">
+    <div class="strip-card">
+      <div class="item">
+        <div class="t">Sem custo para baixar</div>
+        <div class="d">O usuário não precisa assumir risco para conhecer a ferramenta.</div>
+      </div>
+      <div class="item">
+        <div class="t">Teste no processo real</div>
+        <div class="d">O valor aparece na prática, dentro da rotina da produção.</div>
+      </div>
+      <div class="item">
+        <div class="t">Feito para o seu nicho</div>
+        <div class="d">Não é software genérico. É uma solução pensada para quem trabalha com cortes lineares.</div>
+      </div>
+      <div class="item">
+        <div class="t">Quando faz sentido, você ativa</div>
+        <div class="d">Primeiro você vê resultado. Depois decide continuar com segurança.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="como-funciona">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Baixe, teste e veja o valor no seu próprio processo</h2>
+        <div class="muted">A página foi pensada para o usuário sentir segurança, entender o benefício e encontrar o botão de download sem esforço.</div>
+      </div>
+    </div>
+
+    <div class="download-panel">
+      <div class="download-box">
+        <span class="label">download recomendado</span>
+        <h3>Comece agora com o LINERA-NEST</h3>
+        <p>Faça o download do instalador, experimente o teste grátis e descubra como um corte mais inteligente pode gerar economia real no seu dia a dia.</p>
+        <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe">Fazer download grátis</a>
+        <div class="small-note">Download direto do instalador para Windows.</div>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <div class="tx"><strong>Baixe o instalador</strong> Faça o download em um clique pelo botão principal da página.</div>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <div class="tx"><strong>Instale e teste</strong> Abra o programa e experimente com seus próprios materiais e peças.</div>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <div class="tx"><strong>Compare o antes e o depois</strong> Veja a diferença em aproveitamento, organização e velocidade.</div>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <div class="tx"><strong>Ative quando tiver certeza</strong> Se o programa fizer sentido para sua operação, basta seguir para a página de planos.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefits">
+      <div class="benefit">
+        <div class="icon">⚙</div>
+        <div class="t">Pensado para uso real</div>
+        <div class="d">O foco do LINERA-NEST é resolver um problema prático de produção: aproveitar melhor o material e organizar o corte.</div>
+      </div>
+      <div class="benefit">
+        <div class="icon">📉</div>
+        <div class="t">Ajuda a reduzir desperdício</div>
+        <div class="d">Quando sobra menos material e o plano sai melhor, sua margem agradece.</div>
+      </div>
+      <div class="benefit">
+        <div class="icon">🚀</div>
+        <div class="t">Dá velocidade para a operação</div>
+        <div class="d">Menos improviso, menos cálculo manual e mais clareza para quem precisa produzir.</div>
+      </div>
+    </div>
+
+    <div class="confidence">
+      <div class="card">
+        <h3>Mais confiança para baixar</h3>
+        <p>Quem chega até esta página normalmente já sente a dor do desperdício, da conta manual e da operação sem padrão. O objetivo aqui é reduzir a barreira de entrada e mostrar que baixar o LINERA-NEST é um passo lógico, simples e seguro.</p>
+        <ul class="checklist">
+          <li>Teste grátis para o usuário avaliar antes de pagar</li>
+          <li>Botão principal destacado para não gerar dúvida</li>
+          <li>Página alinhada com a identidade visual da venda</li>
+          <li>Mensagem focada em benefício real e aplicação prática</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Depois do download</h3>
+        <p>Quando o usuário percebe o potencial do software no próprio ambiente de trabalho, a decisão de continuar deixa de ser uma aposta e passa a ser uma escolha racional. É exatamente isso que faz esta página vender junto com o download.</p>
+        <ul class="checklist">
+          <li>Baixa o instalador e começa rápido</li>
+          <li>Testa com dados reais da operação</li>
+          <li>Enxerga valor antes de assinar</li>
+          <li>Pode seguir para os planos quando quiser</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cta-final">
+      <div>
+        <h3>O melhor momento para testar é agora.</h3>
+        <p>Baixe o LINERA-NEST, experimente no seu processo e descubra quanto mais sua operação pode render com menos desperdício.</p>
+      </div>
+      <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe">Baixar agora</a>
+    </div>
+  </div>
+</section>
+
+<script>
+function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
+function setUi(){
+  const s = getSession();
+  document.getElementById('btnCliente').classList.toggle('hidden', !s);
+  document.getElementById('btnSair').classList.toggle('hidden', !s);
+  document.getElementById('btnCadastro').classList.toggle('hidden', !!s);
+  document.getElementById('btnLogin').textContent = s ? 'Trocar conta' : 'Entrar';
+}
+document.getElementById('btnSair').onclick=()=>{ localStorage.removeItem('linera_session'); location.reload(); };
+setUi();
+</script>
+</body>
+</html>
