@@ -59,12 +59,182 @@
     .badge{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:900;backdrop-filter:blur(10px)}
     .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
     .trust-line{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;color:rgba(255,255,255,.84);font-size:14px;font-weight:700}
-    .hero-card{background:rgba(255,255,255,.10);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16);border-radius:28px;padding:24px;box-shadow:var(--shadow-strong)}
-    .hero-card h3{margin:0 0 10px;font-size:24px;line-height:1.15}
-    .hero-card .mini{margin:0 0 18px;color:rgba(255,255,255,.82);line-height:1.6}
-    .hero-list{margin:0;padding:0;list-style:none;display:grid;gap:12px}
-    .hero-list li{display:flex;gap:10px;align-items:flex-start;line-height:1.55;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10)}
-    .hero-list li:before{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex:0 0 22px;border-radius:999px;background:rgba(255,255,255,.18);font-weight:1000}
+    .hero-card{background:rgba(255,255,255,.10);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16);border-radius:28px;padding:16px;box-shadow:var(--shadow-strong)}
+
+    .hero-slider{
+      position:relative;
+      width:100%;
+      border-radius:22px;
+      overflow:hidden;
+      background:rgba(255,255,255,.08);
+    }
+    .slides{
+      position:relative;
+      width:100%;
+      height:520px;
+      border-radius:18px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    }
+    .slide{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:0;
+      transition:opacity .6s ease-in-out, transform .6s ease-in-out;
+      transform:scale(1.02);
+    }
+    .slide.active{
+      opacity:1;
+      transform:scale(1);
+    }
+    .slider-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:none;
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      background:rgba(15,23,42,.58);
+      color:#fff;
+      font-size:22px;
+      cursor:pointer;
+      z-index:3;
+      transition:.2s background,.2s transform;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .slider-btn:hover{
+      background:rgba(15,23,42,.82);
+      transform:translateY(-50%) scale(1.04);
+    }
+    .slider-btn.prev{left:16px}
+    .slider-btn.next{right:16px}
+    .slider-dots{
+      position:absolute;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      display:flex;
+      gap:10px;
+      z-index:3;
+    }
+    .dot{
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:rgba(255,255,255,.48);
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.5);
+      transition:.2s transform,.2s background;
+    }
+    .dot.active{
+      background:#fff;
+      transform:scale(1.15);
+    }
+
+    .lightbox{
+      position:fixed;
+      inset:0;
+      background:rgba(5,10,20,.88);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      padding:24px;
+    }
+    .lightbox.show{
+      display:flex;
+    }
+    .lightbox-stage{
+      position:relative;
+      width:min(92vw, 1400px);
+      height:min(86vh, 900px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      border-radius:18px;
+    }
+    .lightbox-image{
+      max-width:100%;
+      max-height:100%;
+      object-fit:contain;
+      transition:transform .2s ease;
+      cursor:zoom-in;
+      user-select:none;
+      transform-origin:center center;
+    }
+    .lightbox-image.zoomed{
+      cursor:grab;
+    }
+    .lightbox-close{
+      position:absolute;
+      top:20px;
+      right:20px;
+      width:48px;
+      height:48px;
+      border:none;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      color:#fff;
+      font-size:22px;
+      cursor:pointer;
+      z-index:10001;
+    }
+    .lightbox-close:hover{
+      background:rgba(255,255,255,.24);
+    }
+    .lightbox-nav{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:54px;
+      height:54px;
+      border:none;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      color:#fff;
+      font-size:28px;
+      cursor:pointer;
+      z-index:10001;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .lightbox-nav:hover{
+      background:rgba(255,255,255,.24);
+    }
+    .lightbox-nav.prev{
+      left:20px;
+    }
+    .lightbox-nav.next{
+      right:20px;
+    }
+    .lightbox-dots{
+      position:absolute;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      display:flex;
+      gap:10px;
+      z-index:10001;
+    }
+    .lightbox-dots .lb-dot{
+      width:12px;
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.35);
+      border:1px solid rgba(255,255,255,.45);
+      cursor:pointer;
+    }
+    .lightbox-dots .lb-dot.active{
+      background:#fff;
+    }
 
     .section{padding:42px 0}
     .section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;flex-wrap:wrap;margin-bottom:10px}
@@ -112,6 +282,7 @@
       .hero-grid,.download-panel,.confidence{grid-template-columns:1fr}
       .benefits,.strip-card{grid-template-columns:repeat(2,1fr)}
       h1{font-size:46px}
+      .slides{height:430px}
     }
     @media (max-width:680px){
       .benefits,.strip-card,.confidence{grid-template-columns:1fr}
@@ -121,6 +292,22 @@
       .hero-cta{flex-direction:column;align-items:stretch}
       .hero-cta .btn,.cta-final .btn{width:100%}
       .download-box h3{font-size:28px}
+      .slides{height:270px}
+      .slider-btn{width:38px;height:38px;font-size:18px}
+      .lightbox-stage{
+        width:95vw;
+        height:78vh;
+      }
+      .lightbox-nav{
+        width:44px;
+        height:44px;
+        font-size:22px;
+      }
+      .lightbox-close{
+        width:42px;
+        height:42px;
+        font-size:18px;
+      }
     }
   </style>
 </head>
@@ -168,16 +355,22 @@
       </div>
 
       <div class="hero-card">
-        <h3>Por que vale a pena baixar agora</h3>
-        <p class="mini">Porque em poucos minutos você já consegue enxergar onde está perdendo material e como o software pode te ajudar a produzir com mais inteligência.</p>
-        <ul class="hero-list">
-          <li>Você testa no seu cenário real, com suas peças e seus materiais</li>
-          <li>Descobre rapidamente se está deixando dinheiro na sobra</li>
-          <li>Ganha velocidade porque seu planejamento de corte não precisa mais ser feito na mão</li>
-          <li>Visualiza uma rotina mais organizada e mais profissional</li>
-          <li>Reduz a insegurança na hora de planejar a produção</li>
-          <li>Baixa agora e decide com confiança depois de ver funcionando</li>
-        </ul>
+        <div class="hero-slider" aria-label="Demonstração visual do LINERA-NEST">
+          <div class="slides">
+            <img src="img/Capturar.JPG" class="slide active" alt="Tela principal do LINERA-NEST" data-full="img/Capturar.JPG">
+            <img src="img/OS001_PC01_VIGA_W150X22_5_page1.jpg" class="slide" alt="Plano de corte gerado pelo sistema" data-full="img/OS001_PC01_VIGA_W150X22_5_page1.jpg">
+            <img src="img/OS001_PC02_VIGA_W200X35_9_page1.jpg" class="slide" alt="Outro plano de corte gerado pelo sistema" data-full="img/OS001_PC02_VIGA_W200X35_9_page1.jpg">
+          </div>
+
+          <button class="slider-btn prev" type="button" aria-label="Imagem anterior">❮</button>
+          <button class="slider-btn next" type="button" aria-label="Próxima imagem">❯</button>
+
+          <div class="slider-dots" aria-label="Navegação do banner">
+            <span class="dot active" data-slide="0" aria-label="Ir para imagem 1"></span>
+            <span class="dot" data-slide="1" aria-label="Ir para imagem 2"></span>
+            <span class="dot" data-slide="2" aria-label="Ir para imagem 3"></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -295,6 +488,19 @@
   </div>
 </section>
 
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Fechar">✕</button>
+  <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Imagem anterior">❮</button>
+
+  <div class="lightbox-stage" id="lightboxStage">
+    <img id="lightboxImage" class="lightbox-image" src="" alt="Visualização ampliada">
+  </div>
+
+  <button class="lightbox-nav next" id="lightboxNext" aria-label="Próxima imagem">❯</button>
+
+  <div class="lightbox-dots" id="lightboxDots"></div>
+</div>
+
 <script>
 function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
 function setUi(){
@@ -306,6 +512,148 @@ function setUi(){
 }
 document.getElementById('btnSair').onclick=()=>{ localStorage.removeItem('linera_session'); location.reload(); };
 setUi();
+
+(function(){
+  const slider = document.querySelector('.hero-slider');
+  if(!slider) return;
+
+  const slides = slider.querySelectorAll('.slide');
+  const dots = slider.querySelectorAll('.dot');
+  const prevBtn = slider.querySelector('.prev');
+  const nextBtn = slider.querySelector('.next');
+  let slideAtual = 0;
+  let sliderInterval = null;
+
+  function mostrarSlide(index){
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    slideAtual = index;
+  }
+
+  function proximoSlide(){
+    mostrarSlide((slideAtual + 1) % slides.length);
+  }
+
+  function mudarSlide(direcao){
+    let novoIndex = slideAtual + direcao;
+    if(novoIndex < 0) novoIndex = slides.length - 1;
+    if(novoIndex >= slides.length) novoIndex = 0;
+    mostrarSlide(novoIndex);
+    reiniciarAutoSlide();
+  }
+
+  function irParaSlide(index){
+    mostrarSlide(index);
+    reiniciarAutoSlide();
+  }
+
+  function iniciarAutoSlide(){
+    sliderInterval = setInterval(proximoSlide, 3500);
+  }
+
+  function reiniciarAutoSlide(){
+    clearInterval(sliderInterval);
+    iniciarAutoSlide();
+  }
+
+  prevBtn.addEventListener('click', () => mudarSlide(-1));
+  nextBtn.addEventListener('click', () => mudarSlide(1));
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => irParaSlide(index));
+  });
+
+  slider.addEventListener('mouseenter', () => clearInterval(sliderInterval));
+  slider.addEventListener('mouseleave', reiniciarAutoSlide);
+
+  mostrarSlide(0);
+  iniciarAutoSlide();
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImage = document.getElementById('lightboxImage');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+  const lightboxDots = document.getElementById('lightboxDots');
+  const lightboxStage = document.getElementById('lightboxStage');
+
+  let lbIndex = 0;
+  let zoom = 1;
+
+  function renderLightboxDots(){
+    lightboxDots.innerHTML = '';
+    slides.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'lb-dot' + (i === lbIndex ? ' active' : '');
+      dot.addEventListener('click', () => abrirLightbox(i));
+      lightboxDots.appendChild(dot);
+    });
+  }
+
+  function resetZoom(){
+    zoom = 1;
+    lightboxImage.style.transform = 'scale(1)';
+    lightboxImage.classList.remove('zoomed');
+  }
+
+  function abrirLightbox(index){
+    lbIndex = index;
+    lightboxImage.src = slides[lbIndex].dataset.full || slides[lbIndex].src;
+    lightboxImage.alt = slides[lbIndex].alt || '';
+    lightbox.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    renderLightboxDots();
+    resetZoom();
+  }
+
+  function fecharLightbox(){
+    lightbox.classList.remove('show');
+    document.body.style.overflow = '';
+    resetZoom();
+  }
+
+  function mudarImagemLightbox(direcao){
+    lbIndex += direcao;
+    if(lbIndex < 0) lbIndex = slides.length - 1;
+    if(lbIndex >= slides.length) lbIndex = 0;
+    abrirLightbox(lbIndex);
+  }
+
+  slides.forEach((slide, index) => {
+    slide.style.cursor = 'pointer';
+    slide.addEventListener('click', () => abrirLightbox(index));
+  });
+
+  lightboxClose.addEventListener('click', fecharLightbox);
+  lightboxPrev.addEventListener('click', () => mudarImagemLightbox(-1));
+  lightboxNext.addEventListener('click', () => mudarImagemLightbox(1));
+
+  lightbox.addEventListener('click', (e) => {
+    if(e.target === lightbox) fecharLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if(!lightbox.classList.contains('show')) return;
+    if(e.key === 'Escape') fecharLightbox();
+    if(e.key === 'ArrowLeft') mudarImagemLightbox(-1);
+    if(e.key === 'ArrowRight') mudarImagemLightbox(1);
+  });
+
+  lightboxImage.addEventListener('click', () => {
+    zoom = zoom === 1 ? 2 : 1;
+    lightboxImage.style.transform = `scale(${zoom})`;
+    lightboxImage.classList.toggle('zoomed', zoom > 1);
+  });
+
+  lightboxStage.addEventListener('wheel', (e) => {
+    if(!lightbox.classList.contains('show')) return;
+    e.preventDefault();
+    zoom += e.deltaY < 0 ? 0.15 : -0.15;
+    if(zoom < 1) zoom = 1;
+    if(zoom > 4) zoom = 4;
+    lightboxImage.style.transform = `scale(${zoom})`;
+    lightboxImage.classList.toggle('zoomed', zoom > 1);
+  }, { passive:false });
+})();
 </script>
 </body>
 </html>
