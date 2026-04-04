@@ -353,7 +353,7 @@
           <div class="badge">Feito para produção real</div>
         </div>
         <div class="hero-cta">
-          <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe">Baixar LINERA-NEST grátis</a>
+          <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe" onclick="registrarDownload(event, this.href)">Baixar LINERA-NEST grátis</a>
           <a class="btn light" href="#como-funciona">Ver como funciona</a>
         </div>
         <div class="trust-line">
@@ -422,7 +422,7 @@
         <span class="label">download recomendado</span>
         <h3>Comece agora com o LINERA-NEST</h3>
         <p>Faça o download do instalador, experimente o teste grátis e descubra como um corte mais inteligente pode gerar economia real no seu dia a dia.</p>
-        <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe">Fazer download grátis</a>
+        <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe" onclick="registrarDownload(event, this.href)">Fazer download grátis</a>
         <div class="small-note">Download direto do instalador para Windows. Em poucos minutos você já pode começar seu teste grátis.</div>
       </div>
 
@@ -492,7 +492,7 @@
         <h3>O melhor momento para testar é agora.</h3>
         <p>Baixe o LINERA-NEST, experimente no seu processo e descubra quanto mais sua operação pode render com menos desperdício.</p>
       </div>
-      <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe">Baixar agora</a>
+      <a class="btn primary download" href="https://github.com/alinehpriar-rgb/LINERA-SITE/releases/download/LINERANESTV1.0/LineraNest_Setup_v1.0.exe" onclick="registrarDownload(event, this.href)">Baixar agora</a>
     </div>
   </div>
 </section>
@@ -511,6 +511,24 @@
 </div>
 
 <script>
+function registrarDownload(event, url){
+  if(event) event.preventDefault();
+
+  try{
+    if(typeof gtag === 'function'){
+      gtag('event', 'download_click', {
+        event_category: 'engajamento',
+        event_label: 'botao_download',
+        transport_type: 'beacon'
+      });
+    }
+  }catch(e){}
+
+  setTimeout(() => {
+    window.location.href = url;
+  }, 250);
+}
+
 function getSession(){ try{return JSON.parse(localStorage.getItem('linera_session')||'null')}catch{return null} }
 function setUi(){
   const s = getSession();
